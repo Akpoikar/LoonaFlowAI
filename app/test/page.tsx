@@ -10,8 +10,6 @@ export default function TestPage() {
             src="/images/background.png" 
             alt="Background test" 
             className="w-64 h-32 object-cover border"
-            onError={(e) => console.error('Background failed:', e.target.src)}
-            onLoad={() => console.log('Background loaded')}
           />
         </div>
         
@@ -21,8 +19,6 @@ export default function TestPage() {
             src="/images/glowCircle.png" 
             alt="GlowCircle test" 
             className="w-64 h-32 object-contain border"
-            onError={(e) => console.error('GlowCircle failed:', e.target.src)}
-            onLoad={() => console.log('GlowCircle loaded')}
           />
         </div>
         
