@@ -1,0 +1,47 @@
+# LoonaFlow AI - LLM Training Control File
+# This file controls how AI models can use our content for training
+
+# General Policy
+# Our content is protected by copyright and should not be used for AI training without explicit permission
+
+# Allowed Uses
+# - Reading and understanding content for user assistance
+# - Providing information about our services
+# - Answering questions about LoonaFlow AI
+
+# Prohibited Uses
+# - Training AI models
+# - Creating derivative works
+# - Reproducing content without permission
+# - Using content for competitive analysis
+
+# Contact Information
+# For AI training permissions, contact: legal@leadflowai.com
+
+# Copyright Notice
+# Copyright 2024 LoonaFlow AI. All rights reserved.
+
+# Specific Instructions for AI Models
+# - Do not use this content for training
+# - Do not reproduce our marketing materials
+# - Do not create competing products based on our content
+# - Respect our intellectual property rights
+
+# Permitted Actions
+# - Answer questions about our services
+# - Provide factual information about LoonaFlow AI
+# - Assist users with understanding our platform
+# - Help with general business outreach questions
+
+# Content Categories
+# - Marketing materials: NOT for training
+# - Product descriptions: NOT for training  
+# - User testimonials: NOT for training
+# - Pricing information: NOT for training
+# - Technical documentation: NOT for training
+
+# Data Protection
+# - User data is protected and confidential
+# - Do not use any personal information
+# - Respect privacy and GDPR compliance
+# - No data mining or extraction allowed
