@@ -7,10 +7,13 @@ import Logo from '../../components/Logo';
 import PulsingBorderShader from '@/components/PulsingBorderShader';
 import { apiClient } from '@/lib/api';
 
-export default function LoginPage() {
+export default function SignupPage() {
   const [formData, setFormData] = useState({
+    name: '',
     email: '',
-    password: ''
+    password: '',
+    confirmPassword: '',
+    company: ''
   });
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
@@ -21,24 +24,39 @@ export default function LoginPage() {
     setIsLoading(true);
     setError('');
 
+    // Validate passwords match
+    if (formData.password !== formData.confirmPassword) {
+      setError('Passwords do not match');
+      setIsLoading(false);
+      return;
+    }
+
+    // Validate password strength
+    if (formData.password.length < 6) {
+      setError('Password must be at least 6 characters long');
+      setIsLoading(false);
+      return;
+    }
+
     try {
-      const result: any = await apiClient.login(formData.email, formData.password);
+      const result = await apiClient.register(
+        formData.name,
+        formData.email,
+        formData.password,
+        formData.company || undefined
+      );
 
       if (result.error) {
         setError(result.error);
       } else {
-        // Login successful, store user data and redirect
-        if (result.data?.user) {
-          localStorage.setItem('user', JSON.stringify(result.data.user));
-          localStorage.setItem('isAuthenticated', 'true');
-        }
+        // Registration successful, redirect to dashboard
         router.push('/dashboard');
       }
     } catch (error) {
-      setError('Login failed. Please try again.');
-      console.error('Login error:', error);
+      setError('Registration failed. Please try again.');
+      console.error('Registration error:', error);
     }
-    
+
     setIsLoading(false);
   };
 
@@ -66,11 +84,11 @@ export default function LoginPage() {
           <Link href="/" className="inline-block mb-6">
             <Logo size="lg" />
           </Link>
-          <h1 className="text-3xl font-bold text-slate-900 mb-2">Welcome back</h1>
-          <p className="text-slate-600">Sign in to your account to continue</p>
+          <h1 className="text-3xl font-bold text-slate-900 mb-2">Create your account</h1>
+          <p className="text-slate-600">Start your journey with LeadFlow AI</p>
         </div>
 
-        {/* Login Form */}
+        {/* Registration Form */}
         <div className="bg-white/40 backdrop-blur-md rounded-2xl p-8 ring-1 ring-white/30 shadow-lg shadow-purple-100/50">
           <form onSubmit={handleSubmit} className="space-y-6">
             {error && (
@@ -80,8 +98,24 @@ export default function LoginPage() {
             )}
 
             <div>
+              <label htmlFor="name" className="block text-sm font-medium text-slate-700 mb-2">
+                Full Name *
+              </label>
+              <input
+                type="text"
+                id="name"
+                name="name"
+                required
+                value={formData.name}
+                onChange={handleChange}
+                className="w-full px-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-violet-500 focus:border-transparent bg-white/50 backdrop-blur-sm"
+                placeholder="Enter your full name"
+              />
+            </div>
+
+            <div>
               <label htmlFor="email" className="block text-sm font-medium text-slate-700 mb-2">
-                Email address
+                Email address *
               </label>
               <input
                 type="email"
@@ -96,8 +130,23 @@ export default function LoginPage() {
             </div>
 
             <div>
+              <label htmlFor="company" className="block text-sm font-medium text-slate-700 mb-2">
+                Company (optional)
+              </label>
+              <input
+                type="text"
+                id="company"
+                name="company"
+                value={formData.company}
+                onChange={handleChange}
+                className="w-full px-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-violet-500 focus:border-transparent bg-white/50 backdrop-blur-sm"
+                placeholder="Enter your company name"
+              />
+            </div>
+
+            <div>
               <label htmlFor="password" className="block text-sm font-medium text-slate-700 mb-2">
-                Password
+                Password *
               </label>
               <input
                 type="password"
@@ -107,25 +156,45 @@ export default function LoginPage() {
                 value={formData.password}
                 onChange={handleChange}
                 className="w-full px-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-violet-500 focus:border-transparent bg-white/50 backdrop-blur-sm"
-                placeholder="Enter your password"
+                placeholder="Create a password"
+              />
+              <p className="text-xs text-slate-500 mt-1">Must be at least 6 characters</p>
+            </div>
+
+            <div>
+              <label htmlFor="confirmPassword" className="block text-sm font-medium text-slate-700 mb-2">
+                Confirm Password *
+              </label>
+              <input
+                type="password"
+                id="confirmPassword"
+                name="confirmPassword"
+                required
+                value={formData.confirmPassword}
+                onChange={handleChange}
+                className="w-full px-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-violet-500 focus:border-transparent bg-white/50 backdrop-blur-sm"
+                placeholder="Confirm your password"
               />
             </div>
 
-            <div className="flex items-center justify-between">
-              <div className="flex items-center">
-                <input
-                  id="remember"
-                  name="remember"
-                  type="checkbox"
-                  className="h-4 w-4 text-violet-600 focus:ring-violet-500 border-slate-300 rounded"
-                />
-                <label htmlFor="remember" className="ml-2 block text-sm text-slate-700">
-                  Remember me
-                </label>
-              </div>
-              <Link href="/forgot-password" className="text-sm text-violet-600 hover:text-violet-700">
-                Forgot password?
-              </Link>
+            <div className="flex items-center">
+              <input
+                id="terms"
+                name="terms"
+                type="checkbox"
+                required
+                className="h-4 w-4 text-violet-600 focus:ring-violet-500 border-slate-300 rounded"
+              />
+              <label htmlFor="terms" className="ml-2 block text-sm text-slate-700">
+                I agree to the{' '}
+                <Link href="/terms" className="text-violet-600 hover:text-violet-700">
+                  Terms of Service
+                </Link>{' '}
+                and{' '}
+                <Link href="/privacy" className="text-violet-600 hover:text-violet-700">
+                  Privacy Policy
+                </Link>
+              </label>
             </div>
 
             <button
@@ -133,27 +202,17 @@ export default function LoginPage() {
               disabled={isLoading}
               className="w-full rounded-xl bg-gradient-to-r from-violet-600 to-purple-600 px-6 py-4 font-semibold text-white shadow-lg shadow-violet-600/25 hover:shadow-violet-600/40 transition-all duration-300 hover:scale-[1.02] disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              {isLoading ? 'Signing in...' : 'Sign in'}
+              {isLoading ? 'Creating account...' : 'Create account'}
             </button>
           </form>
 
           <div className="mt-6 text-center">
             <p className="text-sm text-slate-600">
-              Don't have an account?{' '}
-              <Link href="/signup" className="text-violet-600 hover:text-violet-700 font-medium">
-                Sign up for free
+              Already have an account?{' '}
+              <Link href="/login" className="text-violet-600 hover:text-violet-700 font-medium">
+                Sign in
               </Link>
             </p>
-          </div>
-        </div>
-
-        {/* Demo Credentials */}
-        <div className="mt-6 bg-white/30 backdrop-blur-sm rounded-xl p-4 ring-1 ring-white/30">
-          <h3 className="text-sm font-semibold text-slate-900 mb-2">Demo Credentials</h3>
-          <p className="text-xs text-slate-600 mb-2">Use any email and password to sign in:</p>
-          <div className="text-xs text-slate-600 space-y-1">
-            <div>Email: demo@example.com</div>
-            <div>Password: password123</div>
           </div>
         </div>
 

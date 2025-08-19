@@ -7,9 +7,11 @@ import DashboardNav from '../../components/dashboard/DashboardNav';
 import Overview from '../../components/dashboard/Overview';
 import Campaigns from '../../components/dashboard/Campaigns';
 import Templates from '../../components/dashboard/Templates';
+import Subscription from '../../components/dashboard/Subscription';
 import Settings from '../../components/dashboard/Settings';
 import TutorialGuide, { useTutorial } from '../../components/dashboard/TutorialGuide';
 import PulsingBorderShader from '@/components/PulsingBorderShader';
+import { apiClient } from '@/lib/api';
 
 export default function DashboardPage() {
   const [user, setUser] = useState<User | null>(null);
@@ -109,10 +111,16 @@ export default function DashboardPage() {
     setIsLoading(false);
   }, [router]);
 
-  const handleLogout = () => {
-    localStorage.removeItem('user');
-    localStorage.removeItem('isAuthenticated');
-    router.push('/');
+  const handleLogout = async () => {
+    try {
+      await apiClient.logout();
+    } catch (error) {
+      console.error('Logout error:', error);
+    } finally {
+      localStorage.removeItem('user');
+      localStorage.removeItem('isAuthenticated');
+      router.push('/');
+    }
   };
 
   if (isLoading) {
@@ -134,12 +142,14 @@ export default function DashboardPage() {
     switch (activeTab) {
       case 'dashboard':
         return <Overview user={user} campaigns={campaigns} onTabChange={setActiveTab} />;
-      case 'campaigns':
-        return <Campaigns campaigns={campaigns} />;
-      case 'templates':
-        return <Templates />;
-      case 'settings':
-        return <Settings user={user} />;
+          case 'campaigns':
+      return <Campaigns />;
+    case 'templates':
+      return <Templates />;
+    case 'subscription':
+      return <Subscription />;
+    case 'settings':
+      return <Settings user={user} />;
       default:
         return <Overview user={user} campaigns={campaigns} onTabChange={setActiveTab} />;
     }

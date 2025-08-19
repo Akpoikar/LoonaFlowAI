@@ -1,6 +1,8 @@
 "use client";
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { apiClient, EmailTemplate as ApiEmailTemplate } from '@/lib/api';
+import Modal from '../Modal';
 
 interface EmailTemplate {
   id: string;
@@ -11,29 +13,43 @@ interface EmailTemplate {
 
 export default function Templates() {
   const [showCreateForm, setShowCreateForm] = useState(false);
-  const [editingTemplate, setEditingTemplate] = useState<EmailTemplate | null>(null);
-  const [templates, setTemplates] = useState<EmailTemplate[]>([
-    {
-      id: '1',
-      subject: 'Partnership Opportunity',
-      text: 'Hi [Business Name],\n\nI hope this email finds you well. I came across your business and was impressed by your work in [industry]. I believe there could be a great opportunity for us to collaborate.\n\nWould you be interested in discussing potential partnership opportunities?\n\nBest regards,\n[Your Name]',
-      createdAt: '2024-01-10'
-    },
-    {
-      id: '2',
-      subject: 'How we can help your business',
-      text: 'Dear [Business Name],\n\nI wanted to reach out because I believe our services could significantly benefit your business. We specialize in helping companies like yours increase their efficiency and growth.\n\nWould you be available for a brief call to discuss how we might help?\n\nThank you,\n[Your Name]',
-      createdAt: '2024-01-08'
-    }
-  ]);
+  const [editingTemplate, setEditingTemplate] = useState<ApiEmailTemplate | null>(null);
+  const [templates, setTemplates] = useState<ApiEmailTemplate[]>([]);
   const [formData, setFormData] = useState({
     subject: '',
-    text: ''
+    content: ''
   });
   const [isCreating, setIsCreating] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState('');
 
-  const handleInputChange = (field: 'subject' | 'text', value: string) => {
+  // Load templates from API
+  useEffect(() => {
+    loadTemplates();
+  }, []);
+
+  const loadTemplates = async () => {
+    try {
+      const result: any = await apiClient.getTemplates();
+      
+      if (result.error) {
+        setError(result.error);
+      } else if (result.data) {
+        // Handle backend response format: { templates: [...] }
+        const templatesArray = result.data.templates || (Array.isArray(result.data) ? result.data : []);
+        setTemplates(templatesArray);
+      } else {
+        setTemplates([]);
+      }
+    } catch (error) {
+      setError('Failed to load templates');
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleInputChange = (field: 'subject' | 'content', value: string) => {
     setFormData(prev => ({
       ...prev,
       [field]: value
@@ -43,21 +59,30 @@ export default function Templates() {
   const handleCreateTemplate = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsCreating(true);
+    setError('');
     
-    // Simulate API call
-    await new Promise(resolve => setTimeout(resolve, 1000));
-    
-    const newTemplate: EmailTemplate = {
-      id: Date.now().toString(),
-      subject: formData.subject,
-      text: formData.text,
-      createdAt: new Date().toISOString().split('T')[0]
-    };
-    
-    setTemplates(prev => [newTemplate, ...prev]);
-    setIsCreating(false);
-    setShowCreateForm(false);
-    setFormData({ subject: '', text: '' });
+    try {
+      const result = await apiClient.createTemplate({
+        subject: formData.subject,
+        content: formData.content
+      });
+
+      if (result.error) {
+        setError(result.error);
+      } else {
+        // Reload templates to show the new one
+        await loadTemplates();
+        setShowCreateForm(false);
+        setFormData({
+          subject: '',
+          content: '',
+        });
+      }
+    } catch (error) {
+      setError('Failed to create template');
+    } finally {
+      setIsCreating(false);
+    }
   };
 
   const handleEditTemplate = async (e: React.FormEvent) => {
@@ -65,37 +90,73 @@ export default function Templates() {
     if (!editingTemplate) return;
     
     setIsEditing(true);
+    setError('');
     
-    // Simulate API call
-    await new Promise(resolve => setTimeout(resolve, 1000));
-    
-    setTemplates(prev => prev.map(template => 
-      template.id === editingTemplate.id 
-        ? { ...template, subject: formData.subject, text: formData.text }
-        : template
-    ));
-    
-    setIsEditing(false);
-    setEditingTemplate(null);
-    setShowCreateForm(false);
-    setFormData({ subject: '', text: '' });
+    try {
+      const result = await apiClient.updateTemplate(editingTemplate._id || editingTemplate.id || '', {
+        subject: formData.subject,
+        content: formData.content
+      });
+
+      if (result.error) {
+        setError(result.error);
+      } else {
+        // Reload templates to show the updated one
+        await loadTemplates();
+        setIsEditing(false);
+        setEditingTemplate(null);
+        setShowCreateForm(false);
+        setFormData({
+          subject: '',
+          content: '',
+        });
+      }
+    } catch (error) {
+      setError('Failed to update template');
+    } finally {
+      setIsEditing(false);
+    }
   };
 
-  const handleEditClick = (template: EmailTemplate) => {
+  const handleEditClick = (template: ApiEmailTemplate) => {
     setEditingTemplate(template);
-    setFormData({ subject: template.subject, text: template.text });
+    setFormData({ 
+      subject: template.subject, 
+      content: template.content
+    });
     setShowCreateForm(true);
   };
 
   const handleCancelEdit = () => {
     setEditingTemplate(null);
     setShowCreateForm(false);
-    setFormData({ subject: '', text: '' });
+    setFormData({
+      subject: '',
+      content: ''
+    });
   };
 
-  const getPreviewText = (text: string) => {
-    const lines = text.split('\n').filter(line => line.trim());
-    return lines.slice(0, 3).join(' ').substring(0, 100) + (lines.length > 3 || text.length > 100 ? '...' : '');
+  const handleDeleteTemplate = async (templateId: string) => {
+    if (!confirm('Are you sure you want to delete this template?')) {
+      return;
+    }
+    
+    try {
+      const result = await apiClient.deleteTemplate(templateId);
+      if (result.error) {
+        setError(result.error);
+      } else {
+        // Reload templates to remove the deleted one
+        await loadTemplates();
+      }
+    } catch (error) {
+      setError('Failed to delete template');
+    }
+  };
+
+  const getPreviewText = (content: string) => {
+    const lines = content.split('\n').filter(line => line.trim());
+    return lines.slice(0, 3).join(' ').substring(0, 100) + (lines.length > 3 || content.length > 100 ? '...' : '');
   };
 
   return (
@@ -111,23 +172,15 @@ export default function Templates() {
         </button>
       </div>
 
-      {/* Create Template Form */}
-      {showCreateForm && (
-        <div className="bg-white/40 backdrop-blur-md rounded-2xl p-8 ring-1 ring-white/30 shadow-lg shadow-purple-100/50">
-          <div className="flex justify-between items-center mb-6">
-            <h3 className="text-xl font-bold text-slate-900">
-              {editingTemplate ? 'Edit Template' : 'Create New Template'}
-            </h3>
-            <button 
-              onClick={editingTemplate ? handleCancelEdit : () => setShowCreateForm(false)}
-              className="text-slate-400 hover:text-slate-600 transition-colors"
-            >
-              ✕
-            </button>
-          </div>
-
-          <form onSubmit={editingTemplate ? handleEditTemplate : handleCreateTemplate} className="space-y-6">
-            {/* Subject */}
+             {/* Create Template Modal */}
+       <Modal
+         isOpen={showCreateForm}
+         onClose={editingTemplate ? handleCancelEdit : () => setShowCreateForm(false)}
+         title={editingTemplate ? 'Edit Template' : 'Create New Template'}
+         size="lg"
+       >
+         <form onSubmit={editingTemplate ? handleEditTemplate : handleCreateTemplate} className="space-y-6">
+             {/* Subject */}
             <div>
               <label className="block text-sm font-medium text-slate-700 mb-2">
                 Subject *
@@ -142,16 +195,16 @@ export default function Templates() {
               />
             </div>
 
-            {/* Email Text */}
+                         {/* Email Content */}
             <div>
               <label className="block text-sm font-medium text-slate-700 mb-2">
-                Email Text *
+                Email Content *
               </label>
               <textarea
                 required
                 rows={8}
-                value={formData.text}
-                onChange={(e) => handleInputChange('text', e.target.value)}
+                value={formData.content}
+                onChange={(e) => handleInputChange('content', e.target.value)}
                 className="w-full px-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-violet-500 focus:border-transparent bg-white/50 backdrop-blur-sm resize-none"
                 placeholder="Write your email content here."
               />
@@ -176,50 +229,74 @@ export default function Templates() {
               >
                 {isCreating ? 'Creating...' : isEditing ? 'Saving...' : editingTemplate ? 'Save Changes' : 'Create Template'}
               </button>
-            </div>
-          </form>
-        </div>
-      )}
+                         </div>
+           </form>
+         </Modal>
 
       {/* Templates List */}
       <div className="bg-white/40 backdrop-blur-md rounded-2xl p-8 ring-1 ring-white/30 shadow-lg shadow-purple-100/50">
         <h3 className="text-xl font-bold text-slate-900 mb-6">Your Templates</h3>
-        <div className="space-y-4">
-          {templates.map((template) => (
-            <div key={template.id} className="flex items-center justify-between p-6 bg-white/30 rounded-xl hover:bg-white/40 transition-colors">
-              <div className="flex-1">
-                <h4 className="font-semibold text-slate-900 text-lg mb-2">{template.subject}</h4>
-                <p className="text-slate-600 text-sm leading-relaxed">{getPreviewText(template.text)}</p>
-                <p className="text-xs text-slate-500 mt-2">Created {new Date(template.createdAt).toLocaleDateString()}</p>
+        
+        {isLoading ? (
+          <div className="text-center py-12">
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-violet-600 mx-auto mb-4"></div>
+            <p className="text-slate-600">Loading templates...</p>
+          </div>
+        ) : error ? (
+          <div className="text-center py-12">
+            <div className="text-red-500 mb-4">⚠️</div>
+            <p className="text-red-600 mb-4">{error}</p>
+            <button 
+              onClick={loadTemplates}
+              className="px-6 py-3 bg-gradient-to-r from-violet-600 to-purple-600 text-white rounded-xl font-semibold hover:shadow-lg hover:shadow-violet-600/25 transition-all duration-300"
+            >
+              Retry
+            </button>
+          </div>
+        ) : (
+          <div className="space-y-4">
+            {Array.isArray(templates) && templates.map((template) => (
+              <div key={template._id || template.id} className="flex items-center justify-between p-6 bg-white/30 rounded-xl hover:bg-white/40 transition-colors">
+                                 <div className="flex-1">
+                   <h4 className="font-semibold text-slate-900 text-lg mb-2">{template.subject}</h4>
+                  <p className="text-slate-600 text-sm leading-relaxed">{getPreviewText(template.content)}</p>
+                                     <div className="flex gap-2 mt-2">
+                     <span className="text-xs text-slate-500">Created {new Date(template.createdAt).toLocaleDateString()}</span>
+                   </div>
+                </div>
+                <div className="flex gap-2 ml-4">
+                  <button className="p-2 text-slate-600 hover:text-slate-900 transition-colors" title="Edit" onClick={() => handleEditClick(template)}>
+                    ✏️
+                  </button>
+                  <button className="p-2 text-slate-600 hover:text-slate-900 transition-colors" title="Copy">
+                    📋
+                  </button>
+                                     <button 
+                     className="p-2 text-slate-600 hover:text-slate-900 transition-colors" 
+                     title="Delete" 
+                     onClick={() => handleDeleteTemplate(template._id || template.id || '')}
+                   >
+                     🗑️
+                   </button>
+                </div>
               </div>
-              <div className="flex gap-2 ml-4">
-                <button className="p-2 text-slate-600 hover:text-slate-900 transition-colors" title="Edit" onClick={() => handleEditClick(template)}>
-                  ✏️
-                </button>
-                <button className="p-2 text-slate-600 hover:text-slate-900 transition-colors" title="Copy">
-                  📋
-                </button>
-                <button className="p-2 text-slate-600 hover:text-slate-900 transition-colors" title="Delete">
-                  🗑️
+            ))}
+            
+            {(!Array.isArray(templates) || templates.length === 0) && (
+              <div className="text-center py-12">
+                <div className="text-4xl mb-4">✉️</div>
+                <h3 className="text-lg font-semibold text-slate-900 mb-2">No templates yet</h3>
+                <p className="text-slate-600 mb-6">Create your first email template to start your outreach campaigns.</p>
+                <button 
+                  onClick={() => setShowCreateForm(true)}
+                  className="px-6 py-3 bg-gradient-to-r from-violet-600 to-purple-600 text-white rounded-xl font-semibold hover:shadow-lg hover:shadow-violet-600/25 transition-colors"
+                >
+                  Create Your First Template
                 </button>
               </div>
-            </div>
-          ))}
-          
-          {templates.length === 0 && (
-            <div className="text-center py-12">
-              <div className="text-4xl mb-4">✉️</div>
-              <h3 className="text-lg font-semibold text-slate-900 mb-2">No templates yet</h3>
-              <p className="text-slate-600 mb-6">Create your first email template to start your outreach campaigns.</p>
-              <button 
-                onClick={() => setShowCreateForm(true)}
-                className="px-6 py-3 bg-gradient-to-r from-violet-600 to-purple-600 text-white rounded-xl font-semibold hover:shadow-lg hover:shadow-violet-600/25 transition-colors"
-              >
-                Create Your First Template
-              </button>
-            </div>
-          )}
-        </div>
+            )}
+          </div>
+        )}
       </div>
     </div>
   );

@@ -1,3 +1,5 @@
+import { SubscriptionPlan } from "@/lib/api";
+
 export interface User {
   id: string;
   email: string;
@@ -5,6 +7,10 @@ export interface User {
   company: string;
   plan: string;
   createdAt: string;
+  subscription: {
+    plan: string;
+    currentPlan: SubscriptionPlan;
+  };
 }
 
 export interface Campaign {

@@ -1,7 +1,9 @@
 "use client";
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { User } from '../../types/dashboard';
+import Modal from '../Modal';
+import { apiClient, EmailConfig } from '@/lib/api';
 
 interface SettingsProps {
   user: User;
@@ -9,12 +11,107 @@ interface SettingsProps {
 
 export default function Settings({ user }: SettingsProps) {
   const [activeTab, setActiveTab] = useState('profile');
+  const [showEmailModal, setShowEmailModal] = useState(false);
+  const [emailConfigs, setEmailConfigs] = useState<EmailConfig[]>([]);
+  const [isLoadingEmailConfigs, setIsLoadingEmailConfigs] = useState(true);
+  const [emailConfigError, setEmailConfigError] = useState('');
+  const [emailFormData, setEmailFormData] = useState({
+    name: '',
+    smtpServer: '',
+    smtpPort: 587,
+    emailAddress: '',
+    emailPassword: '',
+    isDefault: false
+  });
+  const [isCreatingEmailConfig, setIsCreatingEmailConfig] = useState(false);
+
+  // Load email configurations
+  useEffect(() => {
+    if (activeTab === 'email') {
+      loadEmailConfigs();
+    }
+  }, [activeTab]);
+
+  const loadEmailConfigs = async () => {
+    try {
+      setIsLoadingEmailConfigs(true);
+      setEmailConfigError('');
+      
+      const result: any = await apiClient.getEmailConfigs();
+      
+      if (result.error) {
+        setEmailConfigError(result.error);
+      } else if (result.data) {
+        const configsArray = result.data.data || (Array.isArray(result.data) ? result.data : []);
+        setEmailConfigs(configsArray);
+      } else {
+        setEmailConfigs([]);
+      }
+    } catch (error) {
+      setEmailConfigError('Failed to load email configurations');
+    } finally {
+      setIsLoadingEmailConfigs(false);
+    }
+  };
+
+  const handleEmailInputChange = (field: string, value: string | number | boolean) => {
+    setEmailFormData(prev => ({
+      ...prev,
+      [field]: value
+    }));
+  };
+
+  const handleCreateEmailConfig = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsCreatingEmailConfig(true);
+    setEmailConfigError('');
+    
+    try {
+      const result = await apiClient.createEmailConfig(emailFormData);
+
+      if (result.error) {
+        setEmailConfigError(result.error);
+      } else {
+        await loadEmailConfigs();
+        setShowEmailModal(false);
+        setEmailFormData({
+          name: '',
+          smtpServer: '',
+          smtpPort: 587,
+          emailAddress: '',
+          emailPassword: '',
+          isDefault: false
+        });
+      }
+    } catch (error) {
+      setEmailConfigError('Failed to create email configuration');
+    } finally {
+      setIsCreatingEmailConfig(false);
+    }
+  };
+
+  const handleDeleteEmailConfig = async (configId: string) => {
+    if (!confirm('Are you sure you want to delete this email configuration?')) {
+      return;
+    }
+    
+    try {
+      const result = await apiClient.deleteEmailConfig(configId);
+      if (result.error) {
+        setEmailConfigError(result.error);
+      } else {
+        await loadEmailConfigs();
+      }
+    } catch (error) {
+      setEmailConfigError('Failed to delete email configuration');
+    }
+  };
 
   const tabs = [
     { id: 'profile', label: 'Profile', icon: '👤' },
     { id: 'email', label: 'Email Accounts', icon: '📧' },
-    { id: 'billing', label: 'Billing', icon: '💳' },
-    { id: 'api', label: 'API Keys', icon: '🔑' }
+    // { id: 'billing', label: 'Billing', icon: '💳' },
+    // { id: 'api', label: 'API Keys', icon: '🔑' }
   ];
 
   return (
@@ -70,7 +167,7 @@ export default function Settings({ user }: SettingsProps) {
               <div>
                 <label className="block text-sm font-medium text-slate-700 mb-2">Plan</label>
                 <div className="px-4 py-3 rounded-xl bg-violet-100 text-violet-800 font-medium">
-                  {user.plan} Plan
+                  {user.subscription.plan} Plan
                 </div>
               </div>
             </div>
@@ -82,26 +179,67 @@ export default function Settings({ user }: SettingsProps) {
 
         {activeTab === 'email' && (
           <div className="space-y-6">
-            <h3 className="text-xl font-bold text-slate-900">Email Accounts</h3>
-            <div className="space-y-4">
-              <div className="flex items-center justify-between p-4 bg-white/30 rounded-xl">
-                <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 bg-red-100 rounded-full flex items-center justify-center">
-                    <span className="text-lg">📧</span>
+            <h3 className="text-xl font-bold text-slate-900">Email Configurations</h3>
+            
+            {emailConfigError && (
+              <div className="bg-red-50 border border-red-200 rounded-xl p-4 text-red-700 text-sm">
+                {emailConfigError}
+              </div>
+            )}
+            
+            {isLoadingEmailConfigs ? (
+              <div className="text-center py-12">
+                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-violet-600 mx-auto mb-4"></div>
+                <p className="text-slate-600">Loading email configurations...</p>
+              </div>
+            ) : (
+              <div className="space-y-4">
+                {emailConfigs.map((config) => (
+                  <div key={config._id || config.id} className="flex items-center justify-between p-4 bg-white/30 rounded-xl">
+                    <div className="flex items-center gap-3">
+                      <div className="w-10 h-10 bg-violet-100 rounded-full flex items-center justify-center">
+                        <span className="text-lg">📧</span>
+                      </div>
+                      <div>
+                        <p className="font-medium text-slate-900">{config.name}</p>
+                        <p className="text-sm text-slate-600">
+                          {config.emailAddress} • {config.smtpServer}:{config.smtpPort}
+                          {config.isDefault && ' • Default'}
+                        </p>
+                      </div>
+                    </div>
+                    <div className="flex gap-2">
+                      {config.isDefault && (
+                        <span className="px-3 py-1 text-sm bg-violet-100 text-violet-700 rounded-lg font-medium">
+                          Default
+                        </span>
+                      )}
+                      <button 
+                        onClick={() => handleDeleteEmailConfig(config._id || config.id || '')}
+                        className="px-4 py-2 text-red-600 hover:bg-red-50 rounded-lg transition-colors"
+                      >
+                        Delete
+                      </button>
+                    </div>
                   </div>
-                  <div>
-                    <p className="font-medium text-slate-900">Gmail Account</p>
-                    <p className="text-sm text-slate-600">Connected • Warm-up active</p>
+                ))}
+                
+                {emailConfigs.length === 0 && (
+                  <div className="text-center py-12">
+                    <div className="text-4xl mb-4">📧</div>
+                    <h3 className="text-lg font-semibold text-slate-900 mb-2">No email configurations yet</h3>
+                    <p className="text-slate-600 mb-6">Add your first email configuration to start sending emails.</p>
                   </div>
-                </div>
-                <button className="px-4 py-2 text-red-600 hover:bg-red-50 rounded-lg transition-colors">
-                  Disconnect
+                )}
+                
+                <button 
+                  onClick={() => setShowEmailModal(true)}
+                  className="w-full px-6 py-4 border-2 border-dashed border-slate-300 rounded-xl text-slate-600 hover:border-violet-400 hover:text-violet-600 transition-colors"
+                >
+                  + Add Email Configuration
                 </button>
               </div>
-              <button className="w-full px-6 py-4 border-2 border-dashed border-slate-300 rounded-xl text-slate-600 hover:border-violet-400 hover:text-violet-600 transition-colors">
-                + Connect Email Account
-              </button>
-            </div>
+            )}
           </div>
         )}
 
@@ -177,6 +315,114 @@ export default function Settings({ user }: SettingsProps) {
           </div>
         )}
       </div>
+
+      {/* Email Configuration Modal */}
+      <Modal
+        isOpen={showEmailModal}
+        onClose={() => setShowEmailModal(false)}
+        title="Add Email Configuration"
+        size="lg"
+      >
+        <form onSubmit={handleCreateEmailConfig} className="space-y-6">
+          {emailConfigError && (
+            <div className="bg-red-50 border border-red-200 rounded-xl p-4 text-red-700 text-sm">
+              {emailConfigError}
+            </div>
+          )}
+          
+          <div>
+            <label className="block text-sm font-medium text-slate-700 mb-2">Configuration Name *</label>
+            <input
+              type="text"
+              required
+              value={emailFormData.name}
+              onChange={(e) => handleEmailInputChange('name', e.target.value)}
+              placeholder="e.g., Zoho Business, Gmail Marketing"
+              className="w-full px-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-violet-500 focus:border-transparent bg-white/50 backdrop-blur-sm"
+            />
+          </div>
+          
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <label className="block text-sm font-medium text-slate-700 mb-2">SMTP Server *</label>
+              <input
+                type="text"
+                required
+                value={emailFormData.smtpServer}
+                onChange={(e) => handleEmailInputChange('smtpServer', e.target.value)}
+                placeholder="e.g., smtp.zoho.eu, smtp.gmail.com"
+                className="w-full px-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-violet-500 focus:border-transparent bg-white/50 backdrop-blur-sm"
+              />
+            </div>
+            
+            <div>
+              <label className="block text-sm font-medium text-slate-700 mb-2">SMTP Port *</label>
+              <input
+                type="number"
+                required
+                value={emailFormData.smtpPort}
+                onChange={(e) => handleEmailInputChange('smtpPort', parseInt(e.target.value))}
+                placeholder="587"
+                className="w-full px-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-violet-500 focus:border-transparent bg-white/50 backdrop-blur-sm"
+              />
+            </div>
+          </div>
+          
+          <div>
+            <label className="block text-sm font-medium text-slate-700 mb-2">Email Address *</label>
+            <input
+              type="email"
+              required
+              value={emailFormData.emailAddress}
+              onChange={(e) => handleEmailInputChange('emailAddress', e.target.value)}
+              placeholder="info@yourdomain.com"
+              className="w-full px-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-violet-500 focus:border-transparent bg-white/50 backdrop-blur-sm"
+            />
+          </div>
+          
+          <div>
+            <label className="block text-sm font-medium text-slate-700 mb-2">Email Password *</label>
+            <input
+              type="password"
+              required
+              value={emailFormData.emailPassword}
+              onChange={(e) => handleEmailInputChange('emailPassword', e.target.value)}
+              placeholder="Enter your email password or app password"
+              className="w-full px-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-violet-500 focus:border-transparent bg-white/50 backdrop-blur-sm"
+            />
+          </div>
+          
+          <div className="flex items-center gap-2">
+            <input
+              type="checkbox"
+              id="isDefault"
+              checked={emailFormData.isDefault}
+              onChange={(e) => handleEmailInputChange('isDefault', e.target.checked)}
+              className="rounded border-slate-300 text-violet-600 focus:ring-violet-500"
+            />
+            <label htmlFor="isDefault" className="text-sm text-slate-700">
+              Set as default configuration
+            </label>
+          </div>
+          
+          <div className="flex gap-3 pt-4">
+            <button
+              type="button"
+              onClick={() => setShowEmailModal(false)}
+              className="flex-1 px-6 py-3 border border-slate-300 text-slate-700 rounded-xl font-medium hover:bg-slate-50 transition-colors"
+            >
+              Cancel
+            </button>
+            <button
+              type="submit"
+              disabled={isCreatingEmailConfig}
+              className="flex-1 px-6 py-3 bg-violet-600 text-white rounded-xl font-medium hover:bg-violet-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              {isCreatingEmailConfig ? 'Creating...' : 'Add Configuration'}
+            </button>
+          </div>
+        </form>
+      </Modal>
     </div>
   );
 }

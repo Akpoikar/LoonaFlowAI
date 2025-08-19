@@ -18,6 +18,7 @@ export default function DashboardNav({ user, activeTab, onTabChange, onLogout, o
     { id: 'dashboard', label: 'Dashboard', icon: '📊' },
     { id: 'templates', label: 'Email Templates', icon: '✉️' },
     { id: 'campaigns', label: 'Campaigns', icon: '🚀' },
+    { id: 'subscription', label: 'Subscription', icon: '💳' },
     { id: 'settings', label: 'Settings', icon: '⚙️' }
   ];
 
@@ -66,7 +67,7 @@ export default function DashboardNav({ user, activeTab, onTabChange, onLogout, o
               </div>
               <div>
                 <p className="text-sm font-bold text-slate-900">{user.name}</p>
-                <p className="text-xs text-slate-500 font-medium">{user.plan} Plan</p>
+                <p className="text-xs text-slate-500 font-medium">{user.subscription.plan} Plan</p>
               </div>
             </div>
           </div>
@@ -92,6 +93,7 @@ export default function DashboardNav({ user, activeTab, onTabChange, onLogout, o
                 {activeTab === 'dashboard' && 'Welcome to your LoonaFlow AI dashboard'}
                 {activeTab === 'templates' && 'Create and manage email templates'}
                 {activeTab === 'campaigns' && 'Launch and track your campaigns'}
+                {activeTab === 'subscription' && 'Manage your subscription and billing'}
                 {activeTab === 'settings' && 'Manage your account settings'}
               </p>
             </div>

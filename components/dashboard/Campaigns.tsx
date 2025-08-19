@@ -1,16 +1,18 @@
 "use client";
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Campaign } from '../../types/dashboard';
+import { apiClient, Campaign as ApiCampaign } from '@/lib/api';
+import Modal from '../Modal';
 
 interface CampaignsProps {
-  campaigns: Campaign[];
+  campaigns?: Campaign[];
 }
 
 interface CampaignFormData {
-  category: string;
+  businessType: string;
   location: string;
-  maxResults: number;
+  maximumResults: number;
   emailTemplate: string;
 }
 
@@ -53,15 +55,62 @@ const previewData = [
   }
 ];
 
-export default function Campaigns({ campaigns }: CampaignsProps) {
+export default function Campaigns({ campaigns: propCampaigns }: CampaignsProps) {
+  const [campaigns, setCampaigns] = useState<ApiCampaign[]>([]);
+  const [templates, setTemplates] = useState<any[]>([]);
   const [showCreateForm, setShowCreateForm] = useState(false);
+  const [editingCampaign, setEditingCampaign] = useState<ApiCampaign | null>(null);
+  const [isEditing, setIsEditing] = useState(false);
+  const [showEmailRecommendations, setShowEmailRecommendations] = useState(false);
   const [formData, setFormData] = useState<CampaignFormData>({
-    category: '',
+    businessType: '',
     location: '',
-    maxResults: 100,
+    maximumResults: 100,
     emailTemplate: ''
   });
   const [isCreating, setIsCreating] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState('');
+
+  // Load campaigns and templates from API
+  useEffect(() => {
+    loadCampaigns();
+    loadTemplates();
+  }, []);
+
+  const loadCampaigns = async () => {
+    try {
+      const result: any = await apiClient.getCampaigns();
+      
+      if (result.error) {
+        setError(result.error);
+      } else if (result.data) {
+        // Handle backend response format: { campaigns: [...] } or direct array
+        const campaignsArray = result.data.campaigns || (Array.isArray(result.data) ? result.data : []);
+        setCampaigns(campaignsArray);
+      } else {
+        setCampaigns([]);
+      }
+    } catch (error) {
+      setError('Failed to load campaigns');
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const loadTemplates = async () => {
+    try {
+      const result: any = await apiClient.getTemplates();
+      if (result.error) {
+        // Silently handle template loading error
+      } else if (result.data) {
+        const templatesArray = result.data.templates || (Array.isArray(result.data) ? result.data : []);
+        setTemplates(templatesArray);
+      }
+    } catch (error) {
+      // Silently handle template loading error
+    }
+  };
 
   const getStatusColor = (status: string) => {
     switch (status) {
@@ -91,148 +140,233 @@ export default function Campaigns({ campaigns }: CampaignsProps) {
   const handleCreateCampaign = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsCreating(true);
+    setError('');
     
-    // Simulate API call
-    await new Promise(resolve => setTimeout(resolve, 2000));
+    try {
+      const result = await apiClient.createCampaign({
+        businessType: formData.businessType,
+        location: formData.location,
+        maximumResults: formData.maximumResults,
+        emailTemplate: formData.emailTemplate
+      });
+
+      if (result.error) {
+        setError(result.error);
+      } else {
+        // Reload campaigns to show the new one
+        await loadCampaigns();
+        setShowCreateForm(false);
+        setFormData({
+          businessType: '',
+          location: '',
+          maximumResults: 100,
+          emailTemplate: ''
+        });
+      }
+    } catch (error) {
+      setError('Failed to create campaign');
+    } finally {
+      setIsCreating(false);
+    }
+  };
+
+  const handleEditCampaign = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!editingCampaign) return;
     
-    setIsCreating(false);
+    setIsEditing(true);
+    setError('');
+    
+    try {
+      const result : any = await apiClient.updateCampaign(editingCampaign._id || editingCampaign.id || '', {
+        businessType: formData.businessType,
+        location: formData.location,
+        maximumResults: formData.maximumResults,
+        emailTemplate: formData.emailTemplate
+      });
+
+      if (result.error) {
+        setError(result.error);
+      } else {
+        // Reload campaigns to show the updated one
+        await loadCampaigns();
+        setIsEditing(false);
+        setEditingCampaign(null);
+        setShowCreateForm(false);
+        setFormData({
+          businessType: '',
+          location: '',
+          maximumResults: 100,
+          emailTemplate: ''
+        });
+      }
+    } catch (error) {
+      setError('Failed to update campaign');
+    } finally {
+      setIsEditing(false);
+    }
+  };
+
+  const handleEditClick = (campaign: ApiCampaign) => {
+    setEditingCampaign(campaign);
+    setFormData({
+      businessType: campaign.businessType,
+      location: campaign.location,
+      maximumResults: campaign.maximumResults,
+      emailTemplate: campaign.emailTemplate._id || campaign.emailTemplate.id || ''
+    });
+    setShowCreateForm(true);
+  };
+
+  const handleCancelEdit = () => {
+    setEditingCampaign(null);
     setShowCreateForm(false);
     setFormData({
-      category: '',
+      businessType: '',
       location: '',
-      maxResults: 100,
+      maximumResults: 100,
       emailTemplate: ''
     });
+  };
+
+  const handleDeleteCampaign = async (campaignId: string) => {
+    if (!confirm('Are you sure you want to delete this campaign?')) {
+      return;
+    }
     
-    // Here you would typically add the new campaign to the list
-    console.log('Creating campaign:', formData);
+    try {
+      const result = await apiClient.deleteCampaign(campaignId);
+      if (result.error) {
+        setError(result.error);
+      } else {
+        // Reload campaigns to remove the deleted one
+        await loadCampaigns();
+      }
+    } catch (error) {
+      setError('Failed to delete campaign');
+    }
+  };
+
+  const handleToggleCampaign = async (campaignId: string, currentStatus: string) => {
+    const newStatus = currentStatus === 'running' ? 'paused' : 'running';
+    
+    try {
+      const result : any = await apiClient.updateCampaign(campaignId, { status: newStatus });
+      if (result.error) {
+        setError(result.error);
+      } else {
+        // Reload campaigns to show the updated status
+        await loadCampaigns();
+      }
+    } catch (error) {
+      setError('Failed to update campaign status');
+    }
   };
 
   return (
     <div className="space-y-8">
-      {/* Header */}
-      <div className="flex justify-between items-center">
-        <h2 className="text-2xl font-bold text-slate-900">Campaigns</h2>
-        <button 
-          onClick={() => setShowCreateForm(true)}
-          className="rounded-xl bg-gradient-to-r from-violet-600 to-purple-600 px-6 py-3 font-semibold text-white shadow-lg shadow-violet-600/25 hover:shadow-violet-600/40 transition-colors relative z-10"
-        >
-          + Create Campaign
-        </button>
-      </div>
+             {/* Header */}
+       <div className="flex justify-between items-center">
+         <div className="flex items-center gap-4">
+           <button
+             onClick={() => setShowEmailRecommendations(true)}
+             className="rounded-xl bg-gradient-to-r from-violet-600 to-purple-600 px-6 py-3 font-semibold text-white shadow-lg shadow-violet-600/25 hover:shadow-violet-600/40 transition-colors relative z-10 flex items-center gap-2"
+           >
+             <span className="text-lg">📩</span>
+             Email Recommendations
+           </button>
+         </div>
+         <button 
+           onClick={() => setShowCreateForm(true)}
+           className="rounded-xl bg-gradient-to-r from-violet-600 to-purple-600 px-6 py-3 font-semibold text-white shadow-lg shadow-violet-600/25 hover:shadow-violet-600/40 transition-colors relative z-10"
+         >
+           + Create Campaign
+         </button>
+       </div>
 
-      {/* Create Campaign Form */}
-      {showCreateForm && (
-        <div className="bg-white/40 backdrop-blur-md rounded-2xl p-8 ring-1 ring-white/30 shadow-lg shadow-purple-100/50">
-          <div className="flex justify-between items-center mb-6">
-            <h3 className="text-xl font-bold text-slate-900">Create New Campaign</h3>
-            <button 
-              onClick={() => setShowCreateForm(false)}
-              className="text-slate-400 hover:text-slate-600 transition-colors"
-            >
-              ✕
-            </button>
-          </div>
+                    {/* Create Campaign Modal */}
+       <Modal
+         isOpen={showCreateForm}
+         onClose={editingCampaign ? handleCancelEdit : () => setShowCreateForm(false)}
+         title={editingCampaign ? 'Edit Campaign' : 'Create New Campaign'}
+         size="xl"
+       >
+         {error && (
+           <div className="bg-red-50 border border-red-200 rounded-xl p-4 text-red-700 text-sm mb-6">
+             {error}
+           </div>
+         )}
 
-          <div className="flex gap-8">
-            {/* Form */}
-            <div className="flex-1">
-              <form onSubmit={handleCreateCampaign} className="space-y-6">
-                {/* Category/Brands */}
-                <div>
-                  <label className="block text-sm font-medium text-slate-700 mb-2">
-                    Category/Business Type *
-                  </label>
-                  <input
-                    type="text"
-                    required
-                    value={formData.category}
-                    onChange={(e) => handleInputChange('category', e.target.value)}
-                    className="w-full px-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-violet-500 focus:border-transparent bg-white/50 backdrop-blur-sm"
-                    placeholder="e.g., Restaurants, Doctors, Lawyers, Real Estate Agents, Dentists, Plumbers, etc."
-                  />
-                  <p className="text-xs text-slate-500 mt-1">
-                    Enter the type of business you want to target
-                  </p>
-                </div>
+         <form onSubmit={editingCampaign ? handleEditCampaign : handleCreateCampaign} className="space-y-6">
+           <div className="flex gap-8">
+             {/* Form */}
+             <div className="flex-1">
+                 {/* Business Type */}
+                 <div>
+                   <label className="block text-sm font-medium text-slate-700 mb-2">
+                     Business Type *
+                   </label>
+                   <input
+                     type="text"
+                     required
+                     value={formData.businessType}
+                     onChange={(e) => handleInputChange('businessType', e.target.value)}
+                     className="w-full px-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-violet-500 focus:border-transparent bg-white/50 backdrop-blur-sm"
+                     placeholder="e.g., Restaurant, Dental, Landscaping"
+                   />
+                 </div>
 
-                {/* Location */}
-                <div>
-                  <label className="block text-sm font-medium text-slate-700 mb-2">
-                    Location *
-                  </label>
-                  <input
-                    type="text"
-                    required
-                    value={formData.location}
-                    onChange={(e) => handleInputChange('location', e.target.value)}
-                    className="w-full px-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-violet-500 focus:border-transparent bg-white/50 backdrop-blur-sm"
-                    placeholder="e.g., Brooklyn, NY, USA or 90001, Los Angeles, CA, USA"
-                  />
-                  <p className="text-xs text-slate-500 mt-1">
-                    Enter city, state, country or ZIP code, city, state, country
-                  </p>
-                </div>
+                 {/* Location */}
+                 <div>
+                   <label className="block text-sm font-medium text-slate-700 mb-2">
+                     Location *
+                   </label>
+                   <input
+                     type="text"
+                     required
+                     value={formData.location}
+                     onChange={(e) => handleInputChange('location', e.target.value)}
+                     className="w-full px-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-violet-500 focus:border-transparent bg-white/50 backdrop-blur-sm"
+                     placeholder="e.g., Los Angeles, CA"
+                   />
+                 </div>
 
-                {/* Maximum Results */}
-                <div>
-                  <label className="block text-sm font-medium text-slate-700 mb-2">
-                    Maximum Results *
-                  </label>
-                  <input
-                    type="number"
-                    min="0"
-                    max="500"
-                    required
-                    value={formData.maxResults}
-                    onChange={(e) => handleInputChange('maxResults', parseInt(e.target.value))}
-                    className="w-full px-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-violet-500 focus:border-transparent bg-white/50 backdrop-blur-sm"
-                    placeholder="e.g., 100"
-                  />
-                  <p className="text-xs text-slate-500 mt-1">
-                    Choose how many leads to find (0-500)
-                  </p>
-                </div>
+                 {/* Maximum Results */}
+                 <div>
+                   <label className="block text-sm font-medium text-slate-700 mb-2">
+                     Maximum Results
+                   </label>
+                   <input
+                     type="number"
+                     min="1"
+                     max="500"
+                     value={formData.maximumResults}
+                     onChange={(e) => handleInputChange('maximumResults', parseInt(e.target.value))}
+                     className="w-full px-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-violet-500 focus:border-transparent bg-white/50 backdrop-blur-sm"
+                     placeholder="e.g., 100"
+                   />
+                 </div>
 
-                {/* Email Template */}
-                <div>
-                  <label className="block text-sm font-medium text-slate-700 mb-2">
-                    Email Template *
-                  </label>
-                  <select
-                    required
-                    value={formData.emailTemplate}
-                    onChange={(e) => handleInputChange('emailTemplate', e.target.value)}
-                    className="w-full px-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-violet-500 focus:border-transparent bg-white/50 backdrop-blur-sm"
-                  >
-                    <option value="">Select an email template</option>
-                    {emailTemplates.map((template) => (
-                      <option key={template.id} value={template.id}>
-                        {template.name} - {template.subject}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-
-                {/* Action Buttons */}
-                <div className="flex gap-4 pt-4">
-                  <button
-                    type="button"
-                    onClick={() => setShowCreateForm(false)}
-                    className="flex-1 px-6 py-3 border border-slate-300 text-slate-700 rounded-xl font-medium hover:bg-slate-50 transition-colors"
-                  >
-                    Cancel
-                  </button>
-                  <button
-                    type="submit"
-                    disabled={isCreating}
-                    className="flex-1 px-6 py-3 bg-gradient-to-r from-violet-600 to-purple-600 text-white rounded-xl font-semibold hover:shadow-lg hover:shadow-violet-600/25 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
-                  >
-                    {isCreating ? 'Creating...' : '🚀 Launch Campaign'}
-                  </button>
-                </div>
-              </form>
-            </div>
+                 {/* Email Template */}
+                 <div>
+                   <label className="block text-sm font-medium text-slate-700 mb-2">
+                     Email Template *
+                   </label>
+                   <select
+                     required
+                     value={formData.emailTemplate}
+                     onChange={(e) => handleInputChange('emailTemplate', e.target.value)}
+                     className="w-full px-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-violet-500 focus:border-transparent bg-white/50 backdrop-blur-sm"
+                   >
+                     <option value="">Select a template</option>
+                     {templates.map((template) => (
+                       <option key={template._id || template.id} value={template._id || template.id}>
+                         {template.subject}
+                       </option>
+                     ))}
+                   </select>
+                 </div>
+               </div>
 
             {/* Preview Table */}
             <div className="w-1/2">
@@ -263,73 +397,186 @@ export default function Campaigns({ campaigns }: CampaignsProps) {
                   </tbody>
                 </table>
               </div>
-            </div>
-          </div>
-        </div>
-      )}
+                         </div>
+           </div>
+           
+           {/* Action Buttons */}
+           <div className="flex gap-4 pt-6 border-t border-slate-200">
+             <button
+               type="button"
+               onClick={editingCampaign ? handleCancelEdit : () => setShowCreateForm(false)}
+               className="flex-1 px-6 py-3 border border-slate-300 text-slate-700 rounded-xl font-medium hover:bg-slate-50 transition-colors"
+             >
+               Cancel
+             </button>
+             <button
+               type="submit"
+               disabled={isCreating || isEditing}
+               className="flex-1 px-6 py-3 bg-gradient-to-r from-violet-600 to-purple-600 text-white rounded-xl font-semibold hover:shadow-lg hover:shadow-violet-600/25 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
+             >
+               {isCreating ? 'Creating...' : isEditing ? 'Saving...' : editingCampaign ? 'Save Changes' : '🚀 Launch Campaign'}
+             </button>
+           </div>
+         </form>
+       </Modal>
 
       {/* Existing Campaigns */}
       <div className="bg-white/40 backdrop-blur-md rounded-2xl p-8 ring-1 ring-white/30 shadow-lg shadow-purple-100/50">
         <h3 className="text-xl font-bold text-slate-900 mb-6">Your Campaigns</h3>
-        <div className="flex gap-6">
-          <div className="flex-1 space-y-4">
-            {campaigns.map((campaign) => (
-              <div key={campaign.id} className="flex items-center justify-between p-6 bg-white/30 rounded-xl">
-                <div className="flex items-center gap-4">
-                  <div className="w-12 h-12 bg-violet-100 rounded-xl flex items-center justify-center">
-                    <span className="text-xl">📧</span>
-                  </div>
-                  <div>
-                    <h3 className="font-semibold text-slate-900 text-lg">{campaign.name}</h3>
-                    <p className="text-sm text-slate-600">Created {new Date(campaign.createdAt).toLocaleDateString()}</p>
+        
+        {isLoading ? (
+          <div className="text-center py-12">
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-violet-600 mx-auto mb-4"></div>
+            <p className="text-slate-600">Loading campaigns...</p>
+          </div>
+        ) : error ? (
+          <div className="text-center py-12">
+            <div className="text-red-500 mb-4">⚠️</div>
+            <p className="text-red-600 mb-4">{error}</p>
+            <button 
+              onClick={loadCampaigns}
+              className="px-6 py-3 bg-gradient-to-r from-violet-600 to-purple-600 text-white rounded-xl font-semibold hover:shadow-lg hover:shadow-violet-600/25 transition-all duration-300"
+            >
+              Retry
+            </button>
+          </div>
+        ) : (
+          <div className="flex gap-6">
+            <div className="flex-1 space-y-4">
+              {Array.isArray(campaigns) && campaigns.map((campaign: any) => (
+                <div key={campaign._id || campaign.id} className="flex items-center justify-between p-6 bg-white/30 rounded-xl">
+                  <div className="flex items-center gap-4">
+                    <div className="w-12 h-12 bg-violet-100 rounded-xl flex items-center justify-center">
+                      <span className="text-xl">📧</span>
+                    </div>
+                                         <div>
+                       <h3 className="font-semibold text-slate-900 text-lg">{campaign.businessType} in {campaign.location}</h3>
+                       <p className="text-sm text-slate-600">Created {new Date(campaign.createdAt).toLocaleDateString()}</p>
+                     </div>
+                   </div>
+                   <div className="flex items-center gap-6">
+                     <div className="text-center">
+                       <p className="text-sm text-slate-600">Results</p>
+                       <p className="text-lg font-semibold text-slate-900">
+                         {campaign.currentResults || 0} / {campaign.maximumResults || 0}
+                       </p>
+                     </div>
+                                         {/* <span className={`px-4 py-2 rounded-full text-sm font-semibold ${getStatusColor(campaign.status)}`}>
+                       {getStatusIcon(campaign.status)} {campaign.status}
+                     </span> */}
+                     <div className="flex gap-2">
+                       <button 
+                         className={`px-3 py-1 rounded-lg text-sm font-medium transition-colors ${
+                           campaign.status === 'running' 
+                             ? 'bg-yellow-100 text-yellow-700 hover:bg-yellow-200' 
+                             : 'bg-green-100 text-green-700 hover:bg-green-200'
+                         }`}
+                         onClick={() => handleToggleCampaign(campaign._id || campaign.id, campaign.status || 'paused')}
+                       >
+                         {campaign.status === 'running' ? '⏸️ Pause' : '▶️ Launch'}
+                       </button>
+                       <button 
+                         className="p-2 text-slate-600 hover:text-slate-900 transition-colors" 
+                         title="Edit" 
+                         onClick={() => handleEditClick(campaign)}
+                       >
+                         ✏️
+                       </button>
+                       <button 
+                         className="p-2 text-slate-600 hover:text-slate-900 transition-colors" 
+                         title="Delete" 
+                         onClick={() => handleDeleteCampaign(campaign._id || campaign.id)}
+                       >
+                         🗑️
+                       </button>
+                     </div>
                   </div>
                 </div>
-                <div className="flex items-center gap-6">
-                  <div className="text-center">
-                    <p className="text-sm text-slate-600">Leads</p>
-                    <p className="text-lg font-semibold text-slate-900">{campaign.leadsCount}</p>
-                  </div>
-                  <div className="text-center">
-                    <p className="text-sm text-slate-600">Sent</p>
-                    <p className="text-lg font-semibold text-slate-900">{campaign.emailsSent}</p>
-                  </div>
-                  <div className="text-center">
-                    <p className="text-sm text-slate-600">Open Rate</p>
-                    <p className="text-lg font-semibold text-slate-900">{campaign.openRate}%</p>
-                  </div>
-                  <div className="text-center">
-                    <p className="text-sm text-slate-600">Reply Rate</p>
-                    <p className="text-lg font-semibold text-slate-900">{campaign.replyRate}%</p>
-                  </div>
-                  <span className={`px-4 py-2 rounded-full text-sm font-semibold ${getStatusColor(campaign.status)}`}>
-                    {getStatusIcon(campaign.status)} {campaign.status}
-                  </span>
-                  <div className="flex gap-2">
-                    <button className="p-2 text-slate-600 hover:text-slate-900 transition-colors">⚙️</button>
-                    <button className="p-2 text-slate-600 hover:text-slate-900 transition-colors">📊</button>
-                  </div>
+              ))}
+              
+              {(!Array.isArray(campaigns) || campaigns.length === 0) && (
+                <div className="text-center py-12">
+                  <div className="text-4xl mb-4">🚀</div>
+                  <h3 className="text-lg font-semibold text-slate-900 mb-2">No campaigns yet</h3>
+                  <p className="text-slate-600 mb-6">Create your first campaign to start finding leads and sending emails.</p>
+                  <button 
+                    onClick={() => setShowCreateForm(true)}
+                    className="px-6 py-3 bg-gradient-to-r from-violet-600 to-purple-600 text-white rounded-xl font-semibold hover:shadow-lg hover:shadow-violet-600/25 transition-all duration-300"
+                  >
+                    Create Your First Campaign
+                  </button>
                 </div>
-              </div>
-            ))}
-            
-            {campaigns.length === 0 && (
-              <div className="text-center py-12">
-                <div className="text-4xl mb-4">🚀</div>
-                <h3 className="text-lg font-semibold text-slate-900 mb-2">No campaigns yet</h3>
-                <p className="text-slate-600 mb-6">Create your first campaign to start finding leads and sending emails.</p>
-                <button 
-                  onClick={() => setShowCreateForm(true)}
-                  className="px-6 py-3 bg-gradient-to-r from-violet-600 to-purple-600 text-white rounded-xl font-semibold hover:shadow-lg hover:shadow-violet-600/25 transition-all duration-300"
-                >
-                  Create Your First Campaign
-                </button>
-              </div>
-            )}
+              )}
+            </div>
+          </div>
+        )}
+      </div>
+
+      {/* Email Recommendations Modal */}
+      <Modal
+        isOpen={showEmailRecommendations}
+        onClose={() => setShowEmailRecommendations(false)}
+        title="📩 Email Sending Volume Recommendations"
+        size="lg"
+      >
+        <div className="space-y-6 text-sm">
+          <div className="bg-blue-50 border border-blue-200 rounded-xl p-4">
+            <h4 className="font-semibold text-blue-900 mb-2">1. Brand New Email / Domain (Warm-Up Phase)</h4>
+            <div className="space-y-2 text-blue-800">
+              <p><strong>Day 1–3:</strong> 10–20 emails/day</p>
+              <p><strong>Day 4–7:</strong> 20–40 emails/day</p>
+              <p><strong>Week 2:</strong> 40–80 emails/day</p>
+              <p><strong>Week 3:</strong> 80–150 emails/day</p>
+              <p><strong>Week 4:</strong> 150–250 emails/day</p>
+            </div>
+            <div className="mt-3 p-3 bg-yellow-50 border border-yellow-200 rounded-lg">
+              <p className="font-semibold text-yellow-800 mb-2">⚠️ Tips:</p>
+              <ul className="text-yellow-700 space-y-1 text-xs">
+                <li>• Focus on high-quality, personalized emails to engaged recipients</li>
+                <li>• Avoid sending bulk campaigns during this period</li>
+                <li>• Mix in replies and forwards — ISPs love to see natural communication</li>
+              </ul>
+            </div>
           </div>
 
-         
+          <div className="bg-green-50 border border-green-200 rounded-xl p-4">
+            <h4 className="font-semibold text-green-900 mb-2">2. Early Stage (Established but Young Domain, 1–2 months)</h4>
+            <div className="space-y-2 text-green-800">
+              <p><strong>Scale to:</strong> 250–500 emails/day</p>
+              <p><strong>Use:</strong> 1–2 sending accounts per domain</p>
+              <p><strong>Keep open rates above 40%</strong> if possible to build trust</p>
+            </div>
+          </div>
+
+          <div className="bg-purple-50 border border-purple-200 rounded-xl p-4">
+            <h4 className="font-semibold text-purple-900 mb-2">3. Growing Stage (3–6 months old, some reputation)</h4>
+            <div className="space-y-2 text-purple-800">
+              <p><strong>Scale gradually to:</strong> 500–1,000 emails/day per account</p>
+              <p><strong>Use multiple domains/accounts</strong> if scaling outreach</p>
+              <p><strong>Rotate IPs/domains</strong> for bigger volumes</p>
+            </div>
+          </div>
+
+          <div className="bg-indigo-50 border border-indigo-200 rounded-xl p-4">
+            <h4 className="font-semibold text-indigo-900 mb-2">4. Mature & Trusted Domain (6+ months, good reputation)</h4>
+            <div className="space-y-2 text-indigo-800">
+              <p><strong>1,000–2,000 emails/day</strong> per account is typically safe</p>
+              <p><strong>Big players</strong> (with pristine reputation, warmed IPs, DKIM/SPF/DMARC) can push <strong>5,000–10,000+</strong> per day, but only after years of solid reputation</p>
+            </div>
+          </div>
+
+          <div className="bg-slate-50 border border-slate-200 rounded-xl p-4">
+            <h4 className="font-semibold text-slate-900 mb-2">💡 Key Success Factors</h4>
+            <ul className="text-slate-700 space-y-1">
+              <li>• Always prioritize email quality over quantity</li>
+              <li>• Monitor bounce rates and spam complaints closely</li>
+              <li>• Use proper authentication (SPF, DKIM, DMARC)</li>
+              <li>• Maintain consistent sending patterns</li>
+              <li>• Clean your email lists regularly</li>
+            </ul>
+          </div>
         </div>
-      </div>
+      </Modal>
     </div>
   );
 }
