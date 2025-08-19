@@ -583,8 +583,8 @@ Authorization: Bearer <jwt_token>
   "name": "Zoho Business",
   "smtpServer": "smtp.zoho.eu",
   "smtpPort": 587,
-  "emailAddress": "info@escapespark.com",
-  "emailPassword": "53513546",
+  "emailAddress": "some@some.com",
+  "emailPassword": "some",
   "isDefault": true
 }
 ```
