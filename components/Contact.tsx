@@ -5,29 +5,56 @@ import Link from 'next/link';
 import Logo from './Logo';
 import PulsingBorderShader from './PulsingBorderShader';
 
+const BACKEND_URL = process.env.BACKEND_URL || 'http://localhost:3001';
+
+
 export default function Contact() {
   const [formData, setFormData] = useState({
     name: '',
     email: '',
     company: '',
-    message: ''
+    subject: '',
+    message: '',
+    category: 'general'
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
+  const [error, setError] = useState('');
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSubmitting(true);
+    setError('');
     
-    // Simulate form submission
-    await new Promise(resolve => setTimeout(resolve, 1000));
-    
-    setIsSubmitting(false);
-    setIsSubmitted(true);
-    setFormData({ name: '', email: '', company: '', message: '' });
+    try {
+      const response = await fetch(`${BACKEND_URL}/api/contact`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          name: formData.name,
+          email: formData.email,
+          subject: formData.subject || 'General Inquiry',
+          message: formData.message,
+          category: formData.category
+        })
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.error || 'Failed to send message');
+      }
+
+      setIsSubmitted(true);
+      setFormData({ name: '', email: '', company: '', subject: '', message: '', category: 'general' });
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Failed to send message');
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     setFormData({
       ...formData,
       [e.target.name]: e.target.value
@@ -97,6 +124,12 @@ export default function Contact() {
                 </div>
               ) : (
                 <form onSubmit={handleSubmit} className="space-y-6">
+                  {error && (
+                    <div className="bg-red-50 border border-red-200 rounded-xl p-4">
+                      <p className="text-red-600 text-sm">{error}</p>
+                    </div>
+                  )}
+                  
                   <div>
                     <label htmlFor="name" className="block text-sm font-medium text-slate-700 mb-2">
                       Name *
@@ -145,6 +178,40 @@ export default function Contact() {
                   </div>
 
                   <div>
+                    <label htmlFor="subject" className="block text-sm font-medium text-slate-700 mb-2">
+                      Subject
+                    </label>
+                    <input
+                      type="text"
+                      id="subject"
+                      name="subject"
+                      value={formData.subject}
+                      onChange={handleChange}
+                      className="w-full px-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-violet-500 focus:border-transparent bg-white/50 backdrop-blur-sm"
+                      placeholder="What's this about?"
+                    />
+                  </div>
+
+                  <div>
+                    <label htmlFor="category" className="block text-sm font-medium text-slate-700 mb-2">
+                      Category
+                    </label>
+                    <select
+                      id="category"
+                      name="category"
+                      value={formData.category}
+                      onChange={handleChange}
+                      className="w-full px-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-violet-500 focus:border-transparent bg-white/50 backdrop-blur-sm"
+                    >
+                      <option value="general">General Inquiry</option>
+                      <option value="technical">Technical Support</option>
+                      <option value="sales">Sales Question</option>
+                      <option value="billing">Billing Question</option>
+                      <option value="feature">Feature Request</option>
+                    </select>
+                  </div>
+
+                  <div>
                     <label htmlFor="message" className="block text-sm font-medium text-slate-700 mb-2">
                       Message *
                     </label>
@@ -181,25 +248,7 @@ export default function Contact() {
                   </div>
                   <div>
                     <div className="font-semibold text-slate-900">Email</div>
-                    <div className="text-slate-600">hello@loonaflowai.com</div>
-                  </div>
-                </div>
-                <div className="flex items-center gap-4">
-                  <div className="w-12 h-12 bg-violet-100 rounded-xl flex items-center justify-center">
-                    <span className="text-2xl">💬</span>
-                  </div>
-                  <div>
-                    <div className="font-semibold text-slate-900">Live Chat</div>
-                    <div className="text-slate-600">Available 24/7</div>
-                  </div>
-                </div>
-                <div className="flex items-center gap-4">
-                  <div className="w-12 h-12 bg-violet-100 rounded-xl flex items-center justify-center">
-                    <span className="text-2xl">📞</span>
-                  </div>
-                  <div>
-                    <div className="font-semibold text-slate-900">Phone</div>
-                    <div className="text-slate-600">+1 (555) 123-4567</div>
+                    <div className="text-slate-600">hello@loonaflow.app</div>
                   </div>
                 </div>
               </div>

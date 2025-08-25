@@ -63,6 +63,13 @@ export default function Settings({ user }: SettingsProps) {
 
   const handleCreateEmailConfig = async (e: React.FormEvent) => {
     e.preventDefault();
+    
+    // Check if user already has an email configuration
+    if (emailConfigs.length > 0) {
+      setEmailConfigError('You can only have one email configuration. Please delete the existing one first.');
+      return;
+    }
+    
     setIsCreatingEmailConfig(true);
     setEmailConfigError('');
     
@@ -179,7 +186,7 @@ export default function Settings({ user }: SettingsProps) {
 
         {activeTab === 'email' && (
           <div className="space-y-6">
-            <h3 className="text-xl font-bold text-slate-900">Email Configurations</h3>
+            <h3 className="text-xl font-bold text-slate-900">Email Configuration</h3>
             
             {emailConfigError && (
               <div className="bg-red-50 border border-red-200 rounded-xl p-4 text-red-700 text-sm">
@@ -227,17 +234,30 @@ export default function Settings({ user }: SettingsProps) {
                 {emailConfigs.length === 0 && (
                   <div className="text-center py-12">
                     <div className="text-4xl mb-4">📧</div>
-                    <h3 className="text-lg font-semibold text-slate-900 mb-2">No email configurations yet</h3>
-                    <p className="text-slate-600 mb-6">Add your first email configuration to start sending emails.</p>
+                    <h3 className="text-lg font-semibold text-slate-900 mb-2">No email configuration yet</h3>
+                    <p className="text-slate-600 mb-6">Add your email configuration to start sending emails. You can only have one configuration at a time.</p>
                   </div>
                 )}
                 
-                <button 
-                  onClick={() => setShowEmailModal(true)}
-                  className="w-full px-6 py-4 border-2 border-dashed border-slate-300 rounded-xl text-slate-600 hover:border-violet-400 hover:text-violet-600 transition-colors"
-                >
-                  + Add Email Configuration
-                </button>
+                {emailConfigs.length === 0 ? (
+                  <button 
+                    onClick={() => setShowEmailModal(true)}
+                    className="w-full px-6 py-4 border-2 border-dashed border-slate-300 rounded-xl text-slate-600 hover:border-violet-400 hover:text-violet-600 transition-colors"
+                  >
+                    + Add Email Configuration
+                  </button>
+                ) : (
+                  <div className="w-full px-6 py-4 bg-slate-50 rounded-xl text-center">
+                    <p className="text-slate-500 text-sm">
+                      You can only have one email configuration. 
+                      {emailConfigs.length > 0 && (
+                        <span className="block mt-1">
+                          To add a new one, please delete the existing configuration first.
+                        </span>
+                      )}
+                    </p>
+                  </div>
+                )}
               </div>
             )}
           </div>

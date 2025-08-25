@@ -3,6 +3,9 @@ import { getAuthHeaders } from '@/lib/auth';
 
 const BACKEND_URL = process.env.BACKEND_URL || 'http://localhost:3001';
 
+// Force dynamic rendering for this route
+export const dynamic = 'force-dynamic';
+
 // GET /api/templates/[id] - Get a specific email template
 export async function GET(
   request: NextRequest,

@@ -1,0 +1,49 @@
+import { NextRequest, NextResponse } from 'next/server';
+import { getAuthHeaders } from '@/lib/auth';
+
+const BACKEND_URL = process.env.BACKEND_URL || 'http://localhost:3001';
+
+// Force dynamic rendering for this route
+export const dynamic = 'force-dynamic';
+
+// POST /api/campaigns/[id]/start-scraping - Start scraping for a campaign
+export async function POST(
+  request: NextRequest,
+  { params }: { params: { id: string } }
+) {
+  try {
+    const { id } = params;
+    const headers = getAuthHeaders();
+    
+    if (!headers.Authorization) {
+      return NextResponse.json(
+        { error: 'Authentication required' },
+        { status: 401 }
+      );
+    }
+
+    const response = await fetch(`${BACKEND_URL}/api/campaigns/${id}/start-scraping`, {
+      method: 'POST',
+      headers,
+    });
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      console.log('Start scraping error:', data);
+      return NextResponse.json(
+        { error: data.message || data.error || 'Failed to start scraping' },
+        { status: response.status }
+      );
+    }
+
+    // Handle backend response format: { success: true, data: {...} }
+    return NextResponse.json(data.data || data, { status: 200 });
+  } catch (error) {
+    console.error('Start scraping error:', error);
+    return NextResponse.json(
+      { error: 'Internal server error' },
+      { status: 500 }
+    );
+  }
+}

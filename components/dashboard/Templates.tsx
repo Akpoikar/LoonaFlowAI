@@ -208,9 +208,9 @@ export default function Templates() {
                 className="w-full px-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-violet-500 focus:border-transparent bg-white/50 backdrop-blur-sm resize-none"
                 placeholder="Write your email content here."
               />
-              <p className="text-xs text-slate-500 mt-1">
-                Use placeholder like [Business Name] for personalization
-              </p>
+                             <p className="text-xs text-slate-500 mt-1">
+                 Use placeholder like &#123;name&#125; for personalization (name = business name)
+               </p>
             </div>
 
             {/* Action Buttons */}
@@ -256,7 +256,7 @@ export default function Templates() {
         ) : (
           <div className="space-y-4">
             {Array.isArray(templates) && templates.map((template) => (
-              <div key={template._id || template.id} className="flex items-center justify-between p-6 bg-white/30 rounded-xl hover:bg-white/40 transition-colors">
+              <div key={template._id || template.id} className="flex items-center justify-between p-6 bg-white/30 rounded-xl hover:bg-white/40 transition-colors border [rgba(100,100,111,0.2)] shadow-[rgba(100,100,111,0.2)_0px_7px_29px_0px]">
                                  <div className="flex-1">
                    <h4 className="font-semibold text-slate-900 text-lg mb-2">{template.subject}</h4>
                   <p className="text-slate-600 text-sm leading-relaxed">{getPreviewText(template.content)}</p>
@@ -267,9 +267,6 @@ export default function Templates() {
                 <div className="flex gap-2 ml-4">
                   <button className="p-2 text-slate-600 hover:text-slate-900 transition-colors" title="Edit" onClick={() => handleEditClick(template)}>
                     ✏️
-                  </button>
-                  <button className="p-2 text-slate-600 hover:text-slate-900 transition-colors" title="Copy">
-                    📋
                   </button>
                                      <button 
                      className="p-2 text-slate-600 hover:text-slate-900 transition-colors" 

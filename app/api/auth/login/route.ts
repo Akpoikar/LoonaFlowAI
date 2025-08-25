@@ -2,6 +2,9 @@ import { NextRequest, NextResponse } from 'next/server';
 
 const BACKEND_URL = process.env.BACKEND_URL || 'http://localhost:3001';
 
+// Force dynamic rendering for this route
+export const dynamic = 'force-dynamic';
+
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
@@ -23,7 +26,6 @@ export async function POST(request: NextRequest) {
     });
 
     const data = await response.json();
-    console.log('Backend login response:', { status: response.status, data: data }); // Debug log
 
     if (!response.ok) {
       return NextResponse.json(
@@ -38,8 +40,6 @@ export async function POST(request: NextRequest) {
       { status: 200 }
     );
 
-    console.log('Setting auth-token cookie with value:', data.token ? 'TOKEN_PRESENT' : 'NO_TOKEN'); // Debug log
-    console.log('Token length:', data.token ? data.token.length : 0); // Debug log
 
     responseWithCookie.cookies.set('auth-token', data.token, {
       httpOnly: true,
@@ -49,7 +49,6 @@ export async function POST(request: NextRequest) {
       path: '/', // Ensure cookie is available for all paths
     });
 
-    console.log('Cookie set successfully'); // Debug log
     return responseWithCookie;
   } catch (error) {
     console.error('Login error:', error);

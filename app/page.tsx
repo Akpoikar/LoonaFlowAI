@@ -9,10 +9,13 @@ import FAQ from "../components/FAQ";
 import FinalCTA from "../components/FinalCTA";
 import Footer from "../components/Footer";
 import Logo from "../components/Logo";
+import SEOHead from "../components/SEOHead";
 
 export default function Page() {
   return (
-    <div className="relative min-h-screen overflow-hidden">
+    <>
+      <SEOHead />
+      <div className="relative min-h-screen overflow-hidden">
       {/* Background image */}
       <div className="absolute inset-0">
         <img
@@ -101,7 +104,7 @@ export default function Page() {
 
           <HowItWorks />
 
-          <Features />
+          {/* <Features /> */}
 
           <SocialProof />
 
@@ -117,5 +120,6 @@ export default function Page() {
         </div>
       </div>
     </div>
+    </>
   );
 }

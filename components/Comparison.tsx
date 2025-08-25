@@ -23,23 +23,23 @@ export default function Comparison() {
             
             <div className="text-slate-700 text-left py-3">Google Maps scraping</div>
             <div className="text-green-600 text-center py-3">✅ Built-in</div>
-            <div className="text-red-500 text-center py-3">❌</div>
-            <div className="text-red-500 text-center py-3">❌</div>
+            <div className="text-red-500 text-center py-3">❌ Not available</div>
+            <div className="text-red-500 text-center py-3">❌ Not available</div>
             
-                         <div className="text-slate-700 text-left py-3 border-t border-slate-200">AI email generator</div>
+                         <div className="text-slate-700 text-left py-3 border-t border-slate-200">AI email generator(coming soon)</div>
              <div className="text-green-600 text-center py-3 border-t border-slate-200">✅ Advanced</div>
-             <div className="text-yellow-500 text-center py-3 border-t border-slate-200">⚠️ Basic</div>
-             <div className="text-yellow-500 text-center py-3 border-t border-slate-200">⚠️ Basic</div>
+             <div className="text-yellow-500 text-center py-3 border-t border-slate-200">⚠️ Basic templates</div>
+             <div className="text-yellow-500 text-center py-3 border-t border-slate-200">⚠️ Basic templates</div>
              
              <div className="text-slate-700 text-left py-3 border-t border-slate-200">Safe sending engine</div>
-             <div className="text-green-600 text-center py-3 border-t border-slate-200">✅</div>
-             <div className="text-red-500 text-center py-3 border-t border-slate-200">❌</div>
-             <div className="text-green-600 text-center py-3 border-t border-slate-200">✅</div>
+             <div className="text-green-600 text-center py-3 border-t border-slate-200">✅ Smart deliverability protection</div>
+             <div className="text-red-500 text-center py-3 border-t border-slate-200">❌ No</div>
+             <div className="text-green-600 text-center py-3 border-t border-slate-200">✅ Yes</div>
              
              <div className="text-slate-700 text-left py-3 border-t border-slate-200">Local lead focus</div>
-             <div className="text-green-600 text-center py-3 border-t border-slate-200">✅ Specialized</div>
-             <div className="text-red-500 text-center py-3 border-t border-slate-200">❌</div>
-             <div className="text-red-500 text-center py-3 border-t border-slate-200">❌</div>
+             <div className="text-green-600 text-center py-3 border-t border-slate-200">✅ Specialized for local markets</div>
+             <div className="text-red-500 text-center py-3 border-t border-slate-200">❌ Global only</div>
+             <div className="text-red-500 text-center py-3 border-t border-slate-200">❌ Not supported</div>
           </div>
         </div>
       </div>

@@ -26,7 +26,21 @@ class ApiClient {
       const data = await response.json();
 
       if (!response.ok) {
-        return { error: data.error || 'Request failed' };
+        // Handle different error response formats
+        let errorMessage = 'Request failed';
+        
+        if (data.error) {
+          errorMessage = data.error;
+        } else if (data.message) {
+          errorMessage = data.message;
+        } else if (typeof data === 'string') {
+          errorMessage = data;
+        } else if (data && typeof data === 'object') {
+          // Try to extract error message from various possible formats
+          errorMessage = data.error || data.message || data.detail || JSON.stringify(data);
+        }
+        
+        return { error: errorMessage };
       }
 
       return { data, message: data.message };
@@ -61,6 +75,10 @@ class ApiClient {
     return this.request('/campaigns');
   }
 
+  async getDashboardStats() {
+    return this.request('/campaigns/dashboard/stats');
+  }
+
   async getCampaign(id: string) {
     return this.request(`/campaigns/${id}`);
   }
@@ -69,6 +87,7 @@ class ApiClient {
     businessType: string;
     location: string;
     maximumResults: number;
+    emailsPerDay: number;
     emailTemplate: string;
   }) {
     return this.request('/campaigns', {
@@ -83,6 +102,7 @@ class ApiClient {
       businessType?: string;
       location?: string;
       maximumResults?: number;
+      emailsPerDay?: number;
       emailTemplate?: string;
       status?: string;
     }
@@ -96,6 +116,18 @@ class ApiClient {
   async deleteCampaign(id: string) {
     return this.request(`/campaigns/${id}`, {
       method: 'DELETE',
+    });
+  }
+
+  async startScraping(campaignId: string) {
+    return this.request(`/campaigns/${campaignId}/start-scraping`, {
+      method: 'POST',
+    });
+  }
+
+  async startSending(campaignId: string) {
+    return this.request(`/campaigns/${campaignId}/start-sending`, {
+      method: 'POST',
     });
   }
 
@@ -198,6 +230,32 @@ class ApiClient {
       body: JSON.stringify({ plan }),
     });
   }
+
+  async cancelSubscription() {
+    return this.request('/subscription', {
+      method: 'DELETE',
+    });
+  }
+
+  // Stripe subscription methods
+  async createCheckoutSession(plan: string) {
+    return this.request('/subscription/create-checkout-session', {
+      method: 'POST',
+      body: JSON.stringify({ plan }),
+    });
+  }
+
+  async createCustomerPortalSession() {
+    return this.request('/subscription/portal', {
+      method: 'POST',
+    });
+  }
+
+  async syncSubscription() {
+    return this.request('/subscription/sync', {
+      method: 'POST',
+    });
+  }
 }
 
 export const apiClient = new ApiClient();
@@ -217,12 +275,19 @@ export interface Campaign {
   location: string;
   maximumResults: number;
   currentResults: number;
+  emailsPerDay: number;
+  emailsSeen: number;
+  emailsSent: number;
+  emailsFailed: number;
+  emailsSkipped: number;
+  status: 'idle' | 'scraping in progress' | 'scraping is done' | 'sending emails in progress' | 'everything is done';
   emailTemplate: {
     _id: string;
     subject: string;
     content: string;
     id?:string;
   };
+  scrapedFileUrl?: string; // URL to download the scraped data file
   user?: string;
   createdAt: string;
   updatedAt: string;
@@ -292,4 +357,24 @@ export interface UserSubscription {
   currentPeriodEnd?: string;
   features: SubscriptionFeatures;
   currentPlan: SubscriptionPlan;
+}
+
+export interface DashboardStats {
+  campaigns: {
+    total: number;
+    completed: number;
+    completionRate: string;
+  };
+  emails: {
+    sent: number;
+    seen: number;
+    openRate: string;
+  };
+  campaignEmails: {
+    sent: number;
+    seen: number;
+  };
+  scrapedPlaces: {
+    total: number;
+  };
 }

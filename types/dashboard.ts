@@ -18,9 +18,14 @@ export interface Campaign {
   name: string;
   leadsCount: number;
   emailsSent: number;
+  emailsFailed: number;
+  emailsSkipped: number;
   openRate: number;
   replyRate: number;
-  status: 'running' | 'paused' | 'completed';
+  emailsPerDay: number;
+  emailsSeen: number;
+  status: 'idle' | 'scraping in progress' | 'scraping is done' | 'sending emails in progress' | 'everything is done';
+  scrapedFileUrl?: string; // URL to download the scraped data file
   createdAt: string;
 }
 

@@ -3,6 +3,9 @@ import { getAuthHeaders } from '@/lib/auth';
 
 const BACKEND_URL = process.env.BACKEND_URL || 'http://localhost:3001';
 
+// Force dynamic rendering for this route
+export const dynamic = 'force-dynamic';
+
 // GET /api/campaigns/[id] - Get a specific campaign
 export async function GET(
   request: NextRequest,
@@ -51,7 +54,7 @@ export async function PUT(
   try {
     const { id } = params;
     const body = await request.json();
-    const { businessType, location, maximumResults, emailTemplate } = body;
+    const { businessType, location, maximumResults, emailsPerDay, emailTemplate } = body;
 
     const headers = getAuthHeaders();
     
@@ -69,6 +72,7 @@ export async function PUT(
         businessType,
         location,
         maximumResults,
+        emailsPerDay,
         emailTemplate,
       }),
     });

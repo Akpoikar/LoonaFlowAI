@@ -6,6 +6,7 @@ import Link from 'next/link';
 import Logo from '../../components/Logo';
 import PulsingBorderShader from '@/components/PulsingBorderShader';
 import { apiClient } from '@/lib/api';
+import SEOHead from '../../components/SEOHead';
 
 export default function LoginPage() {
   const [formData, setFormData] = useState({
@@ -50,7 +51,22 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-indigo-50 via-purple-50 to-pink-50 flex items-center justify-center p-6 overflow-hidden">
+    <>
+      <SEOHead 
+        title="Login to LoonaFlow AI - Access Your Local Business Outreach Dashboard"
+        description="Sign in to your LoonaFlow AI account to manage your local business outreach campaigns, leads, and email automation."
+        keywords={[
+          "loonaflow login",
+          "loonaflow ai login",
+          "local business outreach login",
+          "lead generation login",
+          "email automation login",
+          "business outreach dashboard"
+        ]}
+        canonical="https://loonaflow.app/login"
+        noIndex={true}
+      />
+      <div className="min-h-screen bg-gradient-to-br from-indigo-50 via-purple-50 to-pink-50 flex items-center justify-center p-6 overflow-hidden">
       {/* Background elements */}
       <div className="pointer-events-none absolute inset-0 overflow-hidden">
         <div className="absolute top-0 left-0 h-72 w-72 rounded-full bg-gradient-to-br from-indigo-300/50 to-purple-300/40 blur-3xl" />
@@ -165,5 +181,6 @@ export default function LoginPage() {
         </div>
       </div>
     </div>
+    </>
   );
 }

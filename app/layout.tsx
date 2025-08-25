@@ -32,14 +32,14 @@ export const metadata: Metadata = {
     address: false,
     telephone: false,
   },
-  metadataBase: new URL('https://loonaflowai.com'),
+  metadataBase: new URL('https://loonaflow.app'),
   alternates: {
     canonical: '/',
   },
   openGraph: {
     title: "LoonaFlow AI - All-in-One Local Business Outreach Platform",
     description: "Turn local businesses into clients — with AI that does the outreach for you.",
-    url: 'https://loonaflowai.com',
+    url: 'https://loonaflow.app',
     siteName: 'LoonaFlow AI',
     images: [
       {
@@ -90,7 +90,7 @@ export const metadata: Metadata = {
     'DC.date': '2024',
     'DC.type': 'Software',
     'DC.format': 'text/html',
-    'DC.identifier': 'https://loonaflowai.com',
+    'DC.identifier': 'https://loonaflow.app',
     'DC.language': 'en',
     'DC.coverage': 'Worldwide',
     'DC.rights': 'Copyright 2024 LoonaFlow AI',
@@ -108,6 +108,7 @@ export default function RootLayout({
         <link rel="icon" href="/images/logo.png" />
         <link rel="apple-touch-icon" href="/images/logo.png" />
         <link rel="icon" type="image/png" href="/images/logo.png" />
+        <link rel="manifest" href="/manifest.json" />
         <meta name="theme-color" content="#7c3aed" />
         <meta name="msapplication-TileColor" content="#7c3aed" />
         <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5" />
@@ -121,7 +122,7 @@ export default function RootLayout({
               "@type": "SoftwareApplication",
               "name": "LoonaFlow AI",
               "description": "All-in-one local business outreach platform for lead generation and email automation",
-              "url": "https://loonaflowai.com",
+              "url": "https://loonaflow.app",
               "applicationCategory": "BusinessApplication",
               "operatingSystem": "Web",
               "offers": {
@@ -142,7 +143,7 @@ export default function RootLayout({
               "publisher": {
                 "@type": "Organization",
                 "name": "LoonaFlow AI",
-                "url": "https://loonaflowai.com"
+                "url": "https://loonaflow.app"
               }
             })
           }}

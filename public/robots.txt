@@ -2,7 +2,7 @@ User-agent: *
 Allow: /
 
 # Sitemap
-Sitemap: https://leadflowai.com/sitemap.xml
+Sitemap: https://loonaflow.app/sitemap.xml
 
 # Crawl-delay for respectful crawling
 Crawl-delay: 1

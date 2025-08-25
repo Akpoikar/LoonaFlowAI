@@ -3,6 +3,9 @@ import { getAuthHeaders } from '@/lib/auth';
 
 const BACKEND_URL = process.env.BACKEND_URL;
 
+// Force dynamic rendering for this route
+export const dynamic = 'force-dynamic';
+
 export async function GET(
   request: NextRequest,
   { params }: { params: { id: string } }

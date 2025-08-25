@@ -55,6 +55,7 @@ export default function Subscription() {
       case 'STARTER': return 'bg-blue-100 text-blue-700';
       case 'GROWTH': return 'bg-violet-100 text-violet-700';
       case 'SCALE': return 'bg-purple-100 text-purple-700';
+      case 'ENTERPRISE': return 'bg-slate-100 text-slate-700';
       default: return 'bg-slate-100 text-slate-700';
     }
   };
@@ -65,6 +66,7 @@ export default function Subscription() {
       case 'STARTER': return 'border-blue-200';
       case 'GROWTH': return 'border-violet-200';
       case 'SCALE': return 'border-purple-200';
+      case 'ENTERPRISE': return 'border-slate-200';
       default: return 'border-slate-200';
     }
   };
@@ -74,25 +76,58 @@ export default function Subscription() {
   };
 
   const handleUpgrade = async (planKey: string) => {
-    if (!confirm(`Are you sure you want to upgrade to the ${planKey} plan?`)) {
-      return;
-    }
-
     try {
       setUpgradingPlan(planKey);
       setError('');
 
-      const result = await apiClient.updateSubscription(planKey);
+      // Handle Enterprise tier - redirect to contact page
+      if (planKey === 'ENTERPRISE') {
+        window.location.href = '/contact';
+        return;
+      }
 
-      if (result.error) {
-        setError(result.error);
+      // Get the plan details
+      const plan = plans?.[planKey as keyof SubscriptionPlans];
+      if (!plan) {
+        setError('Plan not found');
+        setUpgradingPlan(null);
+        return;
+      }
+
+      if (plan.price === 0) {
+        // Handle downgrade to free plan
+        if (confirm(`Are you sure you want to downgrade to the ${planKey} plan? This will cancel your current subscription.`)) {
+          setUpgradingPlan(null);
+          return;
+        }
+
+        // Use the existing updateSubscription method for free plan
+        const result = await apiClient.updateSubscription(planKey);
+        if (result.error) {
+          setError(result.error);
+        } else {
+          await loadSubscriptionData();
+        }
       } else {
-        // Reload subscription data to show updated plan
-        await loadSubscriptionData();
-        alert(`Successfully upgraded to ${planKey} plan!`);
+        // Handle upgrade to paid plan
+        if (!confirm(`Are you sure you want to upgrade to the ${planKey} plan?`)) {
+          setUpgradingPlan(null);
+          return;
+        }
+
+        // Create Stripe checkout session
+        const result = await apiClient.createCheckoutSession(planKey);
+        if (result.error) {
+          setError(result.error);
+        } else if (result.data && typeof result.data === 'object' && 'success' in result.data && result.data.success && 'data' in result.data && result.data.data && typeof result.data.data === 'object' && 'url' in result.data.data) {
+          // Redirect to Stripe checkout
+          window.location.href = result.data.data.url as string;
+        } else {
+          setError('Failed to create checkout session');
+        }
       }
     } catch (error) {
-      setError('Failed to upgrade subscription');
+      setError('Failed to process subscription change');
     } finally {
       setUpgradingPlan(null);
     }
@@ -129,12 +164,55 @@ export default function Subscription() {
   return (
     <div className="space-y-8">
 
+      {/* Current Subscription Management */}
+      {currentSubscription && currentSubscription.status !== 'inactive' && (
+        <div className="bg-white/40 backdrop-blur-md rounded-2xl p-8 ring-1 ring-white/30 shadow-lg shadow-purple-100/50">
+          <div className="flex flex-col md:flex-row items-center gap-6">
+            {/* Check Subscription Status Button */}
+            <button
+              onClick={async () => {
+                try {
+                  setError('');
+                  const result = await apiClient.syncSubscription();
+                  if (result.error) {
+                    setError(result.error);
+                  } else {
+                    // Reload subscription data to show updated status
+                    await loadSubscriptionData();
+                  }
+                } catch (error) {
+                  setError('Failed to sync subscription status');
+                }
+              }}
+              className="flex-shrink-0 px-8 py-4 bg-blue-600 text-white rounded-xl font-semibold text-lg hover:bg-blue-700 transition-colors shadow-lg hover:shadow-xl"
+            >
+              Check Subscription Status
+            </button>
+
+            {/* Upgrade Note */}
+            <div className="flex-grow p-4 bg-blue-50 border border-blue-200 rounded-xl">
+              <div className="flex items-start gap-3">
+                <div className="text-orange-500 text-lg">💡</div>
+                <div>
+                  <p className="text-sm text-blue-800 font-medium mb-1">After upgrading to a new plan:</p>
+                  <p className="text-sm text-blue-700">
+                    Click the "Check Subscription Status" button above to update your account with the new plan features.
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Available Plans */}
       <div className="bg-white/40 backdrop-blur-md rounded-2xl p-8 ring-1 ring-white/30 shadow-lg shadow-purple-100/50">
         <h3 className="text-xl font-bold text-slate-900 mb-6">Available Plans</h3>
         
+
+        
                  {plans && (
-           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6">
             {Object.entries(plans).map(([planKey, plan]) => (
                              <div 
                  key={planKey}
@@ -156,7 +234,7 @@ export default function Subscription() {
                  {planKey === 'GROWTH' && !isCurrentPlan(planKey) && (
                    <div className="absolute -top-3 left-1/2 transform -translate-x-1/2">
                      <span className="px-4 py-1 bg-gradient-to-r from-violet-600 to-purple-600 text-white text-sm font-medium rounded-full shadow-lg">
-                       ⭐ Recommended
+                       Recommended
                      </span>
                    </div>
                  )}
@@ -166,10 +244,14 @@ export default function Subscription() {
                    <p className="text-sm text-slate-600 mb-2">{plan.tagline}</p>
                    <p className="text-xs text-slate-500 mb-3">{plan.description}</p>
                    <div className="text-3xl font-bold text-slate-900 mb-1">
-                     ${plan.price}
-                     <span className="text-lg font-normal text-slate-600">/month</span>
+                     {planKey === 'ENTERPRISE' ? 'Custom' : `$${plan.price}`}
+                     {planKey !== 'ENTERPRISE' && (
+                       <span className="text-lg font-normal text-slate-600">/month</span>
+                     )}
                    </div>
-                   {plan.price === 0 && (
+                   {planKey === 'ENTERPRISE' ? (
+                     <p className="text-sm text-slate-600">contact us</p>
+                   ) : plan.price === 0 && (
                      <p className="text-sm text-slate-600">Forever free</p>
                    )}
                  </div>
@@ -231,28 +313,37 @@ export default function Subscription() {
                    )}
                  </div>
 
-                                 <button 
-                   onClick={() => !isCurrentPlan(planKey) && handleUpgrade(planKey)}
-                   className={`w-full py-3 rounded-xl font-semibold transition-all duration-200 ${
-                     isCurrentPlan(planKey)
-                       ? 'bg-slate-100 text-slate-600 cursor-not-allowed'
-                       : planKey === 'GROWTH' && !isCurrentPlan(planKey)
-                       ? 'bg-gradient-to-r from-violet-600 to-purple-600 text-white hover:shadow-xl hover:shadow-violet-600/30 transform hover:scale-105'
-                       : plan.price === 0
-                       ? 'bg-green-600 text-white hover:bg-green-700 hover:shadow-lg'
-                       : 'bg-gradient-to-r from-violet-600 to-purple-600 text-white hover:shadow-lg hover:shadow-violet-600/25'
-                   }`}
-                   disabled={isCurrentPlan(planKey) || upgradingPlan === planKey}
-                 >
-                   {upgradingPlan === planKey 
-                     ? 'Upgrading...' 
-                     : isCurrentPlan(planKey) 
-                     ? 'Current Plan' 
-                     : plan.price === 0 
-                     ? 'Downgrade to Free' 
-                     : 'Upgrade Now'
-                   }
-                 </button>
+                                 {planKey === 'ENTERPRISE' ? (
+                   <a 
+                     href="/contact"
+                     className="block w-full py-3 rounded-xl font-semibold transition-all duration-200 bg-slate-100 text-slate-700 hover:bg-slate-200 text-center"
+                   >
+                     Contact Sales
+                   </a>
+                 ) : (
+                   <button 
+                     onClick={() => !isCurrentPlan(planKey) && handleUpgrade(planKey)}
+                     className={`w-full py-3 rounded-xl font-semibold transition-all duration-200 ${
+                       isCurrentPlan(planKey)
+                         ? 'bg-slate-100 text-slate-600 cursor-not-allowed'
+                         : planKey === 'GROWTH' && !isCurrentPlan(planKey)
+                         ? 'bg-gradient-to-r from-violet-600 to-purple-600 text-white hover:shadow-xl hover:shadow-violet-600/30 transform hover:scale-105'
+                         : plan.price === 0
+                         ? 'bg-green-600 text-white hover:bg-green-700 hover:shadow-lg'
+                         : 'bg-gradient-to-r from-violet-600 to-purple-600 text-white hover:shadow-lg hover:shadow-violet-600/25'
+                     }`}
+                     disabled={isCurrentPlan(planKey) || upgradingPlan === planKey}
+                   >
+                     {upgradingPlan === planKey 
+                       ? 'Processing...' 
+                       : isCurrentPlan(planKey) 
+                       ? 'Current Plan' 
+                       : plan.price === 0 
+                       ? 'Downgrade to Free' 
+                       : 'Upgrade Now'
+                     }
+                   </button>
+                 )}
               </div>
             ))}
           </div>

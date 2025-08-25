@@ -16,7 +16,7 @@
 # - Using content for competitive analysis
 
 # Contact Information
-# For AI training permissions, contact: legal@leadflowai.com
+# For AI training permissions, contact: hello@loonaflow.app
 
 # Copyright Notice
 # Copyright 2024 LoonaFlow AI. All rights reserved.

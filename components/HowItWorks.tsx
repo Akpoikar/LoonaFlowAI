@@ -15,26 +15,26 @@ export default function HowItWorks() {
           {
             step: "Step 1",
             title: "Pick your audience",
-            desc: "Type in who you want to reach. We'll find their business details instantly.",
+            desc: "Enter who you want to reach (e.g., Dentists in Prague). LoonaFlow instantly finds verified business details.",
             icon: "🎯",
             input: true,
           },
           {
             step: "Step 2", 
-            title: "Let AI craft your emails",
-            desc: "AI writes tailored outreach emails that sound natural, not spammy.",
+            title: "Write your email once",
+            desc: "Create a simple email template with placeholders (like {name}). LoonaFlow personalizes it for every contact.",
             icon: "✨",
           },
           {
             step: "Step 3",
             title: "Safe sending engine", 
-            desc: "Emails are sent from your own inbox with smart limits so you stay out of spam.",
+            desc: "Emails go out from your own inbox with smart pacing and warmup, so you stay in the inbox — not the spam folder.",
             icon: "📤",
           },
           {
             step: "Step 4",
             title: "Track and improve",
-            desc: "See exactly who opened, clicked, and replied — and optimize with A/B testing.",
+            desc: "See exactly who opened, clicked, and replied. Run A/B tests to optimize your campaigns for even better results.",
             icon: "📊",
           },
         ].map((i, index) => (

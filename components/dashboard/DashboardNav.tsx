@@ -7,19 +7,18 @@ import Logo from '../Logo';
 interface DashboardNavProps {
   user: User;
   activeTab: string;
-  onTabChange: (tab: string) => void;
   onLogout: () => void;
   onStartTutorial: () => void;
   children?: React.ReactNode;
 }
 
-export default function DashboardNav({ user, activeTab, onTabChange, onLogout, onStartTutorial, children }: DashboardNavProps) {
+export default function DashboardNav({ user, activeTab, onLogout, onStartTutorial, children }: DashboardNavProps) {
   const navItems = [
-    { id: 'dashboard', label: 'Dashboard', icon: '📊' },
-    { id: 'templates', label: 'Email Templates', icon: '✉️' },
-    { id: 'campaigns', label: 'Campaigns', icon: '🚀' },
-    { id: 'subscription', label: 'Subscription', icon: '💳' },
-    { id: 'settings', label: 'Settings', icon: '⚙️' }
+    { id: 'overview', label: 'Dashboard', icon: '📊', href: '/dashboard/overview' },
+    { id: 'templates', label: 'Email Templates', icon: '✉️', href: '/dashboard/templates' },
+    { id: 'campaigns', label: 'Campaigns', icon: '🚀', href: '/dashboard/campaigns' },
+    { id: 'subscription', label: 'Subscription', icon: '💳', href: '/dashboard/subscription' },
+    { id: 'settings', label: 'Settings', icon: '⚙️', href: '/dashboard/settings' },
   ];
 
   return (
@@ -37,9 +36,9 @@ export default function DashboardNav({ user, activeTab, onTabChange, onLogout, o
         <nav className="flex-1 p-6">
           <div className="space-y-3">
             {navItems.map((item) => (
-              <button
+              <Link
                 key={item.id}
-                onClick={() => onTabChange(item.id)}
+                href={item.href}
                 data-tutorial={`${item.id}-tab`}
                 className={`w-full flex items-center gap-4 px-6 py-4 rounded-2xl text-left transition-colors duration-200 ${
                   activeTab === item.id
@@ -51,7 +50,7 @@ export default function DashboardNav({ user, activeTab, onTabChange, onLogout, o
                   {item.icon}
                 </span>
                 <span className="font-semibold text-lg">{item.label}</span>
-              </button>
+              </Link>
             ))}
           </div>
         </nav>
@@ -90,11 +89,12 @@ export default function DashboardNav({ user, activeTab, onTabChange, onLogout, o
                 {navItems.find(item => item.id === activeTab)?.label}
               </h1>
               <p className="text-slate-600 font-medium">
-                {activeTab === 'dashboard' && 'Welcome to your LoonaFlow AI dashboard'}
+                {activeTab === 'overview' && 'Welcome to your LoonaFlow AI dashboard'}
                 {activeTab === 'templates' && 'Create and manage email templates'}
                 {activeTab === 'campaigns' && 'Launch and track your campaigns'}
                 {activeTab === 'subscription' && 'Manage your subscription and billing'}
                 {activeTab === 'settings' && 'Manage your account settings'}
+                {activeTab === 'contact' && 'Get in touch with our support team'}
               </p>
             </div>
             <div className="flex items-center gap-4">

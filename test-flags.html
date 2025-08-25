@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Flag Test</title>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; }
+        .flag-test { margin: 10px 0; padding: 10px; border: 1px solid #ccc; }
+        .flag { font-size: 24px; margin-right: 10px; }
+    </style>
+</head>
+<body>
+    <h1>Country Flag Test</h1>
+    
+    <div class="flag-test">
+        <h3>Test 1: Direct Emoji</h3>
+        <p>🇺🇸 US - United States</p>
+        <p>🇬🇧 GB - United Kingdom</p>
+        <p>🇩🇪 DE - Germany</p>
+        <p>🇫🇷 FR - France</p>
+        <p>🇯🇵 JP - Japan</p>
+        <p>🇷🇺 RU - Russia</p>
+    </div>
+
+    <div class="flag-test">
+        <h3>Test 2: Generated Emoji</h3>
+        <div id="generated-flags"></div>
+    </div>
+
+    <div class="flag-test">
+        <h3>Test 3: Flag API Images</h3>
+        <div id="api-flags"></div>
+    </div>
+
+    <script>
+        // Function to get flag emoji from country code
+        function getFlagEmoji(countryCode) {
+            try {
+                const codePoints = countryCode
+                    .toUpperCase()
+                    .split('')
+                    .map(char => 127397 + char.charCodeAt(0));
+                return String.fromCodePoint(...codePoints);
+            } catch (error) {
+                console.error('Error generating flag for', countryCode, error);
+                return '';
+            }
+        }
+
+        // Test countries
+        const testCountries = ['US', 'GB', 'DE', 'FR', 'JP', 'RU', 'CA', 'AU', 'BR', 'CN'];
+
+        // Generate emoji flags
+        const generatedDiv = document.getElementById('generated-flags');
+        testCountries.forEach(country => {
+            const flag = getFlagEmoji(country);
+            const p = document.createElement('p');
+            p.innerHTML = `<span class="flag">${flag}</span> ${country} - Generated Flag`;
+            generatedDiv.appendChild(p);
+        });
+
+        // Generate API flag images
+        const apiDiv = document.getElementById('api-flags');
+        testCountries.forEach(country => {
+            const img = document.createElement('img');
+            img.src = `https://flagcdn.com/w20/${country.toLowerCase()}.png`;
+            img.alt = `${country} flag`;
+            img.style.marginRight = '10px';
+            img.style.height = '20px';
+            img.onerror = function() {
+                this.style.display = 'none';
+                const span = document.createElement('span');
+                span.textContent = country;
+                span.style.marginRight = '10px';
+                this.parentNode.insertBefore(span, this);
+            };
+            apiDiv.appendChild(img);
+        });
+    </script>
+</body>
+</html>
