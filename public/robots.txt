@@ -21,6 +21,10 @@ Allow: /about
 Allow: /contact
 Allow: /blog
 Allow: /help
+Allow: /privacy
+Allow: /terms
+Allow: /login
+Allow: /signup
 
 # Specific rules for search engines
 User-agent: Googlebot

@@ -6,6 +6,7 @@ import Link from 'next/link';
 import Logo from '../../components/Logo';
 import PulsingBorderShader from '@/components/PulsingBorderShader';
 import { apiClient } from '@/lib/api';
+import SEOHead from '../../components/SEOHead';
 
 export default function SignupPage() {
   const [formData, setFormData] = useState({
@@ -68,7 +69,23 @@ export default function SignupPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-indigo-50 via-purple-50 to-pink-50 flex items-center justify-center p-6 overflow-hidden">
+    <>
+      <SEOHead
+        title="Sign Up for LoonaFlow AI - Start Your Local Business Outreach Journey"
+        description="Create your free LoonaFlow AI account and start generating leads, automating emails, and growing your local business outreach today."
+        keywords={[
+          "loonaflow signup",
+          "loonaflow ai signup",
+          "local business outreach signup",
+          "lead generation signup",
+          "email automation signup",
+          "business outreach registration",
+          "free trial signup"
+        ]}
+        canonical="https://loonaflow.app/signup"
+        noIndex={true}
+      />
+      <div className="min-h-screen bg-gradient-to-br from-indigo-50 via-purple-50 to-pink-50 flex items-center justify-center p-6 overflow-hidden">
       {/* Background elements */}
       <div className="pointer-events-none absolute inset-0 overflow-hidden">
         <div className="absolute top-0 left-0 h-72 w-72 rounded-full bg-gradient-to-br from-indigo-300/50 to-purple-300/40 blur-3xl" />
@@ -85,7 +102,7 @@ export default function SignupPage() {
             <Logo size="lg" />
           </Link>
           <h1 className="text-3xl font-bold text-slate-900 mb-2">Create your account</h1>
-          <p className="text-slate-600">Start your journey with LeadFlow AI</p>
+          <p className="text-slate-600">Start your journey with LoonaFlow AI</p>
         </div>
 
         {/* Registration Form */}
@@ -224,5 +241,6 @@ export default function SignupPage() {
         </div>
       </div>
     </div>
+    </>
   );
 }
