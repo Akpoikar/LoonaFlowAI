@@ -1,4 +1,4 @@
-# Stripe Integration for LeadFlow AI
+# Stripe Integration for LoonaFlow AI
 
 This document outlines the Stripe integration implementation for subscription management.
 

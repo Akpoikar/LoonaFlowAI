@@ -1,6 +1,6 @@
 # API Setup Guide
 
-This guide explains how to set up and use the API endpoints in your LeadFlow AI application.
+This guide explains how to set up and use the API endpoints in your LoonaFlow AI application.
 
 ## Environment Configuration
 

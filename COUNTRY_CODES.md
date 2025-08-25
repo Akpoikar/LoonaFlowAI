@@ -1,7 +1,7 @@
 # Country Codes for Campaigns
 
 ## Overview
-The LeadFlow AI system now uses standardized country codes (ISO 3166-1 alpha-2) instead of free-text location inputs for better data consistency and internationalization.
+The LoonaFlow AI system now uses standardized country codes (ISO 3166-1 alpha-2) instead of free-text location inputs for better data consistency and internationalization.
 
 ## How It Works
 

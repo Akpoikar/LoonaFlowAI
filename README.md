@@ -41,7 +41,7 @@ A modern, responsive landing page for LoonaFlow AI - an all-in-one local outreac
 ## Project Structure
 
 ```
-leadflowai/
+loonaflowai/
 ├── app/
 │   ├── globals.css      # Global styles and Tailwind imports
 │   ├── layout.tsx       # Root layout with Inter font

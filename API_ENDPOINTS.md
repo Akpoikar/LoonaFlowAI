@@ -1,6 +1,6 @@
-# LeadFlow AI API Endpoints Documentation
+# LoonaFlow AI API Endpoints Documentation
 
-This document outlines all the API endpoints available in the LeadFlow AI frontend application. All endpoints forward requests to the backend server and handle authentication via JWT tokens stored in HTTP-only cookies.
+This document outlines all the API endpoints available in the LoonaFlow AI frontend application. All endpoints forward requests to the backend server and handle authentication via JWT tokens stored in HTTP-only cookies.
 
 ## Base URL
 - **Frontend API**: `http://localhost:3000/api`
@@ -314,7 +314,7 @@ Authorization: Bearer <jwt_token>
     {
       "id": "template_id",
       "name": "Welcome Email",
-      "subject": "Welcome to LeadFlow AI!",
+      "subject": "Welcome to LoonaFlow AI!",
       "content": "<h1>Welcome {{name}}!</h1><p>Thank you for joining us...</p>",
       "variables": ["name", "company"],
       "category": "onboarding",
@@ -347,7 +347,7 @@ Authorization: Bearer <jwt_token>
 ```json
 {
   "name": "Welcome Email",
-  "subject": "Welcome to LeadFlow AI!",
+  "subject": "Welcome to LoonaFlow AI!",
   "content": "<h1>Welcome {{name}}!</h1><p>Thank you for joining us...</p>",
   "variables": ["name", "company"],
   "category": "onboarding"
@@ -359,7 +359,7 @@ Authorization: Bearer <jwt_token>
 {
   "id": "template_id",
   "name": "Welcome Email",
-  "subject": "Welcome to LeadFlow AI!",
+  "subject": "Welcome to LoonaFlow AI!",
   "content": "<h1>Welcome {{name}}!</h1><p>Thank you for joining us...</p>",
   "variables": ["name", "company"],
   "category": "onboarding",
@@ -392,7 +392,7 @@ Authorization: Bearer <jwt_token>
 {
   "id": "template_id",
   "name": "Welcome Email",
-  "subject": "Welcome to LeadFlow AI!",
+  "subject": "Welcome to LoonaFlow AI!",
   "content": "<h1>Welcome {{name}}!</h1><p>Thank you for joining us...</p>",
   "variables": ["name", "company"],
   "category": "onboarding",
@@ -424,7 +424,7 @@ Authorization: Bearer <jwt_token>
 ```json
 {
   "name": "Updated Welcome Email",
-  "subject": "Welcome to LeadFlow AI - Get Started!",
+  "subject": "Welcome to LoonaFlow AI - Get Started!",
   "content": "<h1>Welcome {{name}}!</h1><p>Thank you for joining us. Here's how to get started...</p>",
   "variables": ["name", "company", "startDate"],
   "category": "onboarding",
@@ -437,7 +437,7 @@ Authorization: Bearer <jwt_token>
 {
   "id": "template_id",
   "name": "Updated Welcome Email",
-  "subject": "Welcome to LeadFlow AI - Get Started!",
+  "subject": "Welcome to LoonaFlow AI - Get Started!",
   "content": "<h1>Welcome {{name}}!</h1><p>Thank you for joining us. Here's how to get started...</p>",
   "variables": ["name", "company", "startDate"],
   "category": "onboarding",

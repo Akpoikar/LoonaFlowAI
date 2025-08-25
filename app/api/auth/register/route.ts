@@ -6,6 +6,8 @@ const BACKEND_URL = process.env.BACKEND_URL || 'http://localhost:3001';
 export const dynamic = 'force-dynamic';
 
 export async function POST(request: NextRequest) {
+  console.log('login');
+
   try {
     const body = await request.json();
     const { name, email, password, company } = body;
@@ -16,6 +18,7 @@ export async function POST(request: NextRequest) {
         { status: 400 }
       );
     }
+    console.log(BACKEND_URL, 'BACKEND_URL');
 
     const response = await fetch(`${BACKEND_URL}/api/auth/register`, {
       method: 'POST',

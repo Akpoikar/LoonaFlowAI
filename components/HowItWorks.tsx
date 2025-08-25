@@ -47,7 +47,7 @@ export default function HowItWorks() {
           >
             {i.input ? (
               <div className="space-y-4">
-                                 <div className="flex items-center gap-3 bg-white/30 backdrop-blur-sm rounded-xl p-4 border border-white/30 shadow-sm">
+                <div className="flex items-center gap-3 bg-white/30 backdrop-blur-sm rounded-xl p-4 border border-white/30 shadow-sm">
                   <span className="text-2xl">🎯</span>
                   <input 
                     type="text" 
