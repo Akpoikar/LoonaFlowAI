@@ -163,16 +163,6 @@ export default function LoginPage() {
           </div>
         </div>
 
-        {/* Demo Credentials */}
-        <div className="mt-6 bg-white/30 backdrop-blur-sm rounded-xl p-4 ring-1 ring-white/30">
-          <h3 className="text-sm font-semibold text-slate-900 mb-2">Demo Credentials</h3>
-          <p className="text-xs text-slate-600 mb-2">Use any email and password to sign in:</p>
-          <div className="text-xs text-slate-600 space-y-1">
-            <div>Email: demo@example.com</div>
-            <div>Password: password123</div>
-          </div>
-        </div>
-
         {/* Back to Home */}
         <div className="mt-6 text-center">
           <Link href="/" className="text-sm text-slate-600 hover:text-slate-900 transition-colors">

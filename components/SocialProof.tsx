@@ -52,7 +52,7 @@ export default function SocialProof() {
           },
           {
             quote:
-              "Setup was quick. We imported a simple template with {name} and {city}, and LoonaFlow handled the rest. Clean UI, clear stats.",
+              "Setup was quick. We imported a simple template with {name} and city, and LoonaFlow handled the rest. Clean UI, clear stats.",
             name: "Marta K.",
             role: "Owner",
             company: "Local Services Agency",
