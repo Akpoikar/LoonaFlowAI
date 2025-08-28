@@ -6,28 +6,43 @@ import CookieConsent from "../components/CookieConsent";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "LoonaFlow AI - All-in-One Local Business Outreach Platform | Find Leads & Generate AI Emails",
-  description: "LoonaFlow AI helps local businesses find leads, generate AI-personalized emails, and track results. No CSVs, no headaches. Start your free trial today for local outreach automation.",
+  title: "LoonaFlow AI - AI-Powered Lead Generation & Outreach Automation | Find Leads & Generate AI Emails",
+  description: "LoonaFlow AI helps businesses find leads & send personalized outreach automatically. Scrape businesses by niche or country, launch campaigns, and track replies — all in one simple platform. Start your free trial today.",
   keywords: [
-    "local business outreach",
-    "lead generation",
-    "AI email marketing",
-    "local lead scraping",
-    "email automation",
-    "local business marketing",
-    "lead flow",
+    "AI lead generation",
     "outreach automation",
-    "local SEO leads",
+    "lead generation software",
+    "email automation",
+    "business lead scraping",
+    "AI email marketing",
+    "lead generation platform",
+    "email outreach tool",
     "business development",
     "email campaigns",
-    "local marketing automation",
+    "marketing automation",
+    "lead generation automation",
+    "cold email automation",
+    "business prospecting",
+    "lead flow automation",
+    "AI-powered outreach",
+    "lead generation tool",
+    "email marketing automation",
+    "business lead finder",
+    "automated lead generation",
+    "lead generation for businesses",
+    "email outreach automation",
+    "lead generation platform",
+    "business development automation",
     "lead generation software",
-    "email outreach tool",
-    "local business leads"
+    "email automation tool",
+    "lead generation service",
+    "business lead generation",
+    "automated email marketing",
+    "lead generation automation platform"
   ],
-      authors: [{ name: "LoonaFlow AI Team" }],
-    creator: "LoonaFlow AI",
-    publisher: "LoonaFlow AI",
+  authors: [{ name: "LoonaFlow AI Team" }],
+  creator: "LoonaFlow AI",
+  publisher: "LoonaFlow AI",
   formatDetection: {
     email: false,
     address: false,
@@ -38,8 +53,8 @@ export const metadata: Metadata = {
     canonical: '/',
   },
   openGraph: {
-    title: "LoonaFlow AI - All-in-One Local Business Outreach Platform",
-    description: "Turn local businesses into clients — with AI that does the outreach for you.",
+    title: "LoonaFlow AI - AI-Powered Lead Generation & Outreach Automation",
+    description: "LoonaFlow AI helps businesses find leads & send personalized outreach automatically. Scrape businesses by niche or country, launch campaigns, and track replies — all in one simple platform.",
     url: 'https://loonaflow.app',
     siteName: 'LoonaFlow AI',
     images: [
@@ -47,7 +62,7 @@ export const metadata: Metadata = {
         url: '/og-image.jpg',
         width: 1200,
         height: 630,
-        alt: 'LoonaFlow AI - Local Business Outreach Platform',
+        alt: 'LoonaFlow AI - AI-Powered Lead Generation & Outreach Automation',
       },
     ],
     locale: 'en_US',
@@ -55,9 +70,10 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: 'summary_large_image',
-    title: "LoonaFlow AI - All-in-One Local Business Outreach Platform",
-    description: "Turn local businesses into clients — with AI that does the outreach for you.",
+    title: "LoonaFlow AI - AI-Powered Lead Generation & Outreach Automation",
+    description: "LoonaFlow AI helps businesses find leads & send personalized outreach automatically. Scrape businesses by niche or country, launch campaigns, and track replies — all in one simple platform.",
     images: ['/og-image.jpg'],
+    creator: '@loonaflowai',
   },
   robots: {
     index: true,
@@ -82,19 +98,26 @@ export const metadata: Metadata = {
     'geo.placename': 'United States',
     'geo.position': '37.0902;-95.7129',
     'ICBM': '37.0902, -95.7129',
-    'DC.title': 'LoonaFlow AI - Local Business Outreach Platform',
+    'DC.title': 'LoonaFlow AI - AI-Powered Lead Generation & Outreach Automation',
     'DC.creator': 'LoonaFlow AI',
-    'DC.subject': 'Local Business Outreach, Lead Generation, Email Marketing',
-    'DC.description': 'All-in-one platform for local business outreach and lead generation',
+    'DC.subject': 'AI Lead Generation, Outreach Automation, Email Marketing, Business Development',
+    'DC.description': 'AI-powered lead generation and outreach automation platform for businesses',
     'DC.publisher': 'LoonaFlow AI',
     'DC.contributor': 'LoonaFlow AI Team',
-    'DC.date': '2024',
+    'DC.date': '2025',
     'DC.type': 'Software',
     'DC.format': 'text/html',
     'DC.identifier': 'https://loonaflow.app',
     'DC.language': 'en',
     'DC.coverage': 'Worldwide',
-    'DC.rights': 'Copyright 2024 LoonaFlow AI',
+    'DC.rights': 'Copyright 2025 LoonaFlow AI',
+    'application-name': 'LoonaFlow AI',
+    'apple-mobile-web-app-title': 'LoonaFlow AI',
+    'apple-mobile-web-app-capable': 'yes',
+    'apple-mobile-web-app-status-bar-style': 'default',
+    'mobile-web-app-capable': 'yes',
+    'msapplication-TileColor': '#7c3aed',
+    'msapplication-config': '/browserconfig.xml',
   },
 };
 
@@ -114,7 +137,7 @@ export default function RootLayout({
         <meta name="msapplication-TileColor" content="#7c3aed" />
         <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5" />
         
-        {/* Schema.org structured data */}
+        {/* Enhanced Schema.org structured data */}
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{
@@ -122,7 +145,7 @@ export default function RootLayout({
               "@context": "https://schema.org",
               "@type": "SoftwareApplication",
               "name": "LoonaFlow AI",
-              "description": "All-in-one local business outreach platform for lead generation and email automation",
+              "description": "AI-powered lead generation and outreach automation platform. Scrape businesses by niche or country, launch campaigns, and track replies — all in one simple platform.",
               "url": "https://loonaflow.app",
               "applicationCategory": "BusinessApplication",
               "operatingSystem": "Web",
@@ -130,30 +153,78 @@ export default function RootLayout({
                 "@type": "Offer",
                 "price": "0",
                 "priceCurrency": "USD",
-                "description": "Free trial available"
+                "description": "Free trial available",
+                "availability": "https://schema.org/InStock"
               },
               "aggregateRating": {
                 "@type": "AggregateRating",
                 "ratingValue": "4.8",
-                "ratingCount": "127"
+                "ratingCount": "127",
+                "bestRating": "5",
+                "worstRating": "1"
               },
               "author": {
                 "@type": "Organization",
-                "name": "LoonaFlow AI"
+                "name": "LoonaFlow AI",
+                "url": "https://loonaflow.app"
               },
               "publisher": {
                 "@type": "Organization",
                 "name": "LoonaFlow AI",
-                "url": "https://loonaflow.app"
-              }
+                "url": "https://loonaflow.app",
+                "logo": {
+                  "@type": "ImageObject",
+                  "url": "https://loonaflow.app/images/logo.png"
+                }
+              },
+              "featureList": [
+                "AI-powered lead generation",
+                "Business scraping by niche or country",
+                "Personalized outreach automation",
+                "Campaign tracking and analytics",
+                "Email automation",
+                "Lead management"
+              ],
+              "screenshot": "https://loonaflow.app/og-image.jpg",
+              "softwareVersion": "1.0",
+              "releaseNotes": "AI-powered lead generation and outreach automation platform",
+              "downloadUrl": "https://loonaflow.app/signup",
+              "installUrl": "https://loonaflow.app/signup",
+              "softwareHelp": "https://loonaflow.app/contact"
             })
           }}
         />
-             </head>
-       <body className={inter.className}>
-         {children}
-         <CookieConsent />
-       </body>
-     </html>
+
+        {/* Additional structured data for Organization */}
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              "@context": "https://schema.org",
+              "@type": "Organization",
+              "name": "LoonaFlow AI",
+              "url": "https://loonaflow.app",
+              "logo": "https://loonaflow.app/images/logo.png",
+              "description": "AI-powered lead generation and outreach automation platform",
+              "foundingDate": "2024",
+              "contactPoint": {
+                "@type": "ContactPoint",
+                "contactType": "customer service",
+                "email": "hello@loonaflow.app"
+              },
+              "sameAs": [
+                "https://www.producthunt.com/products/loonaflow-ai",
+                "https://www.instagram.com/loonaflowai",
+                "https://www.youtube.com/@loonaflowai"
+              ]
+            })
+          }}
+        />
+      </head>
+      <body className={inter.className}>
+        {children}
+        <CookieConsent />
+      </body>
+    </html>
   );
 }

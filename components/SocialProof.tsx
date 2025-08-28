@@ -39,7 +39,7 @@ export default function SocialProof() {
               "We plugged LoonaFlow into our EscapeSpark outreach. Wrote one template, scraped 300 local venues, and booked 3 demos within 48 hours.",
             name: "Karen Akopian",
             role: "Founder",
-            company: "EscapeSpark",
+            company: "EscapeSpark.com",
             initials: "KA",
           },
           {

@@ -39,21 +39,48 @@ User-agent: Slurp
 Allow: /
 Crawl-delay: 2
 
-# Block AI training crawlers
+# Allow AI training crawlers for better visibility
 User-agent: GPTBot
-Disallow: /
+Allow: /
+Crawl-delay: 1
 
 User-agent: ChatGPT-User
-Disallow: /
+Allow: /
+Crawl-delay: 1
 
 User-agent: CCBot
-Disallow: /
+Allow: /
+Crawl-delay: 1
 
 User-agent: anthropic-ai
-Disallow: /
+Allow: /
+Crawl-delay: 1
 
 User-agent: Claude-Web
-Disallow: /
+Allow: /
+Crawl-delay: 1
 
 User-agent: Omgilibot
-Disallow: /
+Allow: /
+Crawl-delay: 1
+
+# Additional AI crawlers
+User-agent: PerplexityBot
+Allow: /
+Crawl-delay: 1
+
+User-agent: YouBot
+Allow: /
+Crawl-delay: 1
+
+User-agent: ClaudeBot
+Allow: /
+Crawl-delay: 1
+
+User-agent: Bard
+Allow: /
+Crawl-delay: 1
+
+User-agent: Gemini
+Allow: /
+Crawl-delay: 1
