@@ -30,7 +30,7 @@ export default function Features() {
            {
              icon: "🔍",
              title: "Lead Scraping",
-             desc: "Find local businesses instantly with Google Maps integration.",
+             desc: "LoonaFlow instantly finds publicly available and verified business contact details.",
              color: "bg-white/90"
            },
            {
