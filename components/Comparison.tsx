@@ -23,7 +23,7 @@ export default function Comparison() {
             
             <div className="text-slate-700 text-left py-3">Local business data sourcing</div>
             <div className="text-green-600 text-center py-3">✅ Built-in & specialized for local SMBs</div>
-            <div className="text-red-500 text-center py-3">⚠️ Global B2B database (not local-focused)</div>
+            <div className="text-yellow-500 text-center py-3">⚠️ Global B2B database (not local-focused)</div>
             <div className="text-red-500 text-center py-3">❌ Not available</div>
             
             <div className="text-slate-700 text-left py-3 border-t border-slate-200">AI email generator(coming soon)</div>
@@ -38,29 +38,29 @@ export default function Comparison() {
              
              <div className="text-slate-700 text-left py-3 border-t border-slate-200">Local lead focus</div>
              <div className="text-green-600 text-center py-3 border-t border-slate-200">✅ Optimized for local niches (dentists, salons, gyms, etc.)</div>
-             <div className="text-red-500 text-center py-3 border-t border-slate-200">⚠️ Enterprise/global only</div>
+             <div className="text-yellow-500 text-center py-3 border-t border-slate-200">⚠️ Enterprise/global only</div>
              <div className="text-red-500 text-center py-3 border-t border-slate-200">❌ Not supported</div>
              
              <div className="text-slate-700 text-left py-3 border-t border-slate-200">Unsubscribe & GDPR compliance</div>
              <div className="text-green-600 text-center py-3 border-t border-slate-200">✅ Built-in suppression lists & DPA</div>
-             <div className="text-red-500 text-center py-3 border-t border-slate-200">⚠️ Requires manual handling</div>
+             <div className="text-yellow-500 text-center py-3 border-t border-slate-200">⚠️ Requires manual handling</div>
              <div className="text-red-500 text-center py-3 border-t border-slate-200">❌ Not supported</div>
 
              <div className="text-slate-700 text-left py-3 border-t border-slate-200">Ease of use</div>
              <div className="text-green-600 text-center py-3 border-t border-slate-200">✅ Simple 2-step workflow</div>
-             <div className="text-red-500 text-center py-3 border-t border-slate-200">⚠️ Complex enterprise UI</div>
-             <div className="text-red-500 text-center py-3 border-t border-slate-200">✅ Simple</div>
+             <div className="text-yellow-500 text-center py-3 border-t border-slate-200">⚠️ Complex enterprise UI</div>
+             <div className="text-green-500 text-center py-3 border-t border-slate-200">✅ Simple</div>
 
 
              <div className="text-slate-700 text-left py-3 border-t border-slate-200">Pricing</div>
              <div className="text-green-600 text-center py-3 border-t border-slate-200">✅ Affordable for SMBs</div>
              <div className="text-red-500 text-center py-3 border-t border-slate-200">❌ Expensive enterprise pricing</div>
-             <div className="text-red-500 text-center py-3 border-t border-slate-200">⚠️ Mid-range</div>
+             <div className="text-yellow-500 text-center py-3 border-t border-slate-200">⚠️ Mid-range</div>
 
              <div className="text-slate-700 text-left py-3 border-t border-slate-200">Trial</div>
              <div className="text-green-600 text-center py-3 border-t border-slate-200">✅ Free trial, no credit card</div>
-             <div className="text-red-500 text-center py-3 border-t border-slate-200">⚠️ Limited trial</div>
-             <div className="text-red-500 text-center py-3 border-t border-slate-200">⚠️ Limited trial</div>
+             <div className="text-yellow-500 text-center py-3 border-t border-slate-200">⚠️ Limited trial</div>
+             <div className="text-yellow-500 text-center py-3 border-t border-slate-200">⚠️ Limited trial</div>
           </div>
         </div>
       </div>
