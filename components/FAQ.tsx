@@ -11,17 +11,17 @@ export default function FAQ() {
       {
         q: "Will my emails land in spam?",
         a:
-          "LoonaFlow is designed to maximize inbox placement with warmup, SPF/DKIM/DMARC guidance, sending windows, and smart throttling. While no platform can guarantee 100%, most users achieve strong inbox rates within days."
+          "LoonaFlow helps maximize inbox placement with warmup, SPF/DKIM/DMARC guidance, sending windows, and smart throttling. No platform can guarantee 100%, but consistent warmup, clean lists, and relevant messaging typically improve placement over time."
       },
       {
         q: "Do you provide the leads?",
         a:
-          "Yes. We source leads directly from Google Maps based on your criteria, then deduplicate and enrich key fields. No external lists required."
+          "Yes. We source business records from publicly available directories and trusted third-party providers based on your criteria, then deduplicate and enrich key fields. If a business has no public email, or only a personal/free mailbox (e.g., @gmail.com), it is automatically skipped for outreach."
       },
       {
         q: "Is it GDPR compliant?",
         a:
-          "Yes. We support lawful-basis outreach, honor opt-outs with one-click unsubscribe, and handle data per GDPR best practices. A Data Processing Addendum is available on request."
+          "LoonaFlow is built to support GDPR-friendly workflows: lawful-basis outreach (typically legitimate interest for B2B), clear opt-out handling with suppression lists, data minimization (skipping personal/free emails), and a Data Processing Addendum (DPA) available on request. Customers remain responsible for how they contact recipients in their markets."
       },
       {
         q: "Can I cancel anytime?",
@@ -36,11 +36,12 @@ export default function FAQ() {
       {
         q: "How quickly can I see results?",
         a:
-          "Many users see opens and first replies within 24–48 hours after launching their first campaign, depending on list quality and offer."
+          "Timelines vary by list quality, offer, and warmup status. Many users see opens and early replies after their first campaigns, but sustained performance depends on relevance, deliverability setup, and consistent sending habits."
       }
     ],
     []
   );
+  
 
   // JSON-LD for rich results
   const faqJsonLd = useMemo(
