@@ -844,7 +844,7 @@ export default function Campaigns({ campaigns: propCampaigns, onTabChange }: Cam
       <Modal
         isOpen={showEmailRecommendations}
         onClose={() => setShowEmailRecommendations(false)}
-        title="📩 Email Sending Volume Recommendations"
+        title="📧 LoonaFlow Email Sending Recommendations"
         size="lg"
       >
         <div className="space-y-6 text-sm">
@@ -861,8 +861,10 @@ export default function Campaigns({ campaigns: propCampaigns, onTabChange }: Cam
               <p className="font-semibold text-yellow-800 mb-2">⚠️ Tips:</p>
               <ul className="text-yellow-700 space-y-1 text-xs">
                 <li>• Focus on high-quality, personalized emails to engaged recipients</li>
-                <li>• Avoid sending bulk campaigns during this period</li>
-                <li>• Mix in replies and forwards — ISPs love to see natural communication</li>
+                <li>• Avoid bulk campaigns during this period</li>
+                <li>• Mix in replies and forwards — ISPs like to see natural conversations</li>
+                <li>• Some businesses may not have a public business email address. In those cases, LoonaFlow automatically skips those entries.</li>
+                <li>• If an address is detected as a personal/free mailbox (e.g., @gmail.com, @yahoo.com, @seznam.cz), it will be filtered out and not used for outreach.</li>
               </ul>
             </div>
           </div>
@@ -889,18 +891,19 @@ export default function Campaigns({ campaigns: propCampaigns, onTabChange }: Cam
             <h4 className="font-semibold text-indigo-900 mb-2">4. Mature & Trusted Domain (6+ months, good reputation)</h4>
             <div className="space-y-2 text-indigo-800">
               <p><strong>1,000–2,000 emails/day</strong> per account is typically safe</p>
-              <p><strong>Big players</strong> (with pristine reputation, warmed IPs, DKIM/SPF/DMARC) can push <strong>5,000–10,000+</strong> per day, but only after years of solid reputation</p>
+              <p><strong>Big players</strong> (with pristine reputation, warmed IPs, DKIM/SPF/DMARC) can push <strong>5,000–10,000+</strong> per day, but only after years of consistent sending reputation</p>
             </div>
           </div>
 
           <div className="bg-slate-50 border border-slate-200 rounded-xl p-4">
             <h4 className="font-semibold text-slate-900 mb-2">💡 Key Success Factors</h4>
             <ul className="text-slate-700 space-y-1">
-              <li>• Always prioritize email quality over quantity</li>
+              <li>• Always prioritize quality over quantity</li>
               <li>• Monitor bounce rates and spam complaints closely</li>
               <li>• Use proper authentication (SPF, DKIM, DMARC)</li>
               <li>• Maintain consistent sending patterns</li>
-              <li>• Clean your email lists regularly</li>
+              <li>• Clean your email lists regularly — LoonaFlow automatically suppresses unsubscribes and skips invalid or personal email addresses</li>
+              <li>• Respect data minimization principles: only contact businesses with a valid business email</li>
             </ul>
           </div>
         </div>

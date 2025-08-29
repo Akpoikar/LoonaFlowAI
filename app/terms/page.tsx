@@ -20,7 +20,7 @@ export default function TermsPage() {
       <div className="min-h-screen bg-gradient-to-br from-indigo-50 via-purple-50 to-pink-50">
         <div className="max-w-4xl mx-auto px-4 py-16 sm:px-6 lg:px-8">
           <div className="bg-white/40 backdrop-blur-md rounded-2xl p-8 ring-1 ring-white/30 shadow-lg shadow-purple-100/50">
-            <h1 className="text-4xl font-bold text-slate-900 mb-8">Terms of Service</h1>
+            <h1 className="text-4xl font-bold text-slate-900 mb-8">📑 LoonaFlow AI – Terms of Service</h1>
             
             <div className="prose prose-slate max-w-none">
               <p className="text-lg text-slate-700 mb-6">
@@ -30,35 +30,33 @@ export default function TermsPage() {
               <section className="mb-8">
                 <h2 className="text-2xl font-semibold text-slate-900 mb-4">1. Acceptance of Terms</h2>
                 <p className="text-slate-700 mb-4">
-                  By accessing and using LoonaFlow AI ("Service"), you accept and agree to be bound by the terms 
-                  and provision of this agreement. If you do not agree to abide by the above, please do not use this service.
+                  By accessing and using LoonaFlow AI ("Service"), you agree to be bound by these Terms. If you do not agree, you may not use the Service.
                 </p>
               </section>
 
               <section className="mb-8">
                 <h2 className="text-2xl font-semibold text-slate-900 mb-4">2. Description of Service</h2>
                 <p className="text-slate-700 mb-4">
-                  LoonaFlow AI is an all-in-one local business outreach platform that provides:
+                  LoonaFlow AI is an outreach automation platform that provides:
                 </p>
                 <ul className="list-disc pl-6 text-slate-700 mb-4">
-                  <li>Lead generation and scraping tools</li>
+                  <li>Lead generation and scraping integrations</li>
                   <li>Email automation and campaign management</li>
-                  <li>Email template creation and management</li>
+                  <li>Email template creation and personalization</li>
                   <li>Analytics and reporting features</li>
-                  <li>Email warmup and deliverability tools</li>
+                  <li>Deliverability and warmup tools</li>
                 </ul>
               </section>
 
               <section className="mb-8">
                 <h2 className="text-2xl font-semibold text-slate-900 mb-4">3. User Accounts</h2>
                 <p className="text-slate-700 mb-4">
-                  To use our Service, you must:
+                  To use the Service, you must:
                 </p>
                 <ul className="list-disc pl-6 text-slate-700 mb-4">
                   <li>Be at least 18 years old or have parental consent</li>
-                  <li>Provide accurate and complete registration information</li>
+                  <li>Provide accurate registration information</li>
                   <li>Maintain the security of your account credentials</li>
-                  <li>Notify us immediately of any unauthorized use</li>
                   <li>Accept responsibility for all activities under your account</li>
                 </ul>
               </section>
@@ -69,134 +67,88 @@ export default function TermsPage() {
                   You agree not to use the Service to:
                 </p>
                 <ul className="list-disc pl-6 text-slate-700 mb-4">
-                  <li>Violate any applicable laws or regulations</li>
-                  <li>Send spam, unsolicited emails, or engage in email harassment</li>
-                  <li>Scrape or collect data without proper authorization</li>
+                  <li>Violate any applicable laws or regulations (including GDPR, CAN-SPAM, and the ePrivacy Directive)</li>
+                  <li>Send spam, unsolicited bulk emails, or harass recipients</li>
+                  <li>Collect or process personal data without a lawful basis</li>
                   <li>Impersonate others or provide false information</li>
-                  <li>Interfere with or disrupt the Service</li>
-                  <li>Attempt to gain unauthorized access to our systems</li>
-                  <li>Use the Service for any illegal or harmful purposes</li>
+                  <li>Attempt unauthorized access to our systems</li>
                 </ul>
               </section>
 
               <section className="mb-8">
                 <h2 className="text-2xl font-semibold text-slate-900 mb-4">5. Subscription and Billing</h2>
                 <p className="text-slate-700 mb-4">
-                  Our Service offers various subscription plans:
-                </p>
-                <ul className="list-disc pl-6 text-slate-700 mb-4">
-                  <li>Free Tier: Limited features with no cost</li>
-                  <li>Paid Plans: Monthly or annual billing cycles</li>
-                  <li>Enterprise: Custom pricing and features</li>
-                </ul>
-                <p className="text-slate-700 mb-4">
-                  You agree to pay all fees associated with your chosen plan. Fees are non-refundable except 
-                  as required by law. We may change our pricing with 30 days notice.
+                  The Service offers free and paid subscription plans. Paid plans renew automatically unless cancelled. Fees are non-refundable except as required by law. We may change pricing with 30 days' notice.
                 </p>
               </section>
 
               <section className="mb-8">
-                <h2 className="text-2xl font-semibold text-slate-900 mb-4">6. Data and Privacy</h2>
+                <h2 className="text-2xl font-semibold text-slate-900 mb-4">6. Data Protection & Privacy</h2>
                 <p className="text-slate-700 mb-4">
-                  Your privacy is important to us. Our collection and use of personal information is governed 
-                  by our Privacy Policy, which is incorporated into these Terms by reference.
+                  <strong>Roles</strong> – For account and platform usage data, LoonaFlow AI is the data controller. For contact data (e.g., emails, leads) uploaded or generated by users, the user is the data controller and LoonaFlow AI acts solely as a data processor, processing data only on user instructions.
                 </p>
                 <p className="text-slate-700 mb-4">
-                  You are responsible for:
+                  <strong>Compliance</strong> – Users are solely responsible for ensuring that their use of the Service, including contacting leads, complies with all applicable laws and regulations.
                 </p>
-                <ul className="list-disc pl-6 text-slate-700 mb-4">
-                  <li>Ensuring you have permission to contact leads</li>
-                  <li>Complying with anti-spam laws (CAN-SPAM, GDPR, etc.)</li>
-                  <li>Respecting recipients' opt-out requests</li>
-                  <li>Maintaining accurate and up-to-date contact lists</li>
-                </ul>
+                <p className="text-slate-700 mb-4">
+                  <strong>Unsubscribe & Suppression</strong> – All outreach emails must include a clear unsubscribe option. LoonaFlow AI provides suppression functionality; users must not send further communication to unsubscribed contacts.
+                </p>
+                <p className="text-slate-700 mb-4">
+                  <strong>Data Processing Addendum</strong> – A Data Processing Addendum (DPA) is available upon request.
+                </p>
               </section>
 
               <section className="mb-8">
                 <h2 className="text-2xl font-semibold text-slate-900 mb-4">7. Intellectual Property</h2>
                 <p className="text-slate-700 mb-4">
-                  The Service and its original content, features, and functionality are owned by LoonaFlow AI 
-                  and are protected by international copyright, trademark, patent, trade secret, and other 
-                  intellectual property laws.
-                </p>
-                <p className="text-slate-700 mb-4">
-                  You retain ownership of content you create using our Service, but grant us a license to 
-                  use it for providing and improving our Service.
+                  The Service and its content are owned by LoonaFlow AI. You retain ownership of content you create using the Service but grant us a license to use it for providing and improving the Service.
                 </p>
               </section>
 
               <section className="mb-8">
                 <h2 className="text-2xl font-semibold text-slate-900 mb-4">8. Service Availability</h2>
                 <p className="text-slate-700 mb-4">
-                  We strive to maintain high service availability but cannot guarantee uninterrupted access. 
-                  We may temporarily suspend the Service for maintenance, updates, or other operational reasons.
-                </p>
-                <p className="text-slate-700 mb-4">
-                  We are not responsible for any losses or damages resulting from service interruptions.
+                  We aim for high availability but cannot guarantee uninterrupted access. Temporary outages may occur for maintenance or updates.
                 </p>
               </section>
 
               <section className="mb-8">
                 <h2 className="text-2xl font-semibold text-slate-900 mb-4">9. Limitation of Liability</h2>
                 <p className="text-slate-700 mb-4">
-                  To the maximum extent permitted by law, LoonaFlow AI shall not be liable for any indirect, 
-                  incidental, special, consequential, or punitive damages, including but not limited to loss 
-                  of profits, data, use, goodwill, or other intangible losses.
-                </p>
-                <p className="text-slate-700 mb-4">
-                  Our total liability shall not exceed the amount paid by you for the Service in the 12 months 
-                  preceding the claim.
+                  To the maximum extent permitted by law, LoonaFlow AI shall not be liable for indirect, incidental, or consequential damages. Our total liability will not exceed the fees you paid in the 12 months before the claim.
                 </p>
               </section>
 
               <section className="mb-8">
                 <h2 className="text-2xl font-semibold text-slate-900 mb-4">10. Indemnification</h2>
                 <p className="text-slate-700 mb-4">
-                  You agree to defend, indemnify, and hold harmless LoonaFlow AI from and against any claims, 
-                  damages, obligations, losses, liabilities, costs, or debt arising from:
+                  You agree to indemnify and hold harmless LoonaFlow AI from any claims arising from your use of the Service, including violations of law or third-party rights.
                 </p>
-                <ul className="list-disc pl-6 text-slate-700 mb-4">
-                  <li>Your use of the Service</li>
-                  <li>Your violation of these Terms</li>
-                  <li>Your violation of any third-party rights</li>
-                  <li>Any content you submit or transmit through the Service</li>
-                </ul>
               </section>
 
               <section className="mb-8">
                 <h2 className="text-2xl font-semibold text-slate-900 mb-4">11. Termination</h2>
                 <p className="text-slate-700 mb-4">
-                  We may terminate or suspend your account immediately, without prior notice, for conduct that 
-                  we believe violates these Terms or is harmful to other users, us, or third parties.
-                </p>
-                <p className="text-slate-700 mb-4">
-                  Upon termination, your right to use the Service will cease immediately. We may delete your 
-                  account and data, though we may retain certain information as required by law.
+                  We may suspend or terminate your account for violations of these Terms. Upon termination, your access will cease, and we may delete associated data unless retention is required by law.
                 </p>
               </section>
 
               <section className="mb-8">
                 <h2 className="text-2xl font-semibold text-slate-900 mb-4">12. Governing Law</h2>
                 <p className="text-slate-700 mb-4">
-                  These Terms shall be governed by and construed in accordance with the laws of the United States, 
-                  without regard to its conflict of law provisions.
+                  These Terms shall be governed by and construed in accordance with the laws of the Czech Republic and applicable European Union regulations, without regard to conflict of law principles. Any disputes shall be subject to the exclusive jurisdiction of the courts of Prague, Czech Republic.
                 </p>
               </section>
 
               <section className="mb-8">
                 <h2 className="text-2xl font-semibold text-slate-900 mb-4">13. Changes to Terms</h2>
                 <p className="text-slate-700 mb-4">
-                  We reserve the right to modify these Terms at any time. We will notify users of any material 
-                  changes via email or through the Service. Your continued use of the Service after changes 
-                  constitutes acceptance of the new Terms.
+                  We may update these Terms at any time. Material changes will be notified via email or within the Service. Continued use after changes constitutes acceptance.
                 </p>
               </section>
 
               <section className="mb-8">
                 <h2 className="text-2xl font-semibold text-slate-900 mb-4">14. Contact Information</h2>
-                <p className="text-slate-700 mb-4">
-                  If you have any questions about these Terms of Service, please contact us at:
-                </p>
                 <div className="bg-slate-50 rounded-lg p-4">
                   <p className="text-slate-700">
                     <strong>Email:</strong> hello@loonaflow.app<br />
@@ -204,15 +156,6 @@ export default function TermsPage() {
                     <strong>Subject:</strong> Terms of Service Inquiry
                   </p>
                 </div>
-              </section>
-
-              <section className="mb-8">
-                <h2 className="text-2xl font-semibold text-slate-900 mb-4">15. Severability</h2>
-                <p className="text-slate-700">
-                  If any provision of these Terms is found to be unenforceable or invalid, that provision 
-                  will be limited or eliminated to the minimum extent necessary so that the Terms will 
-                  otherwise remain in full force and effect.
-                </p>
               </section>
             </div>
           </div>
