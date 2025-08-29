@@ -18,6 +18,7 @@ export default function SignupPage() {
   });
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
+  const [isSuccess, setIsSuccess] = useState(false);
   const router = useRouter();
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -50,8 +51,8 @@ export default function SignupPage() {
       if (result.error) {
         setError(result.error);
       } else {
-        // Registration successful, redirect to dashboard
-        router.push('/dashboard');
+        // Registration successful, show success message
+        setIsSuccess(true);
       }
     } catch (error) {
       setError('Registration failed. Please try again.');
@@ -67,6 +68,75 @@ export default function SignupPage() {
       [e.target.name]: e.target.value
     });
   };
+
+  // Show success message if registration was successful
+  if (isSuccess) {
+    return (
+      <>
+        <SEOHead
+          title="Registration Successful - LoonaFlow AI"
+          description="Your account has been successfully created. Please login to access your dashboard."
+          keywords={[
+            "loonaflow registration success",
+            "account created",
+            "login required"
+          ]}
+          canonical="https://loonaflow.app/signup"
+          noIndex={true}
+        />
+        <div className="min-h-screen bg-gradient-to-br from-indigo-50 via-purple-50 to-pink-50 flex items-center justify-center p-6 overflow-hidden">
+          {/* Background elements */}
+          <div className="pointer-events-none absolute inset-0 overflow-hidden">
+            <div className="absolute top-0 left-0 h-72 w-72 rounded-full bg-gradient-to-br from-indigo-300/50 to-purple-300/40 blur-3xl" />
+            <div className="absolute bottom-0 right-0 h-96 w-96 rounded-full bg-gradient-to-br from-pink-300/50 to-rose-200/40 blur-3xl" />
+            <div className="absolute top-1/3 left-1/2 h-64 w-64 -translate-x-1/2 rounded-full bg-gradient-to-br from-sky-300/40 to-violet-300/30 blur-3xl" />
+          </div>
+          <div className="pointer-events-none absolute z-0">
+            <PulsingBorderShader />
+          </div>
+          <div className="relative z-10 w-full max-w-md">
+            {/* Header */}
+            <div className="text-center mb-8">
+              <Link href="/" className="inline-block mb-6">
+                <Logo size="lg" />
+              </Link>
+            </div>
+
+            {/* Success Message */}
+            <div className="bg-white/40 backdrop-blur-md rounded-2xl p-8 ring-1 ring-white/30 shadow-lg shadow-purple-100/50 text-center">
+              <div className="mb-6">
+                <div className="mx-auto flex items-center justify-center h-16 w-16 rounded-full bg-green-100 mb-4">
+                  <svg className="h-8 w-8 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                  </svg>
+                </div>
+                <h1 className="text-2xl font-bold text-slate-900 mb-2">Registration Successful!</h1>
+                <p className="text-slate-600 mb-6">
+                  Your account has been successfully created. Please login to access your dashboard.
+                </p>
+              </div>
+
+              <div className="space-y-4">
+                <Link
+                  href="/login"
+                  className="w-full inline-block rounded-xl bg-gradient-to-r from-violet-600 to-purple-600 px-6 py-4 font-semibold text-white shadow-lg shadow-violet-600/25 hover:shadow-violet-600/40 transition-all duration-300 hover:scale-[1.02]"
+                >
+                  Login to Your Account
+                </Link>
+                
+                <Link
+                  href="/"
+                  className="w-full inline-block rounded-xl border border-slate-200 px-6 py-4 font-semibold text-slate-700 hover:bg-slate-50 transition-all duration-300"
+                >
+                  Back to Homepage
+                </Link>
+              </div>
+            </div>
+          </div>
+        </div>
+      </>
+    );
+  }
 
   return (
     <>
