@@ -441,25 +441,26 @@ export default function Campaigns({ campaigns: propCampaigns, onTabChange }: Cam
 
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-6 sm:space-y-8 px-4 sm:px-0">
       {/* Header */}
-       <div className="flex justify-between items-center">
-         <div className="flex items-center gap-4">
-           <button
-             onClick={() => setShowEmailRecommendations(true)}
-             className="rounded-xl bg-gradient-to-r from-violet-600 to-purple-600 px-6 py-3 font-semibold text-white shadow-lg shadow-violet-600/25 hover:shadow-violet-600/40 transition-colors relative z-10 flex items-center gap-2"
-           >
-             <span className="text-lg">📩</span>
-             Email Recommendations
-           </button>
-         </div>
-         <button 
-           onClick={() => setShowCreateForm(true)}
-           className="rounded-xl bg-gradient-to-r from-violet-600 to-purple-600 px-6 py-3 font-semibold text-white shadow-lg shadow-violet-600/25 hover:shadow-violet-600/40 transition-colors relative z-10"
-         >
-           + Create Campaign
-         </button>
-       </div>
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+        <div className="flex items-center gap-4">
+          <button
+            onClick={() => setShowEmailRecommendations(true)}
+            className="rounded-xl bg-gradient-to-r from-violet-600 to-purple-600 px-4 sm:px-6 py-3 font-semibold text-white shadow-lg shadow-violet-600/25 hover:shadow-violet-600/40 transition-colors relative z-10 flex items-center gap-2 text-sm sm:text-base"
+          >
+            <span className="text-base sm:text-lg">📩</span>
+            <span className="hidden sm:inline">Email Recommendations</span>
+            <span className="sm:hidden">Email Tips</span>
+          </button>
+        </div>
+        <button 
+          onClick={() => setShowCreateForm(true)}
+          className="rounded-xl bg-gradient-to-r from-violet-600 to-purple-600 px-4 sm:px-6 py-3 font-semibold text-white shadow-lg shadow-violet-600/25 hover:shadow-violet-600/40 transition-colors relative z-10 text-sm sm:text-base w-full sm:w-auto"
+        >
+          + Create Campaign
+        </button>
+      </div>
 
                     {/* Create Campaign Modal */}
        <Modal
@@ -646,8 +647,8 @@ export default function Campaigns({ campaigns: propCampaigns, onTabChange }: Cam
        </Modal>
 
       {/* Existing Campaigns */}
-      <div className="bg-white/40 backdrop-blur-md rounded-2xl p-8 ring-1 ring-white/30 shadow-lg shadow-purple-100/50">
-        <h3 className="text-xl font-bold text-slate-900 mb-6">Your Campaigns</h3>
+      <div className="bg-white/40 backdrop-blur-md rounded-xl sm:rounded-2xl p-4 sm:p-8 ring-1 ring-white/30 shadow-lg shadow-purple-100/50">
+        <h3 className="text-lg sm:text-xl font-bold text-slate-900 mb-6">Your Campaigns</h3>
         
         {isLoading ? (
           <div className="text-center py-12">
@@ -667,23 +668,144 @@ export default function Campaigns({ campaigns: propCampaigns, onTabChange }: Cam
           </div>
         ) : (
           <div className="space-y-4">
-            {/* Table Header */}
-            <div className="bg-white/40 backdrop-blur-md rounded-xl p-4 border border-[rgba(100,100,111,0.2)] shadow-sm">
-                              <div className="grid grid-cols-12 gap-4 items-center text-sm font-semibold text-slate-700">
-                  <div className="col-span-3">Campaign</div>
-                  <div className="col-span-1 text-center">Results Scraped</div>
-                  <div className="col-span-1 text-center">Emails/Run</div>
-                  <div className="col-span-2 text-center">Emails Sent/Failed/Skipped</div>
-                  <div className="col-span-2 text-center">Emails Seen/Replied</div>
-                  <div className="col-span-2 text-center">Status</div>
-                  <div className="col-span-1 text-center">Job Actions</div>
-                </div>
+            {/* Table Header - Hidden on mobile */}
+            <div className="hidden sm:block bg-white/40 backdrop-blur-md rounded-xl p-4 border border-[rgba(100,100,111,0.2)] shadow-sm">
+              <div className="grid grid-cols-12 gap-4 items-center text-sm font-semibold text-slate-700">
+                <div className="col-span-3">Campaign</div>
+                <div className="col-span-1 text-center">Results Scraped</div>
+                <div className="col-span-1 text-center">Emails/Run</div>
+                <div className="col-span-2 text-center">Emails Sent/Failed/Skipped</div>
+                <div className="col-span-2 text-center">Emails Seen/Replied</div>
+                <div className="col-span-2 text-center">Status</div>
+                <div className="col-span-1 text-center">Job Actions</div>
+              </div>
             </div>
 
             {/* Campaign Rows */}
             {Array.isArray(campaigns) && campaigns.map((campaign: any) => (
               <div key={campaign._id || campaign.id} className="bg-white/30 backdrop-blur-md rounded-xl border border-[rgba(100,100,111,0.2)] shadow-sm hover:shadow-md transition-all duration-200">
-                <div className="grid grid-cols-12 gap-4 items-center p-4">
+                {/* Mobile Layout */}
+                <div className="sm:hidden p-4 space-y-4">
+                  {/* Campaign Header */}
+                  <div className="flex items-center gap-3">
+                    <div className="w-10 h-10 bg-violet-100 rounded-lg flex items-center justify-center flex-shrink-0">
+                      <span className="text-lg">📧</span>
+                    </div>
+                    <div className="min-w-0 flex-1">
+                      <h3 className="font-semibold text-slate-900 text-base">
+                        {campaign.businessType} in 
+                        <span className="inline-flex items-center gap-2 ml-2">
+                          <Flag countryCode={campaign.location} size="sm" />
+                          <span className="text-slate-700">
+                            {getCountryByCode(campaign.location)?.name || campaign.location}
+                          </span>
+                        </span>
+                      </h3>
+                      <p className="text-xs text-slate-500 mt-1">
+                        Created {new Date(campaign.createdAt).toLocaleDateString()}
+                      </p>
+                    </div>
+                  </div>
+
+                  {/* Mobile Stats Grid */}
+                  <div className="grid grid-cols-2 gap-4 text-sm">
+                    <div className="text-center p-3 bg-white/20 rounded-lg">
+                      <div className="text-xs text-slate-600 mb-1">Results</div>
+                      <div className="font-semibold text-slate-900">
+                        {campaign.status !== 'scraping in progress' && campaign.status !== 'idle'
+                          ? `${campaign.maximumResults || 0} / ${campaign.maximumResults || 0}`
+                          : `${campaign.currentResults || 0} / ${campaign.maximumResults || 0}`
+                        }
+                      </div>
+                    </div>
+                    <div className="text-center p-3 bg-white/20 rounded-lg">
+                      <div className="text-xs text-slate-600 mb-1">Emails/Day</div>
+                      <div className="font-semibold text-slate-900">{campaign.emailsPerDay || 50}</div>
+                    </div>
+                    <div className="text-center p-3 bg-white/20 rounded-lg">
+                      <div className="text-xs text-slate-600 mb-1">Sent/Failed</div>
+                      <div className="font-semibold text-slate-900">
+                        {campaign.emailsSent || 0} / {campaign.emailsFailed || 0}
+                      </div>
+                    </div>
+                    <div className="text-center p-3 bg-white/20 rounded-lg">
+                      <div className="text-xs text-slate-600 mb-1">Status</div>
+                      <span className={`inline-block px-2 py-1 rounded-full text-xs font-semibold ${getStatusColor(campaign.status)}`}>
+                        {getStatusIcon(campaign.status)} {campaign.status.charAt(0).toUpperCase() + campaign.status.slice(1)}
+                      </span>
+                    </div>
+                  </div>
+
+                  {/* Mobile Actions */}
+                  <div className="flex flex-wrap gap-2">
+                    {campaign.status === 'idle' && (
+                      <button 
+                        className={`px-3 py-2 rounded-lg text-sm font-medium transition-all duration-200 ${
+                          scrapingCampaigns.has(campaign._id || campaign.id || '')
+                            ? 'bg-blue-200 text-blue-600 cursor-not-allowed'
+                            : 'bg-blue-500 text-white hover:bg-blue-600 hover:scale-105 shadow-sm'
+                        }`}
+                        onClick={() => handleStartScraping(campaign._id || campaign.id)}
+                        disabled={scrapingCampaigns.has(campaign._id || campaign.id || '')}
+                        title="Start Scraping"
+                      >
+                        {scrapingCampaigns.has(campaign._id || campaign.id || '') ? (
+                          <span className="inline-block animate-spin mr-2">⏳</span>
+                        ) : (
+                          '🔍 Scrape'
+                        )}
+                      </button>
+                    )}
+                    
+                    {campaign.status === 'scraping is done' && (
+                      <button 
+                        className={`px-3 py-2 rounded-lg text-sm font-medium transition-all duration-200 ${
+                          sendingCampaigns.has(campaign._id || campaign.id || '')
+                            ? 'bg-green-200 text-green-600 cursor-not-allowed'
+                            : 'bg-green-500 text-white hover:bg-green-600 hover:scale-105 shadow-sm'
+                        }`}
+                        onClick={() => handleStartSending(campaign._id || campaign.id)}
+                        disabled={sendingCampaigns.has(campaign._id || campaign.id || '')}
+                        title="Start Sending"
+                      >
+                        {sendingCampaigns.has(campaign._id || campaign.id || '') ? (
+                          <span className="inline-block animate-spin mr-2">⏳</span>
+                        ) : (
+                          '📧 Send'
+                        )}
+                      </button>
+                    )}
+
+                    <button 
+                      title="Edit Campaign" 
+                      className="px-3 py-2 rounded-lg text-green-600 hover:bg-green-100 hover:scale-110 transition-all duration-200 border border-green-200"
+                      onClick={() => handleEditClick(campaign)}
+                    >
+                      ✏️ Edit
+                    </button>
+
+                    <button 
+                      title="Delete Campaign" 
+                      className="px-3 py-2 rounded-lg text-red-600 hover:bg-red-100 hover:scale-110 transition-all duration-200 border border-red-200"
+                      onClick={() => handleDeleteCampaign(campaign._id || campaign.id)}
+                    >
+                      🗑️ Delete
+                    </button>
+
+                    {campaign.scrapedFileUrl && (
+                      <button
+                        onClick={() => handleDownloadFile(campaign.scrapedFileUrl)}
+                        className="px-3 py-2 rounded-lg text-blue-600 hover:bg-blue-100 hover:scale-110 transition-all duration-200 border border-blue-200"
+                        title="Download Scraped Data File"
+                      >
+                        📥 Download
+                      </button>
+                    )}
+                  </div>
+                </div>
+
+                {/* Desktop Layout */}
+                <div className="hidden sm:grid grid-cols-12 gap-4 items-center p-4">
                   {/* Campaign Column */}
                   <div className="col-span-3">
                     <div className="flex items-center gap-3">

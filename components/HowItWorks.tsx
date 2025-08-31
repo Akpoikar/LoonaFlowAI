@@ -51,7 +51,7 @@ export default function HowItWorks() {
                   <span className="text-2xl">🎯</span>
                   <input 
                     type="text" 
-                    placeholder="e.g. Dentists in Czech Republic" 
+                    placeholder="e.g. Dentists in US" 
                     className="bg-transparent outline-none text-lg font-medium flex-1 placeholder-slate-500"
                   />
                 </div>

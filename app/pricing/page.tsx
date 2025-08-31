@@ -32,11 +32,11 @@ export default function PricingPage() {
 
       {/* Header */}
       <div className="relative z-10">
-        <nav className="flex items-center justify-between p-6 max-w-7xl mx-auto">
-                          <Link href="/" className="hover:text-violet-600 transition-colors">
-                  <Logo />
-                </Link>
-          <div className="flex items-center gap-6">
+        <nav className="flex flex-col sm:flex-row items-center justify-between gap-4 sm:gap-0 p-4 sm:p-6 max-w-7xl mx-auto">
+          <Link href="/" className="hover:text-violet-600 transition-colors">
+            <Logo />
+          </Link>
+          <div className="flex items-center gap-4 sm:gap-6 text-sm">
             <Link href="/pricing" className="text-slate-700 hover:text-slate-900 transition-colors">
               Pricing
             </Link>
@@ -46,7 +46,7 @@ export default function PricingPage() {
             <Link href="/login" className="text-slate-700 hover:text-slate-900 transition-colors">
               Sign in
             </Link>
-            <Link href="/login" className="rounded-xl bg-violet-600 px-4 py-2 font-medium text-white shadow-lg shadow-violet-600/20 hover:bg-violet-700 transition-colors">
+            <Link href="/login" className="rounded-xl bg-violet-600 px-3 sm:px-4 py-2 font-medium text-white shadow-lg shadow-violet-600/20 hover:bg-violet-700 transition-colors">
               Get Started
             </Link>
           </div>
