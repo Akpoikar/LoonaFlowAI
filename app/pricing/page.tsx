@@ -66,49 +66,45 @@ export default function PricingPage() {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6 max-w-7xl mx-auto">
             {/* Free Tier */}
             <div className="bg-white/40 backdrop-blur-md rounded-2xl p-6 ring-1 ring-white/30 shadow-lg shadow-purple-100/50 relative">
-              <div className="absolute -top-3 left-1/2 transform -translate-x-1/2">
-                <span className="bg-slate-600 text-white px-3 py-1 rounded-full text-xs font-semibold">
-                  Current Plan
-                </span>
-              </div>
               <div className="text-center">
                 <h3 className="text-xl font-bold text-slate-900 mb-2">Free Tier</h3>
                 <p className="text-sm text-slate-600 mb-2">Free Forever</p>
                 <p className="text-xs text-slate-500 mb-4">Perfect for testing the workflow without commitment.</p>
                 <div className="text-3xl font-bold text-slate-900 mb-2">$0</div>
                 <div className="text-slate-600 mb-6 text-sm">Forever free</div>
-                                 <ul className="text-left space-y-2 mb-6 text-sm">
-                   <li className="flex items-center gap-2">
-                     <span className="text-green-500">✓</span>
-                     <span className="text-slate-700">100 leads per month</span>
-                   </li>
-                   <li className="flex items-center gap-2">
-                     <span className="text-green-500">✓</span>
-                     <span className="text-slate-700">1 email account</span>
-                   </li>
-                   <li className="flex items-center gap-2">
-                     <span className="text-green-500">✓</span>
-                     <span className="text-slate-700">1 campaign</span>
-                   </li>
-                   <li className="flex items-center gap-2">
-                     <span className="text-green-500">✓</span>
-                     <span className="text-slate-700">1 email template</span>
-                   </li>
-                   <li className="flex items-center gap-2">
-                     <span className="text-green-500">✓</span>
-                     <span className="text-slate-700">Basic analytics</span>
-                   </li>
-                   <li className="flex items-center gap-2">
-                     <span className="text-green-500">✓</span>
-                     <span className="text-slate-700">Email warmup</span>
-                   </li>
-                   <li className="flex items-center gap-2">
-                     <span className="text-orange-500">🔜</span>
-                     <span className="text-slate-500">AI email generation (Coming Soon)</span>
-                   </li>
-                 </ul>
+                <ul className="text-left space-y-2 mb-6 text-sm">
+                  <li className="flex items-center gap-2">
+                    <span className="text-green-500">✓</span>
+                    <span className="text-slate-700">200 leads per month</span>
+                  </li>
+                  <li className="flex items-center gap-2">
+                    <span className="text-green-500">✓</span>
+                    <span className="text-slate-700">1 email account</span>
+                  </li>
+                  <li className="flex items-center gap-2">
+                    <span className="text-green-500">✓</span>
+                    <span className="text-slate-700">30 emails/day per inbox</span>
+                  </li>
+                  <li className="flex items-center gap-2">
+                    <span className="text-green-500">✓</span>
+                    <span className="text-slate-700">1 campaign</span>
+                  </li>
+                  <li className="flex items-center gap-2">
+                    <span className="text-green-500">✓</span>
+                    <span className="text-slate-700">1 email template</span>
+                  </li>
+                  <li className="flex items-center gap-2">
+                    <span className="text-green-500">✓</span>
+                    <span className="text-slate-700">Basic analytics</span>
+                  </li>
+                  
+                  <li className="flex items-center gap-2">
+                    <span className="text-green-500">✓</span>
+                    <span className="text-slate-700">Email warmup</span>
+                  </li>
+                </ul>
                 <button disabled className="block w-full rounded-xl bg-slate-200 px-4 py-2 font-semibold text-slate-500 cursor-not-allowed text-center text-sm">
-                  Current Plan
+                  Downgrade to Free
                 </button>
               </div>
             </div>
@@ -118,39 +114,40 @@ export default function PricingPage() {
               <div className="text-center">
                 <h3 className="text-xl font-bold text-slate-900 mb-2">Starter</h3>
                 <p className="text-sm text-slate-600 mb-2">For solopreneurs</p>
-                <p className="text-xs text-slate-500 mb-4">Perfect for users sending ~500 emails/month.</p>
-                <div className="text-3xl font-bold text-slate-900 mb-2">$19</div>
+                <p className="text-xs text-slate-500 mb-4">Perfect for users sending ~1000 emails/month.</p>
+                <div className="text-3xl font-bold text-slate-900 mb-2">$14</div>
                 <div className="text-slate-600 mb-6 text-sm">per month</div>
-                                 <ul className="text-left space-y-2 mb-6 text-sm">
-                   <li className="flex items-center gap-2">
-                     <span className="text-green-500">✓</span>
-                     <span className="text-slate-700">500 leads per month</span>
-                   </li>
-                   <li className="flex items-center gap-2">
-                     <span className="text-green-500">✓</span>
-                     <span className="text-slate-700">1 email account</span>
-                   </li>
-                   <li className="flex items-center gap-2">
-                     <span className="text-green-500">✓</span>
-                     <span className="text-slate-700">3 campaigns</span>
-                   </li>
-                   <li className="flex items-center gap-2">
-                     <span className="text-green-500">✓</span>
-                     <span className="text-slate-700">3 email templates</span>
-                   </li>
-                   <li className="flex items-center gap-2">
-                     <span className="text-green-500">✓</span>
-                     <span className="text-slate-700">Basic analytics</span>
-                   </li>
-                   <li className="flex items-center gap-2">
-                     <span className="text-green-500">✓</span>
-                     <span className="text-slate-700">Email warmup</span>
-                   </li>
-                   <li className="flex items-center gap-2">
-                     <span className="text-orange-500">🔜</span>
-                     <span className="text-slate-500">AI email generation (Coming Soon)</span>
-                   </li>
-                 </ul>
+                <ul className="text-left space-y-2 mb-6 text-sm">
+                  <li className="flex items-center gap-2">
+                    <span className="text-green-500">✓</span>
+                    <span className="text-slate-700">1,000 leads per month</span>
+                  </li>
+                  <li className="flex items-center gap-2">
+                    <span className="text-green-500">✓</span>
+                    <span className="text-slate-700">1 email account</span>
+                  </li>
+                  <li className="flex items-center gap-2">
+                    <span className="text-green-500">✓</span>
+                    <span className="text-slate-700">50 emails/day per inbox</span>
+                  </li>
+                  <li className="flex items-center gap-2">
+                    <span className="text-green-500">✓</span>
+                    <span className="text-slate-700">3 campaigns</span>
+                  </li>
+                  <li className="flex items-center gap-2">
+                    <span className="text-green-500">✓</span>
+                    <span className="text-slate-700">3 email templates</span>
+                  </li>
+                  <li className="flex items-center gap-2">
+                    <span className="text-green-500">✓</span>
+                    <span className="text-slate-700">Basic analytics</span>
+                  </li>
+                  
+                  <li className="flex items-center gap-2">
+                    <span className="text-green-500">✓</span>
+                    <span className="text-slate-700">Email warmup</span>
+                  </li>
+                </ul>
                 <Link href="/login" className="block w-full rounded-xl bg-violet-600 px-4 py-2 font-semibold text-white hover:bg-violet-700 transition-colors text-center text-sm">
                   Upgrade Now
                 </Link>
@@ -160,46 +157,47 @@ export default function PricingPage() {
             {/* Growth Plan */}
             <div className="bg-white/40 backdrop-blur-md rounded-2xl p-6 ring-1 ring-violet-300 shadow-lg shadow-purple-100/50 relative">
               <div className="absolute -top-3 left-1/2 transform -translate-x-1/2">
-                <span className="bg-violet-600 text-white px-3 py-1 rounded-full text-xs font-semibold flex items-center gap-1">
-                  ⭐ Recommended
+                <span className="bg-violet-600 text-white px-3 py-1 rounded-full text-xs font-semibold">
+                ⭐Recommended
                 </span>
               </div>
               <div className="text-center">
                 <h3 className="text-xl font-bold text-slate-900 mb-2">Growth</h3>
                 <p className="text-sm text-slate-600 mb-2">For freelancers & small teams</p>
                 <p className="text-xs text-slate-500 mb-4">Advanced features for growing businesses.</p>
-                <div className="text-3xl font-bold text-slate-900 mb-2">$49</div>
+                <div className="text-3xl font-bold text-slate-900 mb-2">$35</div>
                 <div className="text-slate-600 mb-6 text-sm">per month</div>
-                                 <ul className="text-left space-y-2 mb-6 text-sm">
-                   <li className="flex items-center gap-2">
-                     <span className="text-green-500">✓</span>
-                     <span className="text-slate-700">2,000 leads per month</span>
-                   </li>
-                   <li className="flex items-center gap-2">
-                     <span className="text-green-500">✓</span>
-                     <span className="text-slate-700">1 email account</span>
-                   </li>
-                   <li className="flex items-center gap-2">
-                     <span className="text-green-500">✓</span>
-                     <span className="text-slate-700">10 campaigns</span>
-                   </li>
-                   <li className="flex items-center gap-2">
-                     <span className="text-green-500">✓</span>
-                     <span className="text-slate-700">10 email templates</span>
-                   </li>
-                   <li className="flex items-center gap-2">
-                     <span className="text-green-500">✓</span>
-                     <span className="text-slate-700">Basic analytics</span>
-                   </li>
-                   <li className="flex items-center gap-2">
-                     <span className="text-green-500">✓</span>
-                     <span className="text-slate-700">Email warmup</span>
-                   </li>
-                   <li className="flex items-center gap-2">
-                     <span className="text-orange-500">🔜</span>
-                     <span className="text-slate-500">AI email generation (Coming Soon)</span>
-                   </li>
-                 </ul>
+                <ul className="text-left space-y-2 mb-6 text-sm">
+                  <li className="flex items-center gap-2">
+                    <span className="text-green-500">✓</span>
+                    <span className="text-slate-700">3,000 leads per month</span>
+                  </li>
+                  <li className="flex items-center gap-2">
+                    <span className="text-green-500">✓</span>
+                    <span className="text-slate-700">1 email account</span>
+                  </li>
+                  <li className="flex items-center gap-2">
+                    <span className="text-green-500">✓</span>
+                    <span className="text-slate-700">150 emails/day per inbox</span>
+                  </li>
+                  <li className="flex items-center gap-2">
+                    <span className="text-green-500">✓</span>
+                    <span className="text-slate-700">10 campaigns</span>
+                  </li>
+                  <li className="flex items-center gap-2">
+                    <span className="text-green-500">✓</span>
+                    <span className="text-slate-700">10 email templates</span>
+                  </li>
+                  <li className="flex items-center gap-2">
+                    <span className="text-green-500">✓</span>
+                    <span className="text-slate-700">Basic analytics</span>
+                  </li>
+                  
+                  <li className="flex items-center gap-2">
+                    <span className="text-green-500">✓</span>
+                    <span className="text-slate-700">Email warmup</span>
+                  </li>
+                </ul>
                 <Link href="/login" className="block w-full rounded-xl bg-violet-600 px-4 py-2 font-semibold text-white hover:bg-violet-700 transition-colors text-center text-sm">
                   Upgrade Now
                 </Link>
@@ -212,104 +210,98 @@ export default function PricingPage() {
                 <h3 className="text-xl font-bold text-slate-900 mb-2">Scale</h3>
                 <p className="text-sm text-slate-600 mb-2">For agencies</p>
                 <p className="text-xs text-slate-500 mb-4">Enterprise-grade features for large teams.</p>
-                <div className="text-3xl font-bold text-slate-900 mb-2">$99</div>
+                <div className="text-3xl font-bold text-slate-900 mb-2">$79</div>
                 <div className="text-slate-600 mb-6 text-sm">per month</div>
-                                 <ul className="text-left space-y-2 mb-6 text-sm">
-                   <li className="flex items-center gap-2">
-                     <span className="text-green-500">✓</span>
-                     <span className="text-slate-700">5,000 leads per month</span>
-                   </li>
-                   <li className="flex items-center gap-2">
-                     <span className="text-green-500">✓</span>
-                     <span className="text-slate-700">1 email account</span>
-                   </li>
-                   <li className="flex items-center gap-2">
-                     <span className="text-green-500">✓</span>
-                     <span className="text-slate-700">Unlimited campaigns</span>
-                   </li>
-                   <li className="flex items-center gap-2">
-                     <span className="text-green-500">✓</span>
-                     <span className="text-slate-700">Unlimited email templates</span>
-                   </li>
-                   <li className="flex items-center gap-2">
-                     <span className="text-green-500">✓</span>
-                     <span className="text-slate-700">Basic analytics</span>
-                   </li>
-                   <li className="flex items-center gap-2">
-                     <span className="text-green-500">✓</span>
-                     <span className="text-slate-700">Email warmup</span>
-                   </li>
-                   <li className="flex items-center gap-2">
-                     <span className="text-orange-500">🔜</span>
-                     <span className="text-slate-500">AI email generation (Coming Soon)</span>
-                   </li>
-                 </ul>
+                <ul className="text-left space-y-2 mb-6 text-sm">
+                  <li className="flex items-center gap-2">
+                    <span className="text-green-500">✓</span>
+                    <span className="text-slate-700">7,000 leads per month</span>
+                  </li>
+                  <li className="flex items-center gap-2">
+                    <span className="text-green-500">✓</span>
+                    <span className="text-slate-700">1 email account</span>
+                  </li>
+                  <li className="flex items-center gap-2">
+                    <span className="text-green-500">✓</span>
+                    <span className="text-slate-700">500 emails/day per inbox</span>
+                  </li>
+                  <li className="flex items-center gap-2">
+                    <span className="text-green-500">✓</span>
+                    <span className="text-slate-700">Unlimited campaigns</span>
+                  </li>
+                  <li className="flex items-center gap-2">
+                    <span className="text-green-500">✓</span>
+                    <span className="text-slate-700">Unlimited email templates</span>
+                  </li>
+                  <li className="flex items-center gap-2">
+                    <span className="text-green-500">✓</span>
+                    <span className="text-slate-700">Basic analytics</span>
+                  </li>
+                  
+                  <li className="flex items-center gap-2">
+                    <span className="text-green-500">✓</span>
+                    <span className="text-slate-700">Email warmup</span>
+                  </li>
+                </ul>
                 <Link href="/login" className="block w-full rounded-xl bg-violet-600 px-4 py-2 font-semibold text-white hover:bg-violet-700 transition-colors text-center text-sm">
                   Upgrade Now
                 </Link>
               </div>
-                         </div>
+            </div>
 
-             {/* Enterprise Plan */}
-             <div className="bg-white/40 backdrop-blur-md rounded-2xl p-6 ring-1 ring-white/30 shadow-lg shadow-purple-100/50">
-               <div className="text-center">
-                 <h3 className="text-xl font-bold text-slate-900 mb-2">Enterprise</h3>
-                 <p className="text-sm text-slate-600 mb-2">Custom Pricing</p>
-                 <p className="text-xs text-slate-500 mb-4">For enterprises & high-volume senders.</p>
-                 <div className="text-3xl font-bold text-slate-900 mb-2">Custom</div>
-                 <div className="text-slate-600 mb-6 text-sm">contact us</div>
-                 <ul className="text-left space-y-2 mb-6 text-sm">
-                   <li className="flex items-center gap-2">
-                     <span className="text-green-500">✓</span>
-                     <span className="text-slate-700">10,000–100,000+ leads/month</span>
-                   </li>
-                   <li className="flex items-center gap-2">
-                     <span className="text-green-500">✓</span>
-                     <span className="text-slate-700">10–50 email accounts</span>
-                   </li>
-                   <li className="flex items-center gap-2">
-                     <span className="text-green-500">✓</span>
-                     <span className="text-slate-700">Custom daily email limits</span>
-                   </li>
-                   <li className="flex items-center gap-2">
-                     <span className="text-green-500">✓</span>
-                     <span className="text-slate-700">Unlimited campaigns & templates</span>
-                   </li>
-                   <li className="flex items-center gap-2">
-                     <span className="text-green-500">✓</span>
-                     <span className="text-slate-700">Advanced analytics + reporting</span>
-                   </li>
-                   <li className="flex items-center gap-2">
-                     <span className="text-green-500">✓</span>
-                     <span className="text-slate-700">Dedicated account manager</span>
-                   </li>
-                   <li className="flex items-center gap-2">
-                     <span className="text-green-500">✓</span>
-                     <span className="text-slate-700">API access & integrations</span>
-                   </li>
-                   <li className="flex items-center gap-2">
-                     <span className="text-green-500">✓</span>
-                     <span className="text-slate-700">Custom SLA / uptime guarantee</span>
-                   </li>
-                   <li className="flex items-center gap-2">
-                     <span className="text-green-500">✓</span>
-                     <span className="text-slate-700">Security & compliance</span>
-                   </li>
-                   <li className="flex items-center gap-2">
-                     <span className="text-green-500">✓</span>
-                     <span className="text-slate-700">White-label option</span>
-                   </li>
-                   <li className="flex items-center gap-2">
-                     <span className="text-orange-500">🔜</span>
-                     <span className="text-slate-500">AI email generation (Coming Soon)</span>
-                   </li>
-                 </ul>
-                 <Link href="/contact" className="block w-full rounded-xl bg-slate-100 px-4 py-2 font-semibold text-slate-700 hover:bg-slate-200 transition-colors text-center text-sm">
-                   Contact Sales
-                 </Link>
-               </div>
-             </div>
-           </div>
+            {/* Enterprise Plan */}
+            <div className="bg-white/40 backdrop-blur-md rounded-2xl p-6 ring-1 ring-white/30 shadow-lg shadow-purple-100/50">
+              <div className="text-center">
+                <h3 className="text-xl font-bold text-slate-900 mb-2">Enterprise</h3>
+                <p className="text-sm text-slate-600 mb-2">Custom Pricing</p>
+                <p className="text-xs text-slate-500 mb-4">For enterprises & high-volume senders.</p>
+                <div className="text-3xl font-bold text-slate-900 mb-2">Custom</div>
+                <div className="text-slate-600 mb-6 text-sm">contact us</div>
+                <ul className="text-left space-y-2 mb-6 text-sm">
+                  <li className="flex items-center gap-2">
+                    <span className="text-green-500">✓</span>
+                    <span className="text-slate-700">10,000 leads per month</span>
+                  </li>
+                  <li className="flex items-center gap-2">
+                    <span className="text-green-500">✓</span>
+                    <span className="text-slate-700">10 email accounts</span>
+                  </li>
+                  <li className="flex items-center gap-2">
+                    <span className="text-green-500">✓</span>
+                    <span className="text-slate-700">50 emails/day per inbox</span>
+                  </li>
+                  <li className="flex items-center gap-2">
+                    <span className="text-green-500">✓</span>
+                    <span className="text-slate-700">Unlimited campaigns</span>
+                  </li>
+                  <li className="flex items-center gap-2">
+                    <span className="text-green-500">✓</span>
+                    <span className="text-slate-700">Unlimited email templates</span>
+                  </li>
+                  <li className="flex items-center gap-2">
+                    <span className="text-green-500">✓</span>
+                    <span className="text-slate-700">Advanced analytics</span>
+                  </li>
+                  
+                  <li className="flex items-center gap-2">
+                    <span className="text-green-500">✓</span>
+                    <span className="text-slate-700">Email warmup</span>
+                  </li>
+                  <li className="flex items-center gap-2">
+                    <span className="text-green-500">✓</span>
+                    <span className="text-slate-700">Priority support</span>
+                  </li>
+                  <li className="flex items-center gap-2">
+                    <span className="text-green-500">✓</span>
+                    <span className="text-slate-700">Agency dashboard</span>
+                  </li>
+                </ul>
+                <Link href="/contact" className="block w-full rounded-xl bg-slate-100 px-4 py-2 font-semibold text-slate-700 hover:bg-slate-200 transition-colors text-center text-sm">
+                  Contact Sales
+                </Link>
+              </div>
+            </div>
+          </div>
 
           
            <Footer />
