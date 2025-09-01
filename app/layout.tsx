@@ -6,8 +6,8 @@ import CookieConsent from "../components/CookieConsent";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "LoonaFlow AI - AI-Powered Lead Generation & Outreach Automation | Find Leads & Generate AI Emails",
-  description: "LoonaFlow AI helps businesses find leads & send personalized outreach automatically. Scrape businesses by niche or country, launch campaigns, and track replies — all in one simple platform. Start your free trial today.",
+  title: "LoonaFlow AI - AI-Powered Lead Generation & Outreach Automation",
+  description: "LoonaFlow AI helps businesses find leads & send personalized outreach. Scrape by niche or country, launch campaigns, and track replies — all in one platform.",
   keywords: [
     "AI lead generation",
     "outreach automation",
@@ -54,7 +54,7 @@ export const metadata: Metadata = {
   },
   openGraph: {
     title: "LoonaFlow AI - AI-Powered Lead Generation & Outreach Automation",
-    description: "LoonaFlow AI helps businesses find leads & send personalized outreach automatically. Scrape businesses by niche or country, launch campaigns, and track replies — all in one simple platform.",
+    description: "LoonaFlow AI helps businesses find leads & send personalized outreach. Scrape by niche or country, launch campaigns, and track replies — all in one platform.",
     url: 'https://loonaflow.app',
     siteName: 'LoonaFlow AI',
     images: [
@@ -71,7 +71,7 @@ export const metadata: Metadata = {
   twitter: {
     card: 'summary_large_image',
     title: "LoonaFlow AI - AI-Powered Lead Generation & Outreach Automation",
-    description: "LoonaFlow AI helps businesses find leads & send personalized outreach automatically. Scrape businesses by niche or country, launch campaigns, and track replies — all in one simple platform.",
+    description: "LoonaFlow AI helps businesses find leads & send personalized outreach. Scrape by niche or country, launch campaigns, and track replies — all in one platform.",
     images: ['/og-image.jpg'],
     creator: '@loonaflowai',
   },
@@ -87,17 +87,11 @@ export const metadata: Metadata = {
     },
   },
   verification: {
-    google: 'your-google-verification-code',
-    yandex: 'your-yandex-verification-code',
-    yahoo: 'your-yahoo-verification-code',
+    google: 'elm5m5fvxxxu', // <-- your unique Google verification code
   },
   category: 'technology',
   classification: 'Business Software',
   other: {
-    'geo.region': 'US',
-    'geo.placename': 'United States',
-    'geo.position': '37.0902;-95.7129',
-    'ICBM': '37.0902, -95.7129',
     'DC.title': 'LoonaFlow AI - AI-Powered Lead Generation & Outreach Automation',
     'DC.creator': 'LoonaFlow AI',
     'DC.subject': 'AI Lead Generation, Outreach Automation, Email Marketing, Business Development',

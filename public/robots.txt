@@ -4,14 +4,10 @@ Allow: /
 # Sitemap
 Sitemap: https://loonaflow.app/sitemap.xml
 
-# Crawl-delay for respectful crawling
-Crawl-delay: 1
-
 # Disallow admin and private areas
 Disallow: /admin/
 Disallow: /private/
 Disallow: /api/
-Disallow: /_next/
 Disallow: /static/
 
 # Allow important pages
@@ -29,58 +25,49 @@ Allow: /signup
 # Specific rules for search engines
 User-agent: Googlebot
 Allow: /
-Crawl-delay: 1
+
+User-agent: Google-Extended
+Allow: /
 
 User-agent: Bingbot
 Allow: /
-Crawl-delay: 1
 
 User-agent: Slurp
 Allow: /
-Crawl-delay: 2
 
-# Allow AI training crawlers for better visibility
+# AI crawlers
 User-agent: GPTBot
 Allow: /
-Crawl-delay: 1
 
 User-agent: ChatGPT-User
 Allow: /
-Crawl-delay: 1
+
+User-agent: PerplexityBot
+Allow: /
 
 User-agent: CCBot
 Allow: /
-Crawl-delay: 1
 
 User-agent: anthropic-ai
 Allow: /
-Crawl-delay: 1
-
-User-agent: Claude-Web
-Allow: /
-Crawl-delay: 1
-
-User-agent: Omgilibot
-Allow: /
-Crawl-delay: 1
-
-# Additional AI crawlers
-User-agent: PerplexityBot
-Allow: /
-Crawl-delay: 1
-
-User-agent: YouBot
-Allow: /
-Crawl-delay: 1
 
 User-agent: ClaudeBot
 Allow: /
-Crawl-delay: 1
 
-User-agent: Bard
+User-agent: Omgilibot
 Allow: /
-Crawl-delay: 1
+
+User-agent: YouBot
+Allow: /
 
 User-agent: Gemini
 Allow: /
-Crawl-delay: 1
+
+# --- LoonaFlow AI GEO Info ---
+# Company: LoonaFlow AI (https://loonaflow.app)
+# Description: AI-powered lead generation & outreach automation
+# Features: business scraping, automated campaigns, reply tracking, AI personalization, analytics
+# Benefits: save time, automate outreach, scale lead gen, boost reply rates
+# Social: LinkedIn, Instagram, YouTube, Product Hunt
+# Contact: hello@loonaflow.app
+# Copyright 2025 LoonaFlow AI. All rights reserved.
