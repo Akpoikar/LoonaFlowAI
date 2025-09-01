@@ -1,3 +1,6 @@
+"use client";
+
+import { useState } from 'react';
 import PulsingBorderShader from "../components/PulsingBorderShader";
 import Hero from "../components/Hero";
 import HowItWorks from "../components/HowItWorks";
@@ -10,8 +13,19 @@ import FinalCTA from "../components/FinalCTA";
 import Footer from "../components/Footer";
 import Logo from "../components/Logo";
 import SEOHead from "../components/SEOHead";
+import LandingTutorial from "../components/LandingTutorial";
 
 export default function Page() {
+  const [showTutorial, setShowTutorial] = useState(false);
+
+  const handleTutorialClick = (e: React.MouseEvent) => {
+    e.preventDefault();
+    setShowTutorial(true);
+  };
+
+  const closeTutorial = () => {
+    setShowTutorial(false);
+  };
   return (
     <>
       <SEOHead />
@@ -91,6 +105,12 @@ export default function Page() {
                      <a href="/login" className="text-slate-700 hover:text-slate-900 transition-colors">
                        Sign in
                      </a>
+                     <button
+                       onClick={handleTutorialClick}
+                       className="rounded-xl bg-white/20 backdrop-blur-sm px-3 sm:px-4 py-2 font-medium text-slate-700 border border-slate-300/50 hover:bg-white/30 hover:border-slate-400/50 text-sm transition-all duration-200"
+                     >
+                       Tutorial
+                     </button>
                      <a
                        href="/login"
                        className="rounded-xl bg-violet-600 px-3 sm:px-4 py-2 font-medium text-white shadow-lg shadow-violet-600/20 hover:bg-violet-700 text-sm transition-colors"
@@ -119,6 +139,12 @@ export default function Page() {
           <Footer />
         </div>
       </div>
+
+      {/* Tutorial Modal */}
+      <LandingTutorial 
+        isVisible={showTutorial}
+        onClose={closeTutorial}
+      />
     </div>
     </>
   );

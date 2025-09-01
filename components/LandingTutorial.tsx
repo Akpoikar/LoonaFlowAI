@@ -10,10 +10,9 @@ interface TutorialStep {
   imagePath?: string;
 }
 
-interface TutorialGuideProps {
+interface LandingTutorialProps {
   isVisible: boolean;
   onClose: () => void;
-  onComplete: () => void;
 }
 
 const tutorialSteps: TutorialStep[] = [
@@ -68,14 +67,13 @@ const tutorialSteps: TutorialStep[] = [
   },
   {
     id: 8,
-    title: "You’re ready to go 🚀",
+    title: "You're ready to go 🚀",
     description: "Congrats! Setup is complete. Start generating leads and growing your business with LoonaFlow AI.",
     hasImage: false
   }
 ];
 
-
-export default function TutorialGuide({ isVisible, onClose, onComplete }: TutorialGuideProps) {
+export default function LandingTutorial({ isVisible, onClose }: LandingTutorialProps) {
   const [currentStep, setCurrentStep] = useState(0);
   const [isAnimating, setIsAnimating] = useState(false);
 
@@ -103,7 +101,7 @@ export default function TutorialGuide({ isVisible, onClose, onComplete }: Tutori
         setIsAnimating(false);
       }, 200);
     } else {
-      completeTutorial();
+      onClose();
     }
   };
 
@@ -117,15 +115,7 @@ export default function TutorialGuide({ isVisible, onClose, onComplete }: Tutori
     }
   };
 
-  const completeTutorial = () => {
-    localStorage.setItem('tutorialCompleted', 'true');
-    onComplete();
-    onClose();
-  };
-
   const skipTutorial = () => {
-    localStorage.setItem('tutorialCompleted', 'true');
-    onComplete();
     onClose();
   };
 
@@ -183,7 +173,6 @@ export default function TutorialGuide({ isVisible, onClose, onComplete }: Tutori
             {currentStepData.hasImage && (
               <div className="mb-8">
                 <div className="bg-gradient-to-br from-slate-50 to-slate-100 rounded-2xl p-6 border-2 border-slate-200">
-
                   <div className="relative">
                     <img
                       src={currentStepData.imagePath}
@@ -221,6 +210,17 @@ export default function TutorialGuide({ isVisible, onClose, onComplete }: Tutori
         {/* Navigation Footer */}
         <div className="bg-slate-50 px-6 lg:px-8 py-6 border-t border-slate-200">
           <div className="flex items-center justify-between">
+            <button
+              onClick={previousStep}
+              disabled={isFirstStep || isAnimating}
+              className={`px-6 py-3 rounded-xl font-medium transition-all duration-200 ${
+                isFirstStep || isAnimating
+                  ? 'bg-slate-200 text-slate-400 cursor-not-allowed'
+                  : 'bg-white text-slate-700 hover:bg-slate-100 border border-slate-300 hover:shadow-md'
+              }`}
+            >
+              Previous
+            </button>
             
             <div className="flex items-center gap-3">
               <button
@@ -242,35 +242,4 @@ export default function TutorialGuide({ isVisible, onClose, onComplete }: Tutori
       </div>
     </div>
   );
-}
-
-// Hook to manage tutorial state
-export function useTutorial() {
-  const [showTutorial, setShowTutorial] = useState(false);
-  const [tutorialCompleted, setTutorialCompleted] = useState(false);
-
-  useEffect(() => {
-    const completed = localStorage.getItem('tutorialCompleted') === 'true';
-    setTutorialCompleted(completed);
-  }, []);
-
-  const startTutorial = () => {
-    setShowTutorial(true);
-  };
-
-  const closeTutorial = () => {
-    setShowTutorial(false);
-  };
-
-  const completeTutorial = () => {
-    setTutorialCompleted(true);
-  };
-
-  return {
-    showTutorial,
-    tutorialCompleted,
-    startTutorial,
-    closeTutorial,
-    completeTutorial
-  };
 }

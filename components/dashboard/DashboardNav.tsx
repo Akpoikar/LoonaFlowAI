@@ -157,9 +157,6 @@ export default function DashboardNav({ user, activeTab, onLogout, onStartTutoria
               >
                 Tutorial
               </button>
-              <div className="w-10 h-10 lg:w-12 lg:h-12 bg-gradient-to-br from-slate-100 to-slate-200 rounded-xl lg:rounded-2xl flex items-center justify-center shadow-lg cursor-pointer">
-                <span className="text-lg lg:text-xl">🔔</span>
-              </div>
             </div>
           </div>
 
