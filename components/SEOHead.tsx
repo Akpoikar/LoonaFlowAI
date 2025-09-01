@@ -58,7 +58,7 @@ export default function SEOHead({
         },
         "sameAs": [
           "https://twitter.com/loonaflowai",
-          "https://linkedin.com/company/loonaflowai",
+          "https://www.linkedin.com/company/loonaflow-ai",
           "https://www.instagram.com/loonaflowai",
           "https://www.youtube.com/@loonaflowai"
         ]
