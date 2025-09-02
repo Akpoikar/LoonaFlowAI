@@ -86,6 +86,11 @@ export default function Campaigns({ campaigns: propCampaigns, onTabChange }: Cam
   const [requestedLeads, setRequestedLeads] = useState<number | null>(null);
   const [alreadyScraped, setAlreadyScraped] = useState<number | null>(null);
 
+  // Helper function to check if campaign editing should be restricted
+  const isCampaignEditingRestricted = (): boolean => {
+    return !!(editingCampaign && editingCampaign.status !== 'idle');
+  };
+
   // Function to extract remaining leads from error message
   const extractRemainingLeads = (errorMessage: string): number | null => {
     // Handle new error format: "You have 100 leads remaining this month"
@@ -183,6 +188,17 @@ export default function Campaigns({ campaigns: propCampaigns, onTabChange }: Cam
       case 'sending emails in progress': return '📧';
       case 'everything is done': return '🎉';
       default: return '⏸️';
+    }
+  };
+
+  const getStatusDescription = (status: string) => {
+    switch (status) {
+      case 'idle': return 'Campaign is ready to start';
+      case 'scraping in progress': return 'Finding businesses... This may take several minutes to complete';
+      case 'scraping is done': return 'Businesses found successfully';
+      case 'sending emails in progress': return 'Sending emails... This may take some time depending on volume';
+      case 'everything is done': return 'Campaign completed successfully';
+      default: return 'Unknown status';
     }
   };
 
@@ -442,36 +458,58 @@ export default function Campaigns({ campaigns: propCampaigns, onTabChange }: Cam
 
   return (
     <div className="space-y-6 sm:space-y-8 px-4 sm:px-0">
-      {/* Header */}
-      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-        <div className="flex items-center gap-4">
-          <button
-            onClick={() => setShowEmailRecommendations(true)}
-            className="rounded-xl bg-gradient-to-r from-violet-600 to-purple-600 px-4 sm:px-6 py-3 font-semibold text-white shadow-lg shadow-violet-600/25 hover:shadow-violet-600/40 transition-colors relative z-10 flex items-center gap-2 text-sm sm:text-base"
-          >
-            <span className="text-base sm:text-lg">📩</span>
-            <span className="hidden sm:inline">Email Recommendations</span>
-            <span className="sm:hidden">Email Tips</span>
-          </button>
-        </div>
-        <button 
-          onClick={() => setShowCreateForm(true)}
-          className="rounded-xl bg-gradient-to-r from-violet-600 to-purple-600 px-4 sm:px-6 py-3 font-semibold text-white shadow-lg shadow-violet-600/25 hover:shadow-violet-600/40 transition-colors relative z-10 text-sm sm:text-base w-full sm:w-auto"
-        >
-          + Create Campaign
-        </button>
-      </div>
+             {/* Header */}
+       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+         <div className="flex items-center gap-4">
+           <button
+             onClick={() => setShowEmailRecommendations(true)}
+             className="rounded-xl bg-gradient-to-r from-violet-600 to-purple-600 px-4 sm:px-6 py-3 font-semibold text-white shadow-lg shadow-violet-600/25 hover:shadow-violet-600/40 transition-colors relative z-10 flex items-center gap-2 text-sm sm:text-base"
+           >
+             <span className="text-base sm:text-lg">📩</span>
+             <span className="hidden sm:inline">Email Recommendations</span>
+             <span className="sm:hidden">Email Tips</span>
+           </button>
+           <button
+             onClick={() => {
+               window.location.reload();
+             }}
+             className="rounded-xl bg-slate-600 hover:bg-slate-700 px-4 sm:px-6 py-3 font-semibold text-white shadow-lg shadow-slate-600/25 hover:shadow-slate-700/40 transition-colors relative z-10 flex items-center gap-2 text-sm sm:text-base"
+           >
+             <span className="text-base sm:text-lg">🔄</span>
+             <span className="hidden sm:inline">Restart Page</span>
+             <span className="sm:hidden">Reset</span>
+           </button>
+         </div>
+         <button 
+           onClick={() => setShowCreateForm(true)}
+           className="rounded-xl bg-gradient-to-r from-violet-600 to-purple-600 px-4 sm:px-6 py-3 font-semibold text-white shadow-lg shadow-violet-600/25 hover:shadow-violet-600/40 transition-colors relative z-10 text-sm sm:text-base w-full sm:w-auto"
+         >
+           + Create Campaign
+         </button>
+       </div>
 
                     {/* Create Campaign Modal */}
        <Modal
          isOpen={showCreateForm}
          onClose={editingCampaign ? handleCancelEdit : () => setShowCreateForm(false)}
-         title={editingCampaign ? 'Edit Campaign' : 'Create New Campaign'}
+         title={editingCampaign ? `Edit Campaign${editingCampaign.status !== 'idle' ? ' (Limited Editing)' : ''}` : 'Create New Campaign'}
          size="xl"
        >
          {error && (
            <div className="bg-red-50 border border-red-200 rounded-xl p-4 text-red-700 text-sm mb-6">
              {error}
+           </div>
+         )}
+
+         {editingCampaign && editingCampaign.status !== 'idle' && (
+           <div className="bg-amber-50 border border-amber-200 rounded-xl p-4 text-amber-700 text-sm mb-6">
+             <div className="flex items-center gap-2">
+               <span className="text-amber-600">⚠️</span>
+               <span>
+                 <strong>Campaign is currently active.</strong> Business Type, Country, and Maximum Results cannot be edited while the campaign is running. 
+                 You can still modify Emails Per Run and Email Template.
+               </span>
+             </div>
            </div>
          )}
 
@@ -481,8 +519,11 @@ export default function Campaigns({ campaigns: propCampaigns, onTabChange }: Cam
              <div className="flex-1">
                  {/* Business Type */}
                  <div>
-                   <label className="block text-sm font-medium text-slate-700 mb-2">
+                   <label className={`block text-sm font-medium mb-2 ${isCampaignEditingRestricted() ? 'text-slate-400' : 'text-slate-700'}`}>
                      Business Type *
+                     {isCampaignEditingRestricted() && (
+                       <span className="ml-2 text-xs text-slate-400">(Cannot edit while campaign is active)</span>
+                     )}
                    </label>
                    <input
                      type="text"
@@ -490,7 +531,12 @@ export default function Campaigns({ campaigns: propCampaigns, onTabChange }: Cam
                      maxLength={100}
                      value={formData.businessType}
                      onChange={(e) => handleInputChange('businessType', e.target.value)}
-                     className="w-full px-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-violet-500 focus:border-transparent bg-white/50 backdrop-blur-sm"
+                     disabled={isCampaignEditingRestricted()}
+                     className={`w-full px-4 py-3 rounded-xl border focus:ring-2 focus:border-transparent ${
+                       isCampaignEditingRestricted() 
+                         ? 'border-slate-200 bg-slate-100 text-slate-400 cursor-not-allowed' 
+                         : 'border-slate-200 focus:ring-violet-500 focus:border-transparent bg-white/50 backdrop-blur-sm'
+                     }`}
                      placeholder="e.g., Restaurant, Dental, Landscaping"
                    />
                    <p className="text-xs text-slate-500 mt-1">Max: 100 characters</p>
@@ -498,15 +544,23 @@ export default function Campaigns({ campaigns: propCampaigns, onTabChange }: Cam
 
                  {/* Location */}
                  <div>
-                   <label className="block text-sm font-medium text-slate-700 mb-2">
+                   <label className={`block text-sm font-medium mb-2 ${isCampaignEditingRestricted() ? 'text-slate-400' : 'text-slate-700'}`}>
                      Country *
+                     {isCampaignEditingRestricted() && (
+                       <span className="ml-2 text-xs text-slate-400">(Cannot edit while campaign is active)</span>
+                     )}
                    </label>
                    <div className="relative">
                      <select
                        required
                        value={formData.location}
                        onChange={(e) => handleInputChange('location', e.target.value)}
-                       className="w-full px-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-violet-500 focus:border-transparent bg-white/50 backdrop-blur-sm appearance-none"
+                       disabled={isCampaignEditingRestricted()}
+                       className={`w-full px-4 py-3 rounded-xl border focus:ring-2 focus:border-transparent appearance-none ${
+                         isCampaignEditingRestricted() 
+                           ? 'border-slate-200 bg-slate-100 text-slate-400 cursor-not-allowed' 
+                           : 'border-slate-200 focus:ring-violet-500 focus:border-transparent bg-white/50 backdrop-blur-sm'
+                       }`}
                      >
                        <option value="">Select a country</option>
                                                {countryCodes.map((country) => (
@@ -534,8 +588,11 @@ export default function Campaigns({ campaigns: propCampaigns, onTabChange }: Cam
 
                  {/* Maximum Results */}
                  <div>
-                   <label className="block text-sm font-medium text-slate-700 mb-2">
+                   <label className={`block text-sm font-medium mb-2 ${isCampaignEditingRestricted() ? 'text-slate-400' : 'text-slate-700'}`}>
                      Maximum Results
+                     {isCampaignEditingRestricted() && (
+                       <span className="ml-2 text-xs text-slate-400">(Cannot edit while campaign is active)</span>
+                     )}
                    </label>
                    <input
                      type="number"
@@ -543,7 +600,12 @@ export default function Campaigns({ campaigns: propCampaigns, onTabChange }: Cam
                      max="10000"
                      value={formData.maximumResults}
                      onChange={(e) => handleInputChange('maximumResults', parseInt(e.target.value))}
-                     className="w-full px-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-violet-500 focus:border-transparent bg-white/50 backdrop-blur-sm"
+                     disabled={isCampaignEditingRestricted()}
+                     className={`w-full px-4 py-3 rounded-xl border focus:ring-2 focus:border-transparent ${
+                       isCampaignEditingRestricted() 
+                         ? 'border-slate-200 bg-slate-100 text-slate-400 cursor-not-allowed' 
+                         : 'border-slate-200 focus:ring-violet-500 focus:border-transparent bg-white/50 backdrop-blur-sm'
+                     }`}
                      placeholder="e.g., 100"
                    />
                    <p className="text-xs text-slate-500 mt-1">Min: 1, Max: 10,000</p>
@@ -553,6 +615,9 @@ export default function Campaigns({ campaigns: propCampaigns, onTabChange }: Cam
                  <div>
                    <label className="block text-sm font-medium text-slate-700 mb-2">
                      Emails Per Run
+                     {isCampaignEditingRestricted() && (
+                       <span className="ml-2 text-xs text-green-600">(Can still be edited)</span>
+                     )}
                    </label>
                    <input
                      type="number"
@@ -570,6 +635,9 @@ export default function Campaigns({ campaigns: propCampaigns, onTabChange }: Cam
                  <div>
                    <label className="block text-sm font-medium text-slate-700 mb-2">
                      Email Template *
+                     {isCampaignEditingRestricted() && (
+                       <span className="ml-2 text-xs text-green-600">(Can still be edited)</span>
+                     )}
                    </label>
                    <select
                      required
@@ -728,53 +796,64 @@ export default function Campaigns({ campaigns: propCampaigns, onTabChange }: Cam
                         {campaign.emailsSent || 0} / {campaign.emailsFailed || 0}
                       </div>
                     </div>
-                    <div className="text-center p-3 bg-white/20 rounded-lg">
-                      <div className="text-xs text-slate-600 mb-1">Status</div>
-                      <span className={`inline-block px-2 py-1 rounded-full text-xs font-semibold ${getStatusColor(campaign.status)}`}>
-                        {getStatusIcon(campaign.status)} {campaign.status.charAt(0).toUpperCase() + campaign.status.slice(1)}
-                      </span>
-                    </div>
+                                         <div className="text-center p-3 bg-white/20 rounded-lg">
+                       <div className="text-xs text-slate-600 mb-1">Status</div>
+                       <span className={`inline-block px-2 py-1 rounded-full text-xs font-semibold ${getStatusColor(campaign.status)}`}>
+                         {getStatusIcon(campaign.status)} {campaign.status.charAt(0).toUpperCase() + campaign.status.slice(1)}
+                       </span>
+                       <div className="text-xs text-slate-500 mt-1 px-2">
+                         {getStatusDescription(campaign.status)}
+                       </div>
+                     </div>
                   </div>
 
                   {/* Mobile Actions */}
                   <div className="flex flex-wrap gap-2">
-                    {campaign.status === 'idle' && (
-                      <button 
-                        className={`px-3 py-2 rounded-lg text-sm font-medium transition-all duration-200 ${
-                          scrapingCampaigns.has(campaign._id || campaign.id || '')
-                            ? 'bg-blue-200 text-blue-600 cursor-not-allowed'
-                            : 'bg-blue-500 text-white hover:bg-blue-600 hover:scale-105 shadow-sm'
-                        }`}
-                        onClick={() => handleStartScraping(campaign._id || campaign.id)}
-                        disabled={scrapingCampaigns.has(campaign._id || campaign.id || '')}
-                        title="Start Scraping"
-                      >
-                        {scrapingCampaigns.has(campaign._id || campaign.id || '') ? (
-                          <span className="inline-block animate-spin mr-2">⏳</span>
-                        ) : (
-                          '🔍 Scrape'
-                        )}
-                      </button>
-                    )}
+                                         {campaign.status === 'idle' && (
+                       <button 
+                         className={`px-3 py-2 rounded-lg text-sm font-medium transition-all duration-200 ${
+                           scrapingCampaigns.has(campaign._id || campaign.id || '')
+                             ? 'bg-blue-200 text-blue-600 cursor-not-allowed'
+                             : 'bg-blue-500 text-white hover:bg-blue-600 hover:scale-105 shadow-sm'
+                         }`}
+                         onClick={() => {
+                           if (confirm('Start scraping? This process may take several minutes to complete.')) {
+                             handleStartScraping(campaign._id || campaign.id);
+                           }
+                         }}
+                         disabled={scrapingCampaigns.has(campaign._id || campaign.id || '')}
+                         title="Start Scraping - May take several minutes"
+                       >
+                         {scrapingCampaigns.has(campaign._id || campaign.id || '') ? (
+                           <span className="inline-block animate-spin mr-2">⏳</span>
+                         ) : (
+                           '🔍 Scrape'
+                         )}
+                       </button>
+                     )}
                     
-                    {campaign.status === 'scraping is done' && (
-                      <button 
-                        className={`px-3 py-2 rounded-lg text-sm font-medium transition-all duration-200 ${
-                          sendingCampaigns.has(campaign._id || campaign.id || '')
-                            ? 'bg-green-200 text-green-600 cursor-not-allowed'
-                            : 'bg-green-500 text-white hover:bg-green-600 hover:scale-105 shadow-sm'
-                        }`}
-                        onClick={() => handleStartSending(campaign._id || campaign.id)}
-                        disabled={sendingCampaigns.has(campaign._id || campaign.id || '')}
-                        title="Start Sending"
-                      >
-                        {sendingCampaigns.has(campaign._id || campaign.id || '') ? (
-                          <span className="inline-block animate-spin mr-2">⏳</span>
-                        ) : (
-                          '📧 Send'
-                        )}
-                      </button>
-                    )}
+                                         {campaign.status === 'scraping is done' && (
+                       <button 
+                         className={`px-3 py-2 rounded-lg text-sm font-medium transition-all duration-200 ${
+                           sendingCampaigns.has(campaign._id || campaign.id || '')
+                             ? 'bg-green-200 text-green-600 cursor-not-allowed'
+                             : 'bg-green-500 text-white hover:bg-green-600 hover:scale-105 shadow-sm'
+                         }`}
+                         onClick={() => {
+                           if (confirm('Start sending emails? This process may take some time depending on the volume of emails.')) {
+                             handleStartSending(campaign._id || campaign.id);
+                           }
+                         }}
+                         disabled={sendingCampaigns.has(campaign._id || campaign.id || '')}
+                         title="Start Sending - May take some time"
+                       >
+                         {sendingCampaigns.has(campaign._id || campaign.id || '') ? (
+                           <span className="inline-block animate-spin mr-2">⏳</span>
+                         ) : (
+                           '📧 Send'
+                         )}
+                       </button>
+                     )}
 
                     <button 
                       title="Edit Campaign" 
@@ -891,53 +970,64 @@ export default function Campaigns({ campaigns: propCampaigns, onTabChange }: Cam
                     <div className="text-xs text-orange-500 font-medium">🔜 Coming Soon</div>
                   </div>
 
-                  {/* Status Column */}
-                  <div className="col-span-2 text-center">
-                    <span className={`inline-block px-3 py-1 rounded-full text-xs font-semibold ${getStatusColor(campaign.status)}`}>
-                      {getStatusIcon(campaign.status)} {campaign.status.charAt(0).toUpperCase() + campaign.status.slice(1)}
-                    </span>
-                  </div>
+                                     {/* Status Column */}
+                   <div className="col-span-2 text-center">
+                     <span className={`inline-block px-3 py-1 rounded-full text-xs font-semibold ${getStatusColor(campaign.status)}`}>
+                       {getStatusIcon(campaign.status)} {campaign.status.charAt(0).toUpperCase() + campaign.status.slice(1)}
+                     </span>
+                     <div className="text-xs text-slate-500 mt-1 px-2">
+                       {getStatusDescription(campaign.status)}
+                     </div>
+                   </div>
 
                   {/* Job Actions Column */}
                   <div className="col-span-1 text-center">
                     <div className="flex items-center justify-center">
-                      {campaign.status === 'idle' && (
-                        <button 
-                          className={`px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 ${
-                            scrapingCampaigns.has(campaign._id || campaign.id || '')
-                              ? 'bg-blue-200 text-blue-600 cursor-not-allowed'
-                              : 'bg-blue-500 text-white hover:bg-blue-600 hover:scale-105 shadow-sm'
-                          }`}
-                          onClick={() => handleStartScraping(campaign._id || campaign.id)}
-                          disabled={scrapingCampaigns.has(campaign._id || campaign.id || '')}
-                          title="Start Scraping"
-                        >
-                          {scrapingCampaigns.has(campaign._id || campaign.id || '') ? (
-                            <span className="inline-block animate-spin mr-2">⏳</span>
-                          ) : (
-                            '🔍 Scrape'
-                          )}
-                        </button>
-                      )}
+                                             {campaign.status === 'idle' && (
+                         <button 
+                           className={`px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 ${
+                             scrapingCampaigns.has(campaign._id || campaign.id || '')
+                               ? 'bg-blue-200 text-blue-600 cursor-not-allowed'
+                               : 'bg-blue-500 text-white hover:bg-blue-600 hover:scale-105 shadow-sm'
+                           }`}
+                           onClick={() => {
+                             if (confirm('Start scraping? This process may take several minutes to complete.')) {
+                               handleStartScraping(campaign._id || campaign.id);
+                             }
+                           }}
+                           disabled={scrapingCampaigns.has(campaign._id || campaign.id || '')}
+                           title="Start Scraping - May take several minutes"
+                         >
+                           {scrapingCampaigns.has(campaign._id || campaign.id || '') ? (
+                             <span className="inline-block animate-spin mr-2">⏳</span>
+                           ) : (
+                             '🔍 Scrape'
+                           )}
+                         </button>
+                       )}
                       
-                      {campaign.status === 'scraping is done' && (
-                        <button 
-                          className={`px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 ${
-                            sendingCampaigns.has(campaign._id || campaign.id || '')
-                              ? 'bg-green-200 text-green-600 cursor-not-allowed'
-                              : 'bg-green-500 text-white hover:bg-green-600 hover:scale-105 shadow-sm'
-                          }`}
-                          onClick={() => handleStartSending(campaign._id || campaign.id)}
-                          disabled={sendingCampaigns.has(campaign._id || campaign.id || '')}
-                          title="Start Sending"
-                        >
-                          {sendingCampaigns.has(campaign._id || campaign.id || '') ? (
-                            <span className="inline-block animate-spin mr-2">⏳</span>
-                          ) : (
-                            '📧 Send'
-                          )}
-                        </button>
-                      )}
+                                             {campaign.status === 'scraping is done' && (
+                         <button 
+                           className={`px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 ${
+                             sendingCampaigns.has(campaign._id || campaign.id || '')
+                               ? 'bg-green-200 text-green-600 cursor-not-allowed'
+                               : 'bg-green-500 text-white hover:bg-green-600 hover:scale-105 shadow-sm'
+                           }`}
+                           onClick={() => {
+                             if (confirm('Start sending emails? This process may take some time depending on the volume of emails.')) {
+                               handleStartSending(campaign._id || campaign.id);
+                             }
+                           }}
+                           disabled={sendingCampaigns.has(campaign._id || campaign.id || '')}
+                           title="Start Sending - May take some time"
+                         >
+                           {sendingCampaigns.has(campaign._id || campaign.id || '') ? (
+                             <span className="inline-block animate-spin mr-2">⏳</span>
+                           ) : (
+                             '📧 Send'
+                           )}
+                         </button>
+                       )}
                     </div>
                   </div>
                   
