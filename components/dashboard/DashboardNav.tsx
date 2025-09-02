@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
 import { User } from '../../types/dashboard';
 import Logo from '../Logo';
@@ -16,6 +16,26 @@ interface DashboardNavProps {
 export default function DashboardNav({ user, activeTab, onLogout, onStartTutorial, children }: DashboardNavProps) {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const scriptRef = useRef<HTMLScriptElement | null>(null);
+
+  // Add Ahrefs analytics script
+  useEffect(() => {
+    if (!scriptRef.current) {
+      const script = document.createElement('script');
+      script.src = 'https://analytics.ahrefs.com/analytics.js';
+      script.setAttribute('data-key', 'leM5NQWz8sapz04+GfldKA');
+      script.async = true;
+      scriptRef.current = script;
+      document.head.appendChild(script);
+    }
+
+    return () => {
+      if (scriptRef.current) {
+        document.head.removeChild(scriptRef.current);
+        scriptRef.current = null;
+      }
+    };
+  }, []);
 
   const navItems = [
     { id: 'overview', label: 'Dashboard', icon: '📊', href: '/dashboard/overview' },
