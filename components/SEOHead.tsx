@@ -146,7 +146,7 @@ export default function SEOHead({
       <meta name="msapplication-TileColor" content="#7c3aed" />
       
       {/* Favicon */}
-      <link rel="icon" href="/favicon/favicon.ico" sizes="any" />
+      <link rel="icon" href="/favicon.ico" sizes="any" />
       <link rel="icon" href="/favicon/favicon.svg" type="image/svg+xml" />
       <link rel="apple-touch-icon" href="/favicon/apple-touch-icon.png" />
       <link rel="icon" type="image/png" sizes="96x96" href="/favicon/favicon-96x96.png" />
