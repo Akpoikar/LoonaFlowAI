@@ -146,9 +146,13 @@ export default function SEOHead({
       <meta name="msapplication-TileColor" content="#7c3aed" />
       
       {/* Favicon */}
-      <link rel="icon" href="/images/logo.png" />
-      <link rel="apple-touch-icon" href="/images/logo.png" />
-      <link rel="icon" type="image/png" href="/images/logo.png" />
+      <link rel="icon" href="/favicon/favicon.ico" sizes="any" />
+      <link rel="icon" href="/favicon/favicon.svg" type="image/svg+xml" />
+      <link rel="apple-touch-icon" href="/favicon/apple-touch-icon.png" />
+      <link rel="icon" type="image/png" sizes="96x96" href="/favicon/favicon-96x96.png" />
+      <link rel="icon" type="image/png" sizes="192x192" href="/favicon/web-app-manifest-192x192.png" />
+      <link rel="icon" type="image/png" sizes="512x512" href="/favicon/web-app-manifest-512x512.png" />
+      <link rel="manifest" href="/favicon/site.webmanifest" />
       
       {/* DNS Prefetch */}
       <link rel="dns-prefetch" href="//fonts.googleapis.com" />
