@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import Logo from '../../components/Logo';
@@ -11,11 +11,34 @@ import SEOHead from '../../components/SEOHead';
 export default function LoginPage() {
   const [formData, setFormData] = useState({
     email: '',
-    password: ''
+    password: '',
+    remember: false
   });
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
   const router = useRouter();
+
+  // Load remembered email on component mount
+  useEffect(() => {
+    const rememberedEmail = localStorage.getItem('rememberedEmail');
+    const sessionExpiry = localStorage.getItem('sessionExpiry');
+    
+    // Check if session is still valid
+    if (rememberedEmail && sessionExpiry) {
+      const expiryTime = parseInt(sessionExpiry);
+      if (Date.now() < expiryTime) {
+        setFormData(prev => ({
+          ...prev,
+          email: rememberedEmail,
+          remember: true
+        }));
+      } else {
+        // Session expired, clear remembered data
+        localStorage.removeItem('rememberedEmail');
+        localStorage.removeItem('sessionExpiry');
+      }
+    }
+  }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -32,6 +55,18 @@ export default function LoginPage() {
         if (result.data?.user) {
           localStorage.setItem('user', JSON.stringify(result.data.user));
           localStorage.setItem('isAuthenticated', 'true');
+          
+          // Handle remember me functionality
+          if (formData.remember) {
+            // Store email for future logins (optional)
+            localStorage.setItem('rememberedEmail', formData.email);
+            // Set a longer expiration for the session
+            localStorage.setItem('sessionExpiry', (Date.now() + 30 * 24 * 60 * 60 * 1000).toString()); // 30 days
+          } else {
+            // Clear remembered data if not checked
+            localStorage.removeItem('rememberedEmail');
+            localStorage.removeItem('sessionExpiry');
+          }
         }
         router.push('/dashboard');
       }
@@ -44,9 +79,10 @@ export default function LoginPage() {
   };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value, type, checked } = e.target;
     setFormData({
       ...formData,
-      [e.target.name]: e.target.value
+      [name]: type === 'checkbox' ? checked : value
     });
   };
 
@@ -133,15 +169,17 @@ export default function LoginPage() {
                   id="remember"
                   name="remember"
                   type="checkbox"
+                  checked={formData.remember}
+                  onChange={handleChange}
                   className="h-4 w-4 text-violet-600 focus:ring-violet-500 border-slate-300 rounded"
                 />
                 <label htmlFor="remember" className="ml-2 block text-sm text-slate-700">
                   Remember me
                 </label>
               </div>
-              <Link href="/forgot-password" className="text-sm text-violet-600 hover:text-violet-700">
+              {/* <Link href="/forgot-password" className="text-sm text-violet-600 hover:text-violet-700">
                 Forgot password?
-              </Link>
+              </Link> */}
             </div>
 
             <button

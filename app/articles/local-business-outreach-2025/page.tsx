@@ -12,6 +12,7 @@ export default function LocalBusinessOutreach2025() {
         title="Local Business Outreach in 2025: What Actually Works | LoonaFlow AI"
         description="Discover the proven strategies that are driving real results in local business outreach this year. From AI-powered tools to personalized approaches that actually get responses."
         keywords={["local business outreach", "local lead generation", "AI outreach tools", "cold email automation", "local business marketing strategy", "business development", "lead generation", "local marketing", "outreach strategies", "B2B sales", "local business leads", "automated outreach", "local sales prospecting"]}
+        canonical="https://loonaflow.app/articles/local-business-outreach-2025"
       />
       <div className="relative min-h-screen overflow-hidden">
         {/* Background image */}

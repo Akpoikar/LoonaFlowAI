@@ -49,9 +49,6 @@ export const metadata: Metadata = {
     telephone: false,
   },
   metadataBase: new URL('https://loonaflow.app'),
-  alternates: {
-    canonical: '/',
-  },
   openGraph: {
     title: "LoonaFlow AI - AI-Powered Lead Generation & Outreach Automation",
     description: "LoonaFlow AI helps businesses find leads & send personalized outreach. Scrape by niche or country, launch campaigns, and track replies — all in one platform.",

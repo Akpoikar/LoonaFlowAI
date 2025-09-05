@@ -28,7 +28,12 @@ export default function Page() {
   };
   return (
     <>
-      <SEOHead />
+      <SEOHead 
+        title="LoonaFlow AI - AI-Powered Lead Generation & Outreach Automation"
+        description="LoonaFlow AI helps businesses find leads & send personalized outreach. Scrape by niche or country, launch campaigns, and track replies — all in one platform."
+        keywords={["AI lead generation", "outreach automation", "local business leads", "cold email automation", "lead generation software", "B2B sales automation", "local marketing automation", "business outreach tools"]}
+        canonical="https://loonaflow.app/"
+      />
       <div className="relative min-h-screen overflow-hidden">
       {/* Background image */}
       <div className="absolute inset-0">

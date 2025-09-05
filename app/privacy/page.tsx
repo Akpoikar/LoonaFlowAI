@@ -1,4 +1,5 @@
 import SEOHead from '../../components/SEOHead';
+import Logo from '../../components/Logo';
 
 export default function PrivacyPage() {
   return (
@@ -18,6 +19,34 @@ export default function PrivacyPage() {
         canonical="https://loonaflow.app/privacy"
       />
       <div className="min-h-screen bg-gradient-to-br from-indigo-50 via-purple-50 to-pink-50">
+        {/* Navigation Header */}
+        <nav className="bg-white/20 backdrop-blur-md border-b border-white/30">
+          <div className="max-w-6xl mx-auto px-4 py-4 sm:px-6 lg:px-8">
+            <div className="flex items-center justify-between">
+              <a href="/" className="flex items-center">
+                <Logo size="md" />
+              </a>
+              <div className="flex items-center gap-6 text-sm">
+                <a href="/" className="text-slate-700 hover:text-slate-900 transition-colors">
+                  Home
+                </a>
+                <a href="/pricing" className="text-slate-700 hover:text-slate-900 transition-colors">
+                  Pricing
+                </a>
+                <a href="/contact" className="text-slate-700 hover:text-slate-900 transition-colors">
+                  Contact
+                </a>
+                <a href="/articles" className="text-slate-700 hover:text-slate-900 transition-colors">
+                  Articles
+                </a>
+                <a href="/terms" className="text-slate-700 hover:text-slate-900 transition-colors">
+                  Terms
+                </a>
+              </div>
+            </div>
+          </div>
+        </nav>
+
         <div className="max-w-4xl mx-auto px-4 py-16 sm:px-6 lg:px-8">
           <div className="bg-white/40 backdrop-blur-md rounded-2xl p-8 ring-1 ring-white/30 shadow-lg shadow-purple-100/50">
             <h1 className="text-4xl font-bold text-slate-900 mb-8">📑 LoonaFlow AI – Privacy Policy</h1>
@@ -159,6 +188,27 @@ export default function PrivacyPage() {
                   </p>
                 </div>
               </section>
+            </div>
+          </div>
+
+          {/* Footer Navigation */}
+          <div className="mt-12 text-center">
+            <div className="bg-white/20 backdrop-blur-md rounded-2xl p-6 ring-1 ring-white/30">
+              <p className="text-slate-600 mb-4">Need help or have questions?</p>
+              <div className="flex flex-wrap justify-center gap-4 text-sm">
+                <a href="/" className="text-violet-600 hover:text-violet-700 font-medium">
+                  ← Back to Home
+                </a>
+                <a href="/contact" className="text-violet-600 hover:text-violet-700 font-medium">
+                  Contact Support
+                </a>
+                <a href="/terms" className="text-violet-600 hover:text-violet-700 font-medium">
+                  Terms of Service
+                </a>
+                <a href="/pricing" className="text-violet-600 hover:text-violet-700 font-medium">
+                  View Pricing
+                </a>
+              </div>
             </div>
           </div>
         </div>

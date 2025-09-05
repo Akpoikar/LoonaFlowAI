@@ -12,6 +12,7 @@ export default function GoogleMapsLeadGeneration2025() {
         title="Google Maps Lead Generation: How to Find and Contact Local Businesses in 2025 | LoonaFlow AI"
         description="Master Google Maps lead generation in 2025. Learn proven strategies to find, research, and contact local businesses using Google Maps data and automation tools."
         keywords={["Google Maps lead generation", "local business leads", "Google Maps scraping", "local business finder", "Google My Business leads", "local lead generation", "Google Maps automation", "local business outreach", "Google Maps data extraction", "local sales prospecting"]}
+        canonical="https://loonaflow.app/articles/google-maps-lead-generation-2025"
       />
       <div className="relative min-h-screen overflow-hidden">
         {/* Background image */}

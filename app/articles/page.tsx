@@ -60,6 +60,7 @@ export default function ArticlesPage() {
         title="Articles - LoonaFlow AI | Local Business Outreach Strategies"
         description="Expert insights on local business outreach, cold email strategies, and lead generation techniques that actually work in 2025."
         keywords={["local business outreach", "cold email strategies", "lead generation", "business development", "email marketing"]}
+        canonical="https://loonaflow.app/articles"
       />
       <div className="relative min-h-screen overflow-hidden">
         {/* Background image */}
