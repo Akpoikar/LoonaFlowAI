@@ -32,7 +32,7 @@ export default function SEOHead({
     "loonaflow ai",
     "business outreach platform"
   ],
-  canonical = "https://loonaflow.app",
+  canonical,
   ogImage = "https://loonaflow.app/og-image.jpg",
   noIndex = false
 }: SEOHeadProps) {
