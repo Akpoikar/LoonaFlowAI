@@ -102,6 +102,9 @@ export default function Page() {
                      <a href="/contact" className="text-slate-700 hover:text-slate-900 transition-colors">
                        Contact
                      </a>
+                     <a href="/articles" className="text-slate-700 hover:text-slate-900 transition-colors">
+                       Articles
+                     </a>
                      <a href="/login" className="text-slate-700 hover:text-slate-900 transition-colors">
                        Sign in
                      </a>
