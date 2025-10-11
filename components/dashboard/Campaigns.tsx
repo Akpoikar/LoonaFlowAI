@@ -15,6 +15,7 @@ interface CampaignsProps {
 interface CampaignFormData {
   businessType: string;
   location: string;
+  selectedLocations?: string[];
   maximumResults: number;
   emailsPerDay: number;
   emailTemplate: string;
@@ -69,6 +70,7 @@ export default function Campaigns({ campaigns: propCampaigns, onTabChange }: Cam
   const [formData, setFormData] = useState<CampaignFormData>({
     businessType: '',
     location: '',
+    selectedLocations: [],
     maximumResults: 100,
     emailsPerDay: 50,
     emailTemplate: ''
@@ -85,6 +87,11 @@ export default function Campaigns({ campaigns: propCampaigns, onTabChange }: Cam
   const [planLimit, setPlanLimit] = useState<number | null>(null);
   const [requestedLeads, setRequestedLeads] = useState<number | null>(null);
   const [alreadyScraped, setAlreadyScraped] = useState<number | null>(null);
+  const [locations, setLocations] = useState<any[]>([]);
+  const [isLoadingLocations, setIsLoadingLocations] = useState(false);
+  const [locationsError, setLocationsError] = useState('');
+  const [selectedLocations, setSelectedLocations] = useState<string[]>([]);
+  const [showLocationModal, setShowLocationModal] = useState(false);
 
   // Helper function to check if campaign editing should be restricted
   const isCampaignEditingRestricted = (): boolean => {
@@ -207,6 +214,40 @@ export default function Campaigns({ campaigns: propCampaigns, onTabChange }: Cam
       ...prev,
       [field]: value
     }));
+
+    // If location (country) is being changed, reset locations data
+    if (field === 'location') {
+      setSelectedLocations([]);
+      setLocations([]);
+      setLocationsError('');
+    }
+  };
+
+  const fetchLocations = async (country: string) => {
+    setIsLoadingLocations(true);
+    setLocationsError('');
+    
+    try {
+      const result = await apiClient.getLocations(country);
+      
+      console.log('Locations API result:', result);
+      
+      if (result.error) {
+        setLocationsError(result.error);
+        setLocations([]);
+      } else {
+        // Handle the response structure: { country: "NL", locations: [...], total_count: 12 }
+        const locationsData = (result.data as any)?.locations || result.data || [];
+        console.log('Locations data:', locationsData);
+        setLocations(locationsData);
+      }
+    } catch (error) {
+      console.error('Fetch locations error:', error);
+      setLocationsError('Failed to fetch locations');
+      setLocations([]);
+    } finally {
+      setIsLoadingLocations(false);
+    }
   };
 
   const handleCreateCampaign = async (e: React.FormEvent) => {
@@ -243,6 +284,7 @@ export default function Campaigns({ campaigns: propCampaigns, onTabChange }: Cam
       const result = await apiClient.createCampaign({
         businessType: formData.businessType,
         location: formData.location,
+        selectedLocations: formData.selectedLocations,
         maximumResults: formData.maximumResults,
         emailsPerDay: formData.emailsPerDay,
         emailTemplate: formData.emailTemplate
@@ -582,6 +624,83 @@ export default function Campaigns({ campaigns: propCampaigns, onTabChange }: Cam
                          <Flag countryCode={formData.location} size="sm" />
                          {getCountryByCode(formData.location)?.name}
                        </span>
+                     </div>
+                   )}
+
+                   {/* Location Selection Button */}
+                   {formData.location && (
+                     <div className="mt-3">
+                       <button
+                         type="button"
+                         onClick={() => {
+                           setShowLocationModal(true);
+                           if (locations.length === 0) {
+                             fetchLocations(formData.location);
+                           }
+                         }}
+                         disabled={isCampaignEditingRestricted()}
+                         className={`inline-flex items-center gap-2 px-4 py-2 rounded-lg border text-sm font-medium transition-all ${
+                           isCampaignEditingRestricted()
+                             ? 'border-slate-200 bg-slate-100 text-slate-400 cursor-not-allowed'
+                             : 'border-violet-200 bg-violet-50 text-violet-700 hover:bg-violet-100 hover:border-violet-300'
+                         }`}
+                       >
+                         <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                         </svg>
+                         {selectedLocations.length > 0 ? `Change Locations (${selectedLocations.length})` : 'Select Specific Locations'}
+                       </button>
+                       
+                       {/* Selected Locations Display */}
+                       {selectedLocations.length > 0 && (
+                         <div className="mt-2 p-3 bg-violet-100 border border-violet-200 rounded-lg">
+                           <div className="text-sm font-medium text-violet-800 mb-2">
+                             Selected Locations ({selectedLocations.length}):
+                           </div>
+                           <div className="flex flex-wrap gap-2">
+                             {selectedLocations.map((locationId, index) => {
+                               const location = locations.find(loc => {
+                                 if (typeof loc === 'string') {
+                                   return loc === locationId;
+                                 }
+                                 return (loc.id || loc._id || locations.indexOf(loc).toString()) === locationId;
+                               });
+                               
+                               const locationName = typeof location === 'string' 
+                                 ? location.split('>')[1] || location
+                                 : (location?.name || location?.title || 'Location');
+                               
+                               return (
+                                 <div key={locationId} className="inline-flex items-center gap-1 px-2 py-1 bg-violet-200 text-violet-800 rounded text-xs">
+                                   {locationName}
+                                   <button
+                                     type="button"
+                                     onClick={() => {
+                                       const newSelections = selectedLocations.filter(id => id !== locationId);
+                                       setSelectedLocations(newSelections);
+                                       setFormData(prev => ({ ...prev, selectedLocations: newSelections }));
+                                     }}
+                                     className="ml-1 text-violet-600 hover:text-violet-800"
+                                   >
+                                     ×
+                                   </button>
+                                 </div>
+                               );
+                             })}
+                           </div>
+                           <button
+                             type="button"
+                             onClick={() => {
+                               setSelectedLocations([]);
+                               setFormData(prev => ({ ...prev, selectedLocations: [] }));
+                             }}
+                             className="mt-2 text-xs text-violet-600 hover:text-violet-800 underline"
+                           >
+                             Clear all selections
+                           </button>
+                         </div>
+                       )}
                      </div>
                    )}
                  </div>
@@ -1287,6 +1406,120 @@ export default function Campaigns({ campaigns: propCampaigns, onTabChange }: Cam
             >
               View All Plans
             </button>
+          </div>
+        </div>
+      </Modal>
+
+      {/* Location Selection Modal */}
+      <Modal 
+        isOpen={showLocationModal} 
+        onClose={() => setShowLocationModal(false)}
+        title={`Select Locations in ${getCountryByCode(formData.location)?.name}`}
+        size="lg"
+      >
+        <div className="space-y-4">
+          {isLoadingLocations ? (
+            <div className="flex items-center justify-center py-8">
+              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-violet-500"></div>
+              <span className="ml-3 text-slate-600">Loading locations...</span>
+            </div>
+          ) : locationsError ? (
+            <div className="text-center py-8">
+              <div className="text-red-600 bg-red-50 p-4 rounded-lg">
+                {locationsError}
+              </div>
+            </div>
+          ) : locations.length > 0 ? (
+            <>
+              <div className="text-sm text-slate-600">
+                Choose one or more locations for your campaign (optional):
+              </div>
+              <div className="max-h-96 overflow-y-auto space-y-2">
+                {locations.map((location, index) => {
+                  const locationId = typeof location === 'string' ? location : (location.id || location._id || index.toString());
+                  const locationName = typeof location === 'string' 
+                    ? location.split('>')[1] || location
+                    : (location.name || location.title || `Location ${index + 1}`);
+                  const isSelected = selectedLocations.includes(locationId);
+                  
+                  return (
+                    <div 
+                      key={locationId} 
+                      className={`p-4 rounded-lg border cursor-pointer transition-all ${
+                        isSelected 
+                          ? 'bg-violet-50 border-violet-200 ring-2 ring-violet-500' 
+                          : 'bg-white border-slate-200 hover:border-violet-200 hover:bg-violet-50'
+                      }`}
+                      onClick={() => {
+                        let newSelections;
+                        if (isSelected) {
+                          // Remove from selection
+                          newSelections = selectedLocations.filter(id => id !== locationId);
+                        } else {
+                          // Add to selection
+                          newSelections = [...selectedLocations, locationId];
+                        }
+                        setSelectedLocations(newSelections);
+                        setFormData(prev => ({ ...prev, selectedLocations: newSelections }));
+                      }}
+                    >
+                      <div className="flex items-center gap-3">
+                        <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center ${
+                          isSelected 
+                            ? 'border-violet-500 bg-violet-500' 
+                            : 'border-slate-300'
+                        }`}>
+                          {isSelected && (
+                            <svg className="w-3 h-3 text-white" fill="currentColor" viewBox="0 0 20 20">
+                              <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                            </svg>
+                          )}
+                        </div>
+                        <div className="flex-1">
+                          <div className="font-medium text-slate-800">
+                            {locationName}
+                          </div>
+                          {typeof location === 'object' && location.address && (
+                            <div className="text-sm text-slate-500 mt-1">
+                              📍 {location.address}
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            </>
+          ) : (
+            <div className="text-center py-8">
+              <div className="text-slate-500">No locations found for this country.</div>
+            </div>
+          )}
+
+          <div className="flex items-center justify-between pt-4 border-t border-slate-200">
+            <div className="text-sm text-slate-600">
+              {selectedLocations.length > 0 ? `${selectedLocations.length} location${selectedLocations.length === 1 ? '' : 's'} selected` : 'No locations selected'}
+            </div>
+            <div className="flex gap-3">
+              <button
+                type="button"
+                onClick={() => {
+                  setSelectedLocations([]);
+                  setFormData(prev => ({ ...prev, selectedLocations: [] }));
+                }}
+                className="px-4 py-2 text-slate-600 hover:text-slate-800 transition-colors"
+              >
+                Clear All
+              </button>
+              <button
+                type="button"
+                onClick={() => setShowLocationModal(false)}
+                className="px-6 py-2 bg-violet-600 text-white rounded-lg hover:bg-violet-700 transition-colors"
+              >
+                Done
+              </button>
+            </div>
           </div>
         </div>
       </Modal>

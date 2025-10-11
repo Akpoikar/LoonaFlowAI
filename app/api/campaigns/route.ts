@@ -47,7 +47,7 @@ export async function GET(request: NextRequest) {
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
-    const { businessType, location, maximumResults, emailsPerDay, emailTemplate } = body;
+    const { businessType, location, selectedLocations, maximumResults, emailsPerDay, emailTemplate } = body;
 
     if (!businessType || !location || !emailTemplate) {
       return NextResponse.json(
@@ -71,6 +71,7 @@ export async function POST(request: NextRequest) {
       body: JSON.stringify({
         businessType,
         location,
+        selectedLocations,
         maximumResults,
         emailTemplate,
         emailsPerDay,

@@ -86,6 +86,7 @@ class ApiClient {
   async createCampaign(campaign: {
     businessType: string;
     location: string;
+    selectedLocations?: string[];
     maximumResults: number;
     emailsPerDay: number;
     emailTemplate: string;
@@ -255,6 +256,11 @@ class ApiClient {
     return this.request('/subscription/sync', {
       method: 'POST',
     });
+  }
+
+  // Location methods
+  async getLocations(country: string) {
+    return this.request(`/locations?country=${country}`);
   }
 }
 

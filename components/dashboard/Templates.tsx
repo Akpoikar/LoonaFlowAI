@@ -19,10 +19,72 @@ export default function Templates() {
     subject: '',
     content: ''
   });
+  const [showExamples, setShowExamples] = useState(false);
   const [isCreating, setIsCreating] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState('');
+
+  // Example templates
+  const exampleTemplates = [
+    {
+      name: "Partnership Introduction",
+      subject: "Partnership Opportunity with {name}",
+      content: `Hi there,
+
+I hope this email finds you well. My name is [Your Name] from [Your Company], and I came across {name} while researching local businesses in the area.
+
+I'm reaching out because I believe there might be a great opportunity for us to work together. We specialize in [your service/product] and have helped many businesses like yours [specific benefit or result].
+
+Would you be interested in a brief 15-minute call to discuss how we might be able to help {name} [specific goal or improvement]?
+
+I understand you're busy, so I'll keep this brief. If this isn't the right time, no worries at all.
+
+Best regards,
+[Your Name]
+[Your Company]
+[Your Contact Information]`
+    },
+    {
+      name: "Service Offer",
+      subject: "How we can help {name} grow",
+      content: `Hello,
+
+I hope you're having a great day! I'm [Your Name] from [Your Company], and I've been following {name}'s success in the community.
+
+I wanted to reach out because we've been helping businesses like {name} [specific service or improvement] with great results. For example, we recently helped [similar business] [specific result or benefit].
+
+I'd love to share some ideas that could help {name} [specific goal or improvement]. Would you be open to a quick 10-minute conversation this week?
+
+If you're interested, just reply with your preferred time, or if this isn't relevant right now, no problem at all.
+
+Thanks for your time!
+
+Best,
+[Your Name]
+[Your Company]`
+    },
+    {
+      name: "Networking Connection",
+      subject: "Connecting with {name} - Local Business Network",
+      content: `Hi,
+
+I hope this message finds you well! I'm [Your Name], and I run [Your Company] here in [Location].
+
+I came across {name} and was impressed by [specific thing you noticed about their business]. It's always great to connect with other local business owners who are doing great work in our community.
+
+I'd love to learn more about {name} and share what we do at [Your Company]. Perhaps we could grab coffee sometime or have a quick call to exchange ideas?
+
+I believe in supporting local businesses and building strong community connections. Would you be interested in connecting?
+
+Looking forward to hearing from you!
+
+Warm regards,
+[Your Name]
+[Your Company]
+[Your Contact Information]`
+    }
+  ];
 
   // Load templates from API
   useEffect(() => {
@@ -54,6 +116,14 @@ export default function Templates() {
       ...prev,
       [field]: value
     }));
+  };
+
+  const useExampleTemplate = (template: typeof exampleTemplates[0]) => {
+    setFormData({
+      subject: template.subject,
+      content: template.content
+    });
+    setShowExamples(false);
   };
 
   const handleCreateTemplate = async (e: React.FormEvent) => {
@@ -193,6 +263,66 @@ export default function Templates() {
          size="lg"
        >
          <form onSubmit={editingTemplate ? handleEditTemplate : handleCreateTemplate} className="space-y-6">
+            {/* Template Examples */}
+            <div className="bg-gradient-to-r from-violet-50 to-purple-50 rounded-xl p-4 border border-violet-200">
+              <div className="flex items-center justify-between mb-3">
+                <h4 className="text-sm font-semibold text-violet-800 flex items-center gap-2">
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                  </svg>
+                  Quick Start Templates
+                </h4>
+                <button
+                  type="button"
+                  onClick={() => setShowExamples(!showExamples)}
+                  className="text-violet-600 hover:text-violet-800 text-sm font-medium"
+                >
+                  {showExamples ? 'Hide Examples' : 'Show Examples'}
+                </button>
+              </div>
+              
+              {showExamples && (
+                <div className="space-y-3">
+                  <p className="text-sm text-violet-700 mb-3">
+                    Click any template below to use it as a starting point. You can customize it afterward.
+                  </p>
+                  <div className="grid gap-2">
+                    {exampleTemplates.map((template, index) => (
+                      <button
+                        key={index}
+                        type="button"
+                        onClick={() => useExampleTemplate(template)}
+                        className="text-left p-3 bg-white rounded-lg border border-violet-200 hover:border-violet-300 hover:bg-violet-50 transition-colors"
+                      >
+                        <div className="font-medium text-slate-800 text-sm">{template.name}</div>
+                        <div className="text-xs text-slate-600 mt-1">{template.subject}</div>
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>
+
+            {/* Variable Guide */}
+            <div className="bg-blue-50 rounded-xl p-4 border border-blue-200">
+              <h4 className="text-sm font-semibold text-blue-800 mb-2 flex items-center gap-2">
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+                How to Use Variables
+              </h4>
+              <div className="text-sm text-blue-700 space-y-2">
+                <p>Use <code className="bg-blue-100 px-1 rounded text-blue-800">&#123;name&#125;</code> in your subject and content - it will be replaced with the actual business name.</p>
+                <div className="bg-white p-3 rounded-lg border border-blue-200">
+                  <div className="text-xs text-blue-600 mb-1">Example:</div>
+                  <div className="text-sm">
+                    <div><strong>Subject:</strong> "Partnership Opportunity with &#123;name&#125;"</div>
+                    <div><strong>Result:</strong> "Partnership Opportunity with <span className="bg-yellow-100 px-1 rounded">Joe's Pizza</span>"</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
              {/* Subject */}
             <div>
               <label className="block text-sm font-medium text-slate-700 mb-2">
@@ -204,26 +334,44 @@ export default function Templates() {
                 value={formData.subject}
                 onChange={(e) => handleInputChange('subject', e.target.value)}
                 className="w-full px-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-violet-500 focus:border-transparent bg-white/50 backdrop-blur-sm"
-                placeholder="e.g., Partnership Opportunity"
+                placeholder="e.g., Partnership Opportunity with {name}"
               />
             </div>
 
-                         {/* Email Content */}
+            {/* Email Content */}
             <div>
               <label className="block text-sm font-medium text-slate-700 mb-2">
                 Email Content *
               </label>
               <textarea
                 required
-                rows={8}
+                rows={10}
                 value={formData.content}
                 onChange={(e) => handleInputChange('content', e.target.value)}
                 className="w-full px-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-violet-500 focus:border-transparent bg-white/50 backdrop-blur-sm resize-none"
-                placeholder="Write your email content here."
+                placeholder="Write your email content here. Use {name} for the business name."
               />
-              <p className="text-xs text-slate-500 mt-1">
-                Use placeholder like &#123;name&#125; for personalization (name = business name)
-              </p>
+              
+              {/* Live Preview */}
+              {formData.content && (
+                <div className="mt-4 p-4 bg-slate-50 rounded-xl border border-slate-200">
+                  <h4 className="text-sm font-semibold text-slate-700 mb-2 flex items-center gap-2">
+                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                    </svg>
+                    Preview (with sample business name)
+                  </h4>
+                  <div className="text-sm text-slate-600 bg-white p-3 rounded-lg border border-slate-200">
+                    <div className="font-medium text-slate-800 mb-2">
+                      Subject: {formData.subject.replace(/{name}/g, 'LoonaFlow')}
+                    </div>
+                    <div className="whitespace-pre-wrap">
+                      {formData.content.replace(/{name}/g, 'LoonaFlow')}
+                    </div>
+                  </div>
+                </div>
+              )}
               
               {/* Disclaimer Preview */}
               <div className="mt-4 p-4 bg-slate-50 rounded-xl border border-slate-200">
