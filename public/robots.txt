@@ -21,6 +21,8 @@ Allow: /privacy
 Allow: /terms
 Allow: /login
 Allow: /signup
+Allow: /articles
+Allow: /seo/
 
 # Specific rules for search engines
 User-agent: Googlebot
