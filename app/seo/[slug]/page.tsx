@@ -19,6 +19,18 @@ interface KeywordData {
   heading: string;
   content: string;
   related: string[];
+  introText?: string;
+  problemStatement?: string;
+  solutionDescription?: string;
+  benefits?: string[];
+  useCases?: string[];
+  industryStats?: string;
+  implementationSteps?: string[];
+  successStory?: string;
+  faq?: Array<{
+    question: string;
+    answer: string;
+  }>;
 }
 
 // Generate static params for all SEO pages
@@ -266,44 +278,109 @@ export default function SEOPage({ params }: SEOPageProps) {
                 <div className="bg-gradient-to-r from-violet-50 to-purple-50 rounded-2xl p-8 mb-12 border border-violet-100">
                   <h2 className="text-2xl font-bold text-slate-900 mb-4">Why {keywordData.keyword} Matters in 2025</h2>
                   <p className="text-slate-700 leading-relaxed">
-                    In today's competitive business landscape, {keywordData.keyword} has become essential for companies looking to scale their operations and increase revenue. 
-                    LoonaFlow's AI-powered platform revolutionizes how businesses approach {keywordData.keyword}, making it more efficient and effective than ever before.
+                    {keywordData.introText || `In today's competitive business landscape, ${keywordData.keyword} has become essential for companies looking to scale their operations and increase revenue. LoonaFlow's AI-powered platform revolutionizes how businesses approach ${keywordData.keyword}, making it more efficient and effective than ever before.`}
                   </p>
                 </div>
 
-                <h2 className="text-3xl font-bold text-slate-900 mb-6 mt-12">The Power of AI in {keywordData.keyword}</h2>
+                <h2 className="text-3xl font-bold text-slate-900 mb-6 mt-12">The Challenge with {keywordData.keyword}</h2>
                 <p className="text-slate-700 leading-relaxed mb-6">
-                  Artificial intelligence is transforming {keywordData.keyword} by automating complex processes, personalizing interactions, and providing actionable insights. 
-                  LoonaFlow leverages cutting-edge AI technology to help businesses achieve better results with less manual effort.
+                  {keywordData.problemStatement || `Artificial intelligence is transforming ${keywordData.keyword} by automating complex processes, personalizing interactions, and providing actionable insights. LoonaFlow leverages cutting-edge AI technology to help businesses achieve better results with less manual effort.`}
+                </p>
+                
+                <h2 className="text-3xl font-bold text-slate-900 mb-6 mt-12">How LoonaFlow Solves This</h2>
+                <p className="text-slate-700 leading-relaxed mb-6">
+                  {keywordData.solutionDescription || `LoonaFlow's comprehensive platform addresses every aspect of ${keywordData.keyword}, from initial setup to advanced optimization. Our AI-powered tools help you achieve better results while reducing manual work and human error.`}
                 </p>
                 
                 <div className="bg-slate-50 rounded-xl p-6 mb-8">
                   <h3 className="text-xl font-semibold text-slate-900 mb-4">Key Benefits of {keywordData.keyword}:</h3>
                   <div className="space-y-4">
-                    <div className="bg-white rounded-lg p-4 border border-slate-200">
-                      <h4 className="font-semibold text-slate-900 mb-2">Increased Efficiency</h4>
-                      <p className="text-slate-600 text-sm">Automate repetitive tasks and focus on high-value activities that drive results.</p>
-                    </div>
-                    <div className="bg-white rounded-lg p-4 border border-slate-200">
-                      <h4 className="font-semibold text-slate-900 mb-2">Better Personalization</h4>
-                      <p className="text-slate-600 text-sm">AI-powered personalization ensures every interaction feels tailored and relevant.</p>
-                    </div>
-                    <div className="bg-white rounded-lg p-4 border border-slate-200">
-                      <h4 className="font-semibold text-slate-900 mb-2">Scalable Growth</h4>
-                      <p className="text-slate-600 text-sm">Scale your operations without proportionally increasing your team size.</p>
-                    </div>
-                    <div className="bg-white rounded-lg p-4 border border-slate-200">
-                      <h4 className="font-semibold text-slate-900 mb-2">Data-Driven Insights</h4>
-                      <p className="text-slate-600 text-sm">Make informed decisions based on real-time data and performance analytics.</p>
-                    </div>
+                    {keywordData.benefits ? (
+                      keywordData.benefits.map((benefit, index) => (
+                        <div key={index} className="bg-white rounded-lg p-4 border border-slate-200">
+                          <p className="text-slate-600 text-sm">{benefit}</p>
+                        </div>
+                      ))
+                    ) : (
+                      <>
+                        <div className="bg-white rounded-lg p-4 border border-slate-200">
+                          <h4 className="font-semibold text-slate-900 mb-2">Increased Efficiency</h4>
+                          <p className="text-slate-600 text-sm">Automate repetitive tasks and focus on high-value activities that drive results.</p>
+                        </div>
+                        <div className="bg-white rounded-lg p-4 border border-slate-200">
+                          <h4 className="font-semibold text-slate-900 mb-2">Better Personalization</h4>
+                          <p className="text-slate-600 text-sm">AI-powered personalization ensures every interaction feels tailored and relevant.</p>
+                        </div>
+                        <div className="bg-white rounded-lg p-4 border border-slate-200">
+                          <h4 className="font-semibold text-slate-900 mb-2">Scalable Growth</h4>
+                          <p className="text-slate-600 text-sm">Scale your operations without proportionally increasing your team size.</p>
+                        </div>
+                        <div className="bg-white rounded-lg p-4 border border-slate-200">
+                          <h4 className="font-semibold text-slate-900 mb-2">Data-Driven Insights</h4>
+                          <p className="text-slate-600 text-sm">Make informed decisions based on real-time data and performance analytics.</p>
+                        </div>
+                      </>
+                    )}
                   </div>
                 </div>
 
-                <h2 className="text-3xl font-bold text-slate-900 mb-6 mt-12">How LoonaFlow Transforms {keywordData.keyword}</h2>
-                <p className="text-slate-700 leading-relaxed mb-6">
-                  LoonaFlow's comprehensive platform addresses every aspect of {keywordData.keyword}, from initial setup to advanced optimization. 
-                  Our AI-powered tools help you achieve better results while reducing manual work and human error.
-                </p>
+                {keywordData.industryStats && (
+                  <div className="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-2xl p-8 mb-8 border border-blue-100">
+                    <h3 className="text-xl font-semibold text-slate-900 mb-4">Industry Statistics</h3>
+                    <p className="text-slate-700 leading-relaxed">{keywordData.industryStats}</p>
+                  </div>
+                )}
+
+                {keywordData.useCases && (
+                  <div className="mb-8">
+                    <h2 className="text-3xl font-bold text-slate-900 mb-6">Perfect for These Use Cases</h2>
+                    <div className="grid md:grid-cols-2 gap-4">
+                      {keywordData.useCases.map((useCase, index) => (
+                        <div key={index} className="bg-white/50 rounded-xl p-4 border border-white/20">
+                          <p className="text-slate-700 text-sm">{useCase}</p>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {keywordData.implementationSteps && (
+                  <div className="mb-8">
+                    <h2 className="text-3xl font-bold text-slate-900 mb-6">Getting Started</h2>
+                    <div className="bg-white/50 rounded-xl p-6 border border-white/20">
+                      <h3 className="text-lg font-semibold text-slate-900 mb-4">Implementation Steps:</h3>
+                      <ol className="space-y-3 text-slate-700">
+                        {keywordData.implementationSteps.map((step, index) => (
+                          <li key={index} className="flex items-start">
+                            <span className="text-violet-600 mr-3 font-bold">{index + 1}.</span>
+                            <span>{step}</span>
+                          </li>
+                        ))}
+                      </ol>
+                    </div>
+                  </div>
+                )}
+
+                {keywordData.successStory && (
+                  <div className="bg-gradient-to-r from-emerald-50 to-teal-50 rounded-2xl p-8 mb-8 border border-emerald-100">
+                    <h3 className="text-xl font-semibold text-slate-900 mb-4">Success Story</h3>
+                    <p className="text-slate-700 leading-relaxed">{keywordData.successStory}</p>
+                  </div>
+                )}
+
+                {keywordData.faq && keywordData.faq.length > 0 && (
+                  <div className="mb-8">
+                    <h2 className="text-3xl font-bold text-slate-900 mb-6">Frequently Asked Questions</h2>
+                    <div className="space-y-4">
+                      {keywordData.faq.map((faq, index) => (
+                        <div key={index} className="bg-white/50 rounded-xl p-6 border border-white/20">
+                          <h3 className="text-lg font-semibold text-slate-900 mb-3">{faq.question}</h3>
+                          <p className="text-slate-700">{faq.answer}</p>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
 
                 <div className="bg-gradient-to-r from-emerald-50 to-teal-50 rounded-2xl p-8 mb-8 border border-emerald-100">
                   <h3 className="text-xl font-semibold text-slate-900 mb-4">LoonaFlow's {keywordData.keyword} Features:</h3>
