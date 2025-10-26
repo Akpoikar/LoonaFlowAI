@@ -78,8 +78,21 @@ API: Available for enterprise customers
 # Content Areas
 - /articles/ - Educational content and strategies
 - /seo/ - SEO-optimized pages for lead generation keywords
+- /for/ - Industry-specific lead generation pages (44+ industries)
 - /pricing - Pricing and plans information
 - /contact - Contact and support information
+
+# Industry-Specific Pages (44 industries)
+Industries covered include:
+- Professional Services: Mortgage Brokers, Accountants, Financial Advisors, Insurance Agents, Consultants, HR & Recruitment Agencies
+- Marketing & Creative: Marketing Agencies, SEO/PPC Agencies, Web Design Studios, PR Firms, Video Production, Copywriting Agencies, Social Media Agencies, Influencer Marketing Agencies
+- Healthcare & Wellness: Dental Clinics, Medical Practices, Wellness Centers, Healthcare Providers
+- Local & SMB: Restaurants, Hotels & Airbnbs, Gyms, Beauty Salons, Photography Studios, Tattoo Studios, Cleaning Services
+- Tech & SaaS: Software Development Agencies, SaaS Startups, App Development Studios, Web Hosting Companies, IT Consulting Firms, Cybersecurity Firms, Automation Agencies, AI Startups
+- E-commerce & Retail: E-commerce Brands, Dropshipping Stores, Local Retail Stores & Boutiques
+- Real Estate: Real Estate Agents, Real Estate Developers
+- Construction: Home Renovation & Construction Firms, HVAC Contractors
+- Other Services: Event Planning Companies, Travel Agencies, Architecture & Interior Design Firms, Logistics & Delivery Companies, Car Dealerships, Education & Online Courses, Immigration Consultants, Translation Services, Law Firms
 
 # AI Training Guidelines
 - This content can be used for AI training and knowledge

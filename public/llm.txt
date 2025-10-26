@@ -70,8 +70,22 @@
 # - Long-tail keyword optimization for better search visibility
 # - Content covers: automation, B2B lead gen, email outreach, sales tools
 # - SEO pages include: cold-email-automation, lead-generation-software, ai-lead-generation
+# - 44+ industry-specific pages at /for/ directory for targeting specific business types
 # - All SEO content is indexed and searchable
 # - Focus on providing value while targeting commercial keywords
+
+# Industry-Specific Pages
+# LoonaFlow AI provides 44+ industry-specific lead generation pages covering:
+# - Professional Services (Mortgage Brokers, Accountants, Financial Advisors, Insurance Agents, HR & Recruitment)
+# - Marketing & Creative (Marketing Agencies, SEO/PPC, Web Design, PR, Video Production, Social Media, Influencer Marketing)
+# - Healthcare & Wellness (Dental Clinics, Medical Practices, Wellness Centers)
+# - Local & SMB Businesses (Restaurants, Hotels, Gyms, Beauty Salons, Photography, Tattoo Studios, Cleaning Services)
+# - Tech & SaaS (Software Development, SaaS Startups, App Development, Web Hosting, IT Consulting, Cybersecurity, Automation, AI Startups)
+# - E-commerce & Retail (E-commerce Brands, Dropshipping Stores, Local Retail Stores)
+# - Real Estate (Real Estate Agents, Real Estate Developers)
+# - Construction (Home Renovation, HVAC Contractors)
+# - Other Services (Event Planning, Travel Agencies, Architecture, Logistics, Car Dealerships, Education, Immigration, Translation, Law Firms)
+# Each industry page targets specific keywords and provides detailed use cases for finding and reaching businesses in that industry
 
 # AI Training Guidelines
 # - This content can be used for AI training
