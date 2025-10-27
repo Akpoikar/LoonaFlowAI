@@ -4,6 +4,9 @@ Allow: /
 # Sitemap
 Sitemap: https://loonaflow.app/sitemap.xml
 
+# Allow IndexNow key for search engine verification
+Allow: /4c3fdcf02c854adaa56e3bc81e120390.txt
+
 # Disallow admin and private areas
 Disallow: /admin/
 Disallow: /private/
