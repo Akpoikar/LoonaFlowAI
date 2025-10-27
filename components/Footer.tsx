@@ -50,6 +50,7 @@ export default function Footer() {
             <h3 className="font-semibold text-slate-900 mb-4">Company</h3>
             <ul className="space-y-2">
               <li><a href="/contact" className="text-slate-600 hover:text-violet-600 transition-colors">Contact</a></li>
+              <li><a href="/slugs" className="text-slate-600 hover:text-violet-600 transition-colors">All Topics</a></li>
               <li><a href="/privacy" className="text-slate-600 hover:text-violet-600 transition-colors">Privacy Policy</a></li>
               <li><a href="/terms" className="text-slate-600 hover:text-violet-600 transition-colors">Terms of Service</a></li>
               <li><a href="mailto:hello@loonaflow.app" className="text-slate-600 hover:text-violet-600 transition-colors">Support</a></li>
