@@ -128,6 +128,11 @@ export default function RootLayout({
         <meta name="theme-color" content="#7c3aed" />
         <meta name="msapplication-TileColor" content="#7c3aed" />
         <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5" />
+        <Script
+          src="https://beamanalytics.b-cdn.net/beam.min.js"
+          data-token="a7ecaac3-1382-461b-b32e-8c64f3fb9236"
+          async
+        />
         
         {/* Enhanced Schema.org structured data */}
         <script
@@ -214,11 +219,6 @@ export default function RootLayout({
         />
       </head>
       <body className={inter.className}>
-        <Script
-          src="https://beamanalytics.b-cdn.net/beam.min.js"
-          data-token="a7ecaac3-1382-461b-b32e-8c64f3fb9236"
-          async
-        />
         {children}
         <CookieConsent />
       </body>
