@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Script from "next/script";
 import { Inter } from "next/font/google";
 import "./globals.css";
 import CookieConsent from "../components/CookieConsent";
@@ -213,6 +214,11 @@ export default function RootLayout({
         />
       </head>
       <body className={inter.className}>
+        <Script
+          src="https://beamanalytics.b-cdn.net/beam.min.js"
+          data-token="a7ecaac3-1382-461b-b32e-8c64f3fb9236"
+          async
+        />
         {children}
         <CookieConsent />
       </body>
