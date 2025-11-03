@@ -3,6 +3,9 @@ import path from 'path';
 import type { MetadataRoute } from 'next';
 import { countryCodes } from '@/lib/countryCodes';
 
+// Regenerate on every request so changes in data/country-seo.json appear immediately
+export const revalidate = 0;
+
 export default function sitemap(): MetadataRoute.Sitemap {
   const baseUrl = 'https://loonaflow.app';
 
