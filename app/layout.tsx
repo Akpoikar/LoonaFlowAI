@@ -133,7 +133,16 @@ export default function RootLayout({
           data-token="a7ecaac3-1382-461b-b32e-8c64f3fb9236"
           async
         />
-        
+        <Script id="microsoft-clarity" strategy="afterInteractive">
+          {`
+            (function(c,l,a,r,i,t,y){
+                c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
+                t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;
+                y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
+            })(window, document, "clarity", "script", "vz9vn97t80");
+          `}
+        </Script>
+
         {/* Enhanced Schema.org structured data */}
         <script
           type="application/ld+json"
