@@ -92,6 +92,7 @@ export default function Campaigns({ campaigns: propCampaigns, onTabChange }: Cam
   const [locationsError, setLocationsError] = useState('');
   const [selectedLocations, setSelectedLocations] = useState<string[]>([]);
   const [showLocationModal, setShowLocationModal] = useState(false);
+  const [hasEmailConfig, setHasEmailConfig] = useState(true);
 
   // Helper function to check if campaign editing should be restricted
   const isCampaignEditingRestricted = (): boolean => {
@@ -140,7 +141,18 @@ export default function Campaigns({ campaigns: propCampaigns, onTabChange }: Cam
   useEffect(() => {
     loadCampaigns();
     loadTemplates();
+    loadEmailConfigStatus();
   }, []);
+
+  const loadEmailConfigStatus = async () => {
+    try {
+      const result: any = await apiClient.getEmailConfigs();
+      const configs = result?.data?.data || (Array.isArray(result?.data) ? result.data : []);
+      setHasEmailConfig(Array.isArray(configs) && configs.length > 0);
+    } catch (error) {
+      setHasEmailConfig(false);
+    }
+  };
 
   const loadCampaigns = async () => {
     try {
@@ -459,6 +471,11 @@ export default function Campaigns({ campaigns: propCampaigns, onTabChange }: Cam
   };
 
   const handleStartSending = async (campaignId: string) => {
+    if (!hasEmailConfig) {
+      setError('Email configuration is required before sending. Please set it up in Settings.');
+      return;
+    }
+
     try {
       setSendingCampaigns(prev => new Set(prev).add(campaignId));
       const result = await apiClient.startSending(campaignId);
@@ -500,6 +517,26 @@ export default function Campaigns({ campaigns: propCampaigns, onTabChange }: Cam
 
   return (
     <div className="space-y-6 sm:space-y-8 px-4 sm:px-0">
+      {!hasEmailConfig && (
+        <div className="bg-amber-50 border border-amber-200 rounded-xl p-4 sm:p-5">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+            <div>
+              <h3 className="text-sm sm:text-base font-semibold text-amber-900">
+                Email configuration required
+              </h3>
+              <p className="text-xs sm:text-sm text-amber-800 mt-1">
+                You can create and scrape campaigns, but sending emails is locked until you configure your email inbox.
+              </p>
+            </div>
+            <button
+              onClick={() => onTabChange?.('settings')}
+              className="px-4 py-2 bg-amber-600 text-white text-sm rounded-lg hover:bg-amber-700 transition-colors"
+            >
+              Go to Settings
+            </button>
+          </div>
+        </div>
+      )}
              {/* Header */}
        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
          <div className="flex items-center gap-4">
@@ -951,10 +988,12 @@ export default function Campaigns({ campaigns: propCampaigns, onTabChange }: Cam
                        </button>
                      )}
                     
-                                         {campaign.status === 'scraping is done' && (
+                    {campaign.status === 'scraping is done' && (
                        <button 
                          className={`px-3 py-2 rounded-lg text-sm font-medium transition-all duration-200 ${
-                           sendingCampaigns.has(campaign._id || campaign.id || '')
+                           !hasEmailConfig
+                             ? 'bg-slate-200 text-slate-500 cursor-not-allowed'
+                             : sendingCampaigns.has(campaign._id || campaign.id || '')
                              ? 'bg-green-200 text-green-600 cursor-not-allowed'
                              : 'bg-green-500 text-white hover:bg-green-600 hover:scale-105 shadow-sm'
                          }`}
@@ -963,8 +1002,8 @@ export default function Campaigns({ campaigns: propCampaigns, onTabChange }: Cam
                              handleStartSending(campaign._id || campaign.id);
                            }
                          }}
-                         disabled={sendingCampaigns.has(campaign._id || campaign.id || '')}
-                         title="Start Sending - May take some time"
+                         disabled={!hasEmailConfig || sendingCampaigns.has(campaign._id || campaign.id || '')}
+                         title={hasEmailConfig ? 'Start Sending - May take some time' : 'Set up email configuration in Settings first'}
                        >
                          {sendingCampaigns.has(campaign._id || campaign.id || '') ? (
                            <span className="inline-block animate-spin mr-2">⏳</span>
@@ -1128,7 +1167,9 @@ export default function Campaigns({ campaigns: propCampaigns, onTabChange }: Cam
                                              {campaign.status === 'scraping is done' && (
                          <button 
                            className={`px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 ${
-                             sendingCampaigns.has(campaign._id || campaign.id || '')
+                             !hasEmailConfig
+                               ? 'bg-slate-200 text-slate-500 cursor-not-allowed'
+                               : sendingCampaigns.has(campaign._id || campaign.id || '')
                                ? 'bg-green-200 text-green-600 cursor-not-allowed'
                                : 'bg-green-500 text-white hover:bg-green-600 hover:scale-105 shadow-sm'
                            }`}
@@ -1137,8 +1178,8 @@ export default function Campaigns({ campaigns: propCampaigns, onTabChange }: Cam
                                handleStartSending(campaign._id || campaign.id);
                              }
                            }}
-                           disabled={sendingCampaigns.has(campaign._id || campaign.id || '')}
-                           title="Start Sending - May take some time"
+                           disabled={!hasEmailConfig || sendingCampaigns.has(campaign._id || campaign.id || '')}
+                           title={hasEmailConfig ? 'Start Sending - May take some time' : 'Set up email configuration in Settings first'}
                          >
                            {sendingCampaigns.has(campaign._id || campaign.id || '') ? (
                              <span className="inline-block animate-spin mr-2">⏳</span>

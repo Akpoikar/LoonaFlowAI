@@ -8,9 +8,10 @@ interface OverviewProps {
   user: User;
   campaigns: Campaign[];
   onTabChange: (tab: string) => void;
+  hasEmailConfig?: boolean;
 }
 
-export default function Overview({ user, campaigns, onTabChange }: OverviewProps) {
+export default function Overview({ user, campaigns, onTabChange, hasEmailConfig = false }: OverviewProps) {
   const [dashboardStats, setDashboardStats] = useState<DashboardStats | null>(null);
   const [isLoadingStats, setIsLoadingStats] = useState(true);
 
@@ -60,32 +61,35 @@ export default function Overview({ user, campaigns, onTabChange }: OverviewProps
       </div>
 
       {/* Email Setup Notification */}
-      <div className="bg-white/40 backdrop-blur-md rounded-xl sm:rounded-2xl p-4 sm:p-6 ring-1 ring-white/30 shadow-lg shadow-purple-100/50">
-        <div className="flex flex-col sm:flex-row items-start gap-4">
-          <div className="flex-shrink-0">
-            <div className="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center">
-              <span className="text-lg text-blue-600">📧</span>
+      {!hasEmailConfig && (
+        <div className="bg-white/40 backdrop-blur-md rounded-xl sm:rounded-2xl p-4 sm:p-6 ring-1 ring-amber-200 shadow-lg shadow-purple-100/50">
+          <div className="flex flex-col sm:flex-row items-start gap-4">
+            <div className="flex-shrink-0">
+              <div className="w-10 h-10 bg-amber-100 rounded-full flex items-center justify-center">
+                <span className="text-lg text-amber-700">📧</span>
+              </div>
+            </div>
+            <div className="flex-1">
+              <h3 className="text-base sm:text-lg font-semibold text-slate-900 mb-2">
+                Email setup is required
+              </h3>
+              <p className="text-sm sm:text-base text-slate-700 mb-4">
+                Before you can send campaign emails, you must add an email configuration in Settings.
+                Once configured, this notice disappears automatically.
+              </p>
+              <button
+                onClick={() => onTabChange('settings')}
+                className="inline-flex items-center px-3 sm:px-4 py-2 bg-amber-600 text-white text-sm font-medium rounded-lg hover:bg-amber-700 transition-colors duration-200"
+              >
+                Set Up Email Configuration
+                <svg className="ml-2 w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                </svg>
+              </button>
             </div>
           </div>
-          <div className="flex-1">
-            <h3 className="text-base sm:text-lg font-semibold text-slate-900 mb-2">
-              Set up your email inbox
-            </h3>
-            <p className="text-sm sm:text-base text-slate-600 mb-4">
-              To send emails through campaigns, you'll need to configure your email settings first. This ensures your emails are delivered properly and tracked correctly.
-            </p>
-            <button 
-              onClick={() => onTabChange('settings')}
-              className="inline-flex items-center px-3 sm:px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 transition-colors duration-200"
-            >
-              Go to Settings
-              <svg className="ml-2 w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-              </svg>
-            </button>
-          </div>
         </div>
-      </div>
+      )}
 
       {/* Workflow Progress */}
       <div className="bg-white/40 backdrop-blur-md rounded-xl sm:rounded-2xl p-4 sm:p-6 ring-1 ring-white/30 shadow-lg shadow-purple-100/50">

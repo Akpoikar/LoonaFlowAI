@@ -12,6 +12,7 @@ import { apiClient } from '@/lib/api';
 export default function DashboardOverviewPage() {
   const [user, setUser] = useState<User | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [hasEmailConfig, setHasEmailConfig] = useState(false);
   const router = useRouter();
 
   // Tutorial state management
@@ -41,6 +42,22 @@ export default function DashboardOverviewPage() {
 
     setIsLoading(false);
   }, [router]);
+
+  useEffect(() => {
+    const loadEmailConfigStatus = async () => {
+      try {
+        const result: any = await apiClient.getEmailConfigs();
+        const configs = result?.data?.data || (Array.isArray(result?.data) ? result.data : []);
+        setHasEmailConfig(Array.isArray(configs) && configs.length > 0);
+      } catch (error) {
+        setHasEmailConfig(false);
+      }
+    };
+
+    if (!isLoading) {
+      loadEmailConfigStatus();
+    }
+  }, [isLoading]);
 
   const handleLogout = async () => {
     try {
@@ -102,7 +119,7 @@ export default function DashboardOverviewPage() {
         onStartTutorial={startTutorial}
       >
         <div className="p-4 sm:p-6 h-full">
-          <Overview user={user} campaigns={campaigns} onTabChange={(tab) => {
+          <Overview user={user} campaigns={campaigns} hasEmailConfig={hasEmailConfig} onTabChange={(tab) => {
             if (tab === 'campaigns') router.push('/dashboard/campaigns');
             if (tab === 'templates') router.push('/dashboard/templates');
             if (tab === 'subscription') router.push('/dashboard/subscription');
