@@ -98,7 +98,7 @@ export default function DashboardCampaignsPage() {
         onLogout={handleLogout}
         onStartTutorial={startTutorial}
       >
-        <div className="p-6 h-full">
+        <div className="p-4 sm:p-6 h-full">
           <Campaigns onTabChange={(tab) => {
             if (tab === 'overview') router.push('/dashboard/overview');
             if (tab === 'templates') router.push('/dashboard/templates');

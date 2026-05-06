@@ -136,7 +136,7 @@ export default function TutorialGuide({ isVisible, onClose, onComplete }: Tutori
   const isFirstStep = currentStep === 0;
 
   return (
-    <div className="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+    <div className="fixed inset-0 bg-black/80 backdrop-blur-sm z-[10050] flex items-center justify-center p-4">
       <div className="bg-white rounded-3xl shadow-2xl max-w-5xl w-full max-h-[95vh] overflow-hidden">
         {/* Header */}
         <div className="bg-gradient-to-r from-violet-600 to-purple-600 text-white p-6 lg:p-8">

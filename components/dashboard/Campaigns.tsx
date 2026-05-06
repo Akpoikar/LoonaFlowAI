@@ -537,6 +537,14 @@ export default function Campaigns({ campaigns: propCampaigns, onTabChange }: Cam
           </div>
         </div>
       )}
+      <div className="bg-white/40 backdrop-blur-md rounded-xl p-4 sm:p-5 ring-1 ring-white/30 shadow-lg shadow-purple-100/40">
+        <h3 className="text-base sm:text-lg font-bold text-slate-900 mb-2">Campaign flow</h3>
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 sm:gap-3 text-sm text-slate-700">
+          <div className="bg-white/50 rounded-lg px-3 py-2"><span className="font-semibold">1.</span> Create campaign with country + template</div>
+          <div className="bg-white/50 rounded-lg px-3 py-2"><span className="font-semibold">2.</span> Run scraping to collect leads</div>
+          <div className="bg-white/50 rounded-lg px-3 py-2"><span className="font-semibold">3.</span> Send emails when scraping is done</div>
+        </div>
+      </div>
              {/* Header */}
        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
          <div className="flex items-center gap-4">
@@ -555,8 +563,8 @@ export default function Campaigns({ campaigns: propCampaigns, onTabChange }: Cam
              className="rounded-xl bg-slate-600 hover:bg-slate-700 px-4 sm:px-6 py-3 font-semibold text-white shadow-lg shadow-slate-600/25 hover:shadow-slate-700/40 transition-colors relative z-10 flex items-center gap-2 text-sm sm:text-base"
            >
              <span className="text-base sm:text-lg">🔄</span>
-             <span className="hidden sm:inline">Restart Page</span>
-             <span className="sm:hidden">Reset</span>
+             <span className="hidden sm:inline">Refresh Data</span>
+             <span className="sm:hidden">Refresh</span>
            </button>
          </div>
          <button 
@@ -593,9 +601,9 @@ export default function Campaigns({ campaigns: propCampaigns, onTabChange }: Cam
          )}
 
          <form onSubmit={editingCampaign ? handleEditCampaign : handleCreateCampaign} className="space-y-6">
-           <div className="flex gap-8">
+          <div className="flex flex-col xl:flex-row gap-6 xl:gap-8">
              {/* Form */}
-             <div className="flex-1">
+            <div className="flex-1 space-y-4">
                  {/* Business Type */}
                  <div>
                    <label className={`block text-sm font-medium mb-2 ${isCampaignEditingRestricted() ? 'text-slate-400' : 'text-slate-700'}`}>
@@ -808,13 +816,29 @@ export default function Campaigns({ campaigns: propCampaigns, onTabChange }: Cam
                        </option>
                      ))}
                    </select>
+                  {templates.length === 0 && (
+                    <div className="mt-2 text-xs text-amber-700 bg-amber-50 border border-amber-200 rounded-lg p-2.5">
+                      No templates found. Create one first, then come back to launch this campaign.
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setShowCreateForm(false);
+                          onTabChange?.('templates');
+                        }}
+                        className="ml-1 underline font-semibold"
+                      >
+                        Go to Templates
+                      </button>
+                    </div>
+                  )}
                  </div>
                </div>
 
             {/* Preview Table */}
-            <div className="w-1/2">
+            <div className="w-full xl:w-1/2">
               <h4 className="text-lg font-semibold text-slate-900 mb-4">Preview Leads</h4>
-              <div className="overflow-hidden rounded-xl border border-slate-200 shadow-lg">
+              <p className="text-xs text-slate-500 mb-3">Sample format of the leads this campaign tries to collect.</p>
+              <div className="overflow-x-auto rounded-xl border border-slate-200 shadow-lg">
                 <table className="w-full text-sm text-left text-slate-900">
                   <thead className="text-xs text-slate-700 uppercase bg-gradient-to-r from-violet-50 to-purple-50 border-b border-slate-200">
                     <tr>
@@ -893,15 +917,14 @@ export default function Campaigns({ campaigns: propCampaigns, onTabChange }: Cam
         ) : (
           <div className="space-y-4">
             {/* Table Header - Hidden on mobile */}
-            <div className="hidden sm:block bg-white/40 backdrop-blur-md rounded-xl p-4 border border-[rgba(100,100,111,0.2)] shadow-sm">
-              <div className="grid grid-cols-12 gap-4 items-center text-sm font-semibold text-slate-700">
+            <div className="hidden lg:block bg-white/40 backdrop-blur-md rounded-xl p-4 border border-[rgba(100,100,111,0.2)] shadow-sm">
+              <div className="grid grid-cols-10 gap-4 items-center text-sm font-semibold text-slate-700">
                 <div className="col-span-3">Campaign</div>
-                <div className="col-span-1 text-center">Results Scraped</div>
+                <div className="col-span-1 text-center">Results</div>
                 <div className="col-span-1 text-center">Emails/Run</div>
-                <div className="col-span-2 text-center">Emails Sent/Failed/Skipped</div>
-                <div className="col-span-2 text-center">Emails Seen/Replied</div>
+                <div className="col-span-2 text-center">Sent/Failed/Skipped</div>
                 <div className="col-span-2 text-center">Status</div>
-                <div className="col-span-1 text-center">Job Actions</div>
+                <div className="col-span-1 text-center">Action</div>
               </div>
             </div>
 
@@ -909,7 +932,7 @@ export default function Campaigns({ campaigns: propCampaigns, onTabChange }: Cam
             {Array.isArray(campaigns) && campaigns.map((campaign: any) => (
               <div key={campaign._id || campaign.id} className="bg-white/30 backdrop-blur-md rounded-xl border border-[rgba(100,100,111,0.2)] shadow-sm hover:shadow-md transition-all duration-200">
                 {/* Mobile Layout */}
-                <div className="sm:hidden p-4 space-y-4">
+                <div className="lg:hidden p-4 space-y-4">
                   {/* Campaign Header */}
                   <div className="flex items-center gap-3">
                     <div className="w-10 h-10 bg-violet-100 rounded-lg flex items-center justify-center flex-shrink-0">
@@ -943,7 +966,7 @@ export default function Campaigns({ campaigns: propCampaigns, onTabChange }: Cam
                       </div>
                     </div>
                     <div className="text-center p-3 bg-white/20 rounded-lg">
-                      <div className="text-xs text-slate-600 mb-1">Emails/Day</div>
+                      <div className="text-xs text-slate-600 mb-1">Emails/Run</div>
                       <div className="font-semibold text-slate-900">{campaign.emailsPerDay || 50}</div>
                     </div>
                     <div className="text-center p-3 bg-white/20 rounded-lg">
@@ -1042,7 +1065,7 @@ export default function Campaigns({ campaigns: propCampaigns, onTabChange }: Cam
                 </div>
 
                 {/* Desktop Layout */}
-                <div className="hidden sm:grid grid-cols-12 gap-4 items-center p-4">
+                <div className="hidden lg:grid grid-cols-10 gap-4 items-center p-4">
                   {/* Campaign Column */}
                   <div className="col-span-3">
                     <div className="flex items-center gap-3">
@@ -1073,21 +1096,12 @@ export default function Campaigns({ campaigns: propCampaigns, onTabChange }: Cam
                       {/* Delete Button */}
                       <button 
                         title="Delete Campaign" 
-                        className="ml-2 p-1.5 rounded-lg text-green-600 hover:bg-green-100 hover:scale-110 transition-all duration-200"
+                        className="ml-2 p-1.5 rounded-lg text-red-600 hover:bg-red-100 hover:scale-110 transition-all duration-200"
 
                         onClick={() => handleDeleteCampaign(campaign._id || campaign.id)}
                       >
                         🗑️
                       </button>
-                                             {campaign.scrapedFileUrl && (
-                         <button
-                           onClick={() => handleDownloadFile(campaign.scrapedFileUrl)}
-                           className="ml-2 p-1.5 rounded-lg text-green-600 hover:bg-green-100 hover:scale-110 transition-all duration-200"
-                           title="Download Scraped Data File"
-                         >
-                           📥
-                         </button>
-                       )}
                         </p>
                      
                       </div>
@@ -1120,14 +1134,6 @@ export default function Campaigns({ campaigns: propCampaigns, onTabChange }: Cam
                     </div>
                   </div>
 
-                  {/* Emails Seen/Replied Column */}
-                  <div className="col-span-2 text-center">
-                    <div className="text-lg font-semibold text-slate-900">
-                      {campaign.emailsSeen || 0}
-                    </div>
-                    <div className="text-xs text-orange-500 font-medium">🔜 Coming Soon</div>
-                  </div>
-
                                      {/* Status Column */}
                    <div className="col-span-2 text-center">
                      <span className={`inline-block px-3 py-1 rounded-full text-xs font-semibold ${getStatusColor(campaign.status)}`}>
@@ -1140,7 +1146,7 @@ export default function Campaigns({ campaigns: propCampaigns, onTabChange }: Cam
 
                   {/* Job Actions Column */}
                   <div className="col-span-1 text-center">
-                    <div className="flex items-center justify-center">
+                    <div className="flex flex-col items-center justify-center gap-2">
                                              {campaign.status === 'idle' && (
                          <button 
                            className={`px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 ${
@@ -1188,6 +1194,15 @@ export default function Campaigns({ campaigns: propCampaigns, onTabChange }: Cam
                            )}
                          </button>
                        )}
+                      {campaign.scrapedFileUrl && (
+                        <button
+                          onClick={() => handleDownloadFile(campaign.scrapedFileUrl)}
+                          className="px-3 py-2 rounded-lg text-sm font-medium bg-blue-600 text-white hover:bg-blue-700 transition-all duration-200 shadow-sm"
+                          title="Download scraped data"
+                        >
+                          📥 Download CSV
+                        </button>
+                      )}
                     </div>
                   </div>
                   

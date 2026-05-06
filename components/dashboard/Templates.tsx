@@ -243,16 +243,25 @@ Warm regards,
   };
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-6 sm:space-y-8">
       {/* Header */}
-      <div className="flex justify-between items-center">
-        <h2 className="text-2xl font-bold text-slate-900">Email Templates</h2>
+      <div className="flex flex-col sm:flex-row justify-between sm:items-center gap-3">
+        <h2 className="text-xl sm:text-2xl font-bold text-slate-900">Email Templates</h2>
         <button 
           onClick={() => setShowCreateForm(true)}
-          className="rounded-xl bg-gradient-to-r from-violet-600 to-purple-600 px-6 py-3 font-semibold text-white shadow-lg shadow-violet-600/25 hover:shadow-violet-600/40 transition-colors relative z-10"
+          className="rounded-xl bg-gradient-to-r from-violet-600 to-purple-600 px-4 sm:px-6 py-3 font-semibold text-white shadow-lg shadow-violet-600/25 hover:shadow-violet-600/40 transition-colors relative z-10 w-full sm:w-auto"
         >
           + Create Template
         </button>
+      </div>
+
+      <div className="bg-white/40 backdrop-blur-md rounded-xl p-4 sm:p-5 ring-1 ring-white/30 shadow-lg shadow-purple-100/40">
+        <h3 className="text-base sm:text-lg font-bold text-slate-900 mb-2">How to use templates</h3>
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 sm:gap-3 text-sm text-slate-700">
+          <div className="bg-white/50 rounded-lg px-3 py-2"><span className="font-semibold">1.</span> Create a template</div>
+          <div className="bg-white/50 rounded-lg px-3 py-2"><span className="font-semibold">2.</span> Add <code className="bg-slate-100 px-1 rounded">&#123;name&#125;</code> for personalization</div>
+          <div className="bg-white/50 rounded-lg px-3 py-2"><span className="font-semibold">3.</span> Use it when creating campaigns</div>
+        </div>
       </div>
 
              {/* Create Template Modal */}
@@ -263,6 +272,15 @@ Warm regards,
          size="lg"
        >
          <form onSubmit={editingTemplate ? handleEditTemplate : handleCreateTemplate} className="space-y-6">
+            <div className="bg-emerald-50 border border-emerald-200 rounded-xl p-4">
+              <h4 className="text-sm font-semibold text-emerald-800 mb-1">
+                What you need to do
+              </h4>
+              <p className="text-sm text-emerald-700">
+                Write a subject and message body. We automatically append the unsubscribe disclaimer for you.
+              </p>
+            </div>
+
             {/* Template Examples */}
             <div className="bg-gradient-to-r from-violet-50 to-purple-50 rounded-xl p-4 border border-violet-200">
               <div className="flex items-center justify-between mb-3">
@@ -326,7 +344,7 @@ Warm regards,
              {/* Subject */}
             <div>
               <label className="block text-sm font-medium text-slate-700 mb-2">
-                Subject *
+                Step 1: Subject *
               </label>
               <input
                 type="text"
@@ -341,7 +359,7 @@ Warm regards,
             {/* Email Content */}
             <div>
               <label className="block text-sm font-medium text-slate-700 mb-2">
-                Email Content *
+                Step 2: Email Content *
               </label>
               <textarea
                 required
@@ -406,8 +424,8 @@ Warm regards,
          </Modal>
 
       {/* Templates List */}
-      <div className="bg-white/40 backdrop-blur-md rounded-2xl p-8 ring-1 ring-white/30 shadow-lg shadow-purple-100/50">
-        <h3 className="text-xl font-bold text-slate-900 mb-6">Your Templates</h3>
+      <div className="bg-white/40 backdrop-blur-md rounded-2xl p-4 sm:p-8 ring-1 ring-white/30 shadow-lg shadow-purple-100/50">
+        <h3 className="text-lg sm:text-xl font-bold text-slate-900 mb-6">Your Templates</h3>
         
         {isLoading ? (
           <div className="text-center py-12">
@@ -428,24 +446,24 @@ Warm regards,
         ) : (
           <div className="space-y-4">
             {Array.isArray(templates) && templates.map((template) => (
-              <div key={template._id || template.id} className="flex items-center justify-between p-6 bg-white/30 rounded-xl hover:bg-white/40 transition-colors border [rgba(100,100,111,0.2)] shadow-[rgba(100,100,111,0.2)_0px_7px_29px_0px]">
-                                 <div className="flex-1">
-                   <h4 className="font-semibold text-slate-900 text-lg mb-2">{template.subject}</h4>
+              <div key={template._id || template.id} className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-4 sm:p-6 bg-white/30 rounded-xl hover:bg-white/40 transition-colors border [rgba(100,100,111,0.2)] shadow-[rgba(100,100,111,0.2)_0px_7px_29px_0px]">
+                                 <div className="flex-1 min-w-0">
+                   <h4 className="font-semibold text-slate-900 text-base sm:text-lg mb-2 break-words">{template.subject}</h4>
                   <p className="text-slate-600 text-sm leading-relaxed">{getPreviewText(template.content)}</p>
                                      <div className="flex gap-2 mt-2">
                      <span className="text-xs text-slate-500">Created {new Date(template.createdAt).toLocaleDateString()}</span>
                    </div>
                 </div>
-                <div className="flex gap-2 ml-4">
-                  <button className="p-2 text-slate-600 hover:text-slate-900 transition-colors" title="Edit" onClick={() => handleEditClick(template)}>
-                    ✏️
+                <div className="flex gap-2 sm:ml-4 w-full sm:w-auto">
+                  <button className="px-3 py-2 rounded-lg border border-slate-200 text-slate-700 hover:text-slate-900 hover:bg-slate-50 transition-colors text-sm w-full sm:w-auto" title="Edit template" onClick={() => handleEditClick(template)}>
+                    Edit
                   </button>
                                      <button 
-                     className="p-2 text-slate-600 hover:text-slate-900 transition-colors" 
-                     title="Delete" 
+                     className="px-3 py-2 rounded-lg border border-red-200 text-red-600 hover:text-red-700 hover:bg-red-50 transition-colors text-sm w-full sm:w-auto" 
+                     title="Delete template" 
                      onClick={() => handleDeleteTemplate(template._id || template.id || '')}
                    >
-                     🗑️
+                     Delete
                    </button>
                 </div>
               </div>
