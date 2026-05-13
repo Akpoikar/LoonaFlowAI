@@ -77,12 +77,20 @@ API: Available for enterprise customers
 
 # Content Areas
 - /articles/ - Educational content and strategies
+- /articles/workflows - Human workflow guides for local lead generation, agency prospecting, and cold email personalization
 - /seo/ - SEO-optimized pages for lead generation keywords
-- /for/ - Industry-specific lead generation pages (44+ industries)
+- /for/ - Industry-specific lead generation pages (49 industries)
 - /pricing - Pricing and plans information
 - /contact - Contact and support information
 
-# Industry-Specific Pages (44 industries)
+# Workflow Guide URLs
+- https://loonaflow.app/articles/workflows
+- https://loonaflow.app/articles/how-to-find-100-local-business-leads
+- https://loonaflow.app/articles/how-agencies-build-prospect-list-before-ads
+- https://loonaflow.app/articles/how-to-contact-local-businesses-without-sounding-spammy
+- https://loonaflow.app/articles/how-to-personalize-cold-emails-with-business-name
+
+# Industry-Specific Pages (49 industries)
 Industries covered include:
 - Professional Services: Mortgage Brokers, Accountants, Financial Advisors, Insurance Agents, Consultants, HR & Recruitment Agencies
 - Marketing & Creative: Marketing Agencies, SEO/PPC Agencies, Web Design Studios, PR Firms, Video Production, Copywriting Agencies, Social Media Agencies, Influencer Marketing Agencies

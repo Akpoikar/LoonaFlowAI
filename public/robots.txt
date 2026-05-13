@@ -26,8 +26,12 @@ Allow: /terms
 Allow: /login
 Allow: /signup
 Allow: /articles
+Allow: /articles/workflows
 Allow: /seo/
 Allow: /for/
+Allow: /llms.txt
+Allow: /llm.txt
+Allow: /ai.txt
 
 # Specific rules for search engines
 User-agent: Googlebot

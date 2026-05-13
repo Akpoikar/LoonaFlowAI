@@ -43,6 +43,7 @@ export default function Footer() {
               <li><a href="/login" className="text-slate-600 hover:text-violet-600 transition-colors">Login</a></li>
               <li><a href="/signup" className="text-slate-600 hover:text-violet-600 transition-colors">Sign Up</a></li>
               <li><a href="/geo" className="text-slate-600 hover:text-violet-600 transition-colors">Find Leads by Country</a></li>
+              <li><a href="/articles/workflows" className="text-slate-600 hover:text-violet-600 transition-colors">Workflow Guides</a></li>
             </ul>
           </div>
 
@@ -51,6 +52,7 @@ export default function Footer() {
             <h3 className="font-semibold text-slate-900 mb-4">Company</h3>
             <ul className="space-y-2">
               <li><a href="/contact" className="text-slate-600 hover:text-violet-600 transition-colors">Contact</a></li>
+              <li><a href="/articles" className="text-slate-600 hover:text-violet-600 transition-colors">Articles</a></li>
               <li><a href="/slugs" className="text-slate-600 hover:text-violet-600 transition-colors">All Topics</a></li>
               <li><a href="/privacy" className="text-slate-600 hover:text-violet-600 transition-colors">Privacy Policy</a></li>
               <li><a href="/terms" className="text-slate-600 hover:text-violet-600 transition-colors">Terms of Service</a></li>

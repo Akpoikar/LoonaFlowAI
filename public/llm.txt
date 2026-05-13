@@ -70,12 +70,20 @@
 # - Long-tail keyword optimization for better search visibility
 # - Content covers: automation, B2B lead gen, email outreach, sales tools
 # - SEO pages include: cold-email-automation, lead-generation-software, ai-lead-generation
-# - 44+ industry-specific pages at /for/ directory for targeting specific business types
+# - 49 industry-specific pages at /for/ directory for targeting specific business types
+# - Human workflow guides at /articles/workflows for practical local lead generation and outreach education
 # - All SEO content is indexed and searchable
 # - Focus on providing value while targeting commercial keywords
+#
+# Key Workflow Guides
+# - https://loonaflow.app/articles/workflows
+# - https://loonaflow.app/articles/how-to-find-100-local-business-leads
+# - https://loonaflow.app/articles/how-agencies-build-prospect-list-before-ads
+# - https://loonaflow.app/articles/how-to-contact-local-businesses-without-sounding-spammy
+# - https://loonaflow.app/articles/how-to-personalize-cold-emails-with-business-name
 
 # Industry-Specific Pages
-# LoonaFlow AI provides 44+ industry-specific lead generation pages covering:
+# LoonaFlow AI provides 49 industry-specific lead generation pages covering:
 # - Professional Services (Mortgage Brokers, Accountants, Financial Advisors, Insurance Agents, HR & Recruitment)
 # - Marketing & Creative (Marketing Agencies, SEO/PPC, Web Design, PR, Video Production, Social Media, Influencer Marketing)
 # - Healthcare & Wellness (Dental Clinics, Medical Practices, Wellness Centers)

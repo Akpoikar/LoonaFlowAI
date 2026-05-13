@@ -1,0 +1,40 @@
+# LoonaFlow AI
+
+LoonaFlow AI is a web-based B2B lead generation and outreach automation platform. It helps teams find local business leads by niche or country, create personalized cold email campaigns, and track replies from one dashboard.
+
+Website: https://loonaflow.app
+Contact: hello@loonaflow.app
+Product Hunt: https://www.producthunt.com/products/loonaflow-ai
+
+## Core Pages
+
+- Home: https://loonaflow.app/
+- Pricing: https://loonaflow.app/pricing
+- Contact: https://loonaflow.app/contact
+- Articles: https://loonaflow.app/articles
+- Workflow Guides: https://loonaflow.app/articles/workflows
+- Find Leads by Country: https://loonaflow.app/geo
+- All Topics: https://loonaflow.app/slugs
+
+## Human Workflow Guides
+
+These pages explain practical, human ways to do local lead generation and outreach:
+
+- How to Find 100 Local Business Leads in One Afternoon: https://loonaflow.app/articles/how-to-find-100-local-business-leads
+- How Agencies Can Build a Prospect List Before Launching Ads: https://loonaflow.app/articles/how-agencies-build-prospect-list-before-ads
+- How to Contact Local Businesses Without Sounding Spammy: https://loonaflow.app/articles/how-to-contact-local-businesses-without-sounding-spammy
+- How to Personalize Cold Emails When All You Have Is a Business Name: https://loonaflow.app/articles/how-to-personalize-cold-emails-with-business-name
+
+## SEO And GEO Content
+
+- Keyword SEO pages live under https://loonaflow.app/seo/
+- Industry-specific lead generation pages live under https://loonaflow.app/for/
+- Country and GEO lead generation pages live under https://loonaflow.app/geo/
+- Sitemap: https://loonaflow.app/sitemap.xml
+- Robots: https://loonaflow.app/robots.txt
+
+## Product Summary
+
+Key features include business scraping by niche and location, AI-powered email personalization, campaign creation, reply tracking, lead management, analytics, and email templates.
+
+Primary audiences include marketing agencies, sales teams, founders, freelancers, small businesses, and business development professionals.

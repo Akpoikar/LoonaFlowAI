@@ -2,6 +2,7 @@ import fs from 'fs';
 import path from 'path';
 import type { MetadataRoute } from 'next';
 import { countryCodes } from '@/lib/countryCodes';
+import { workflowArticles } from '@/data/workflowArticles';
 
 // Regenerate on every request so changes in data/country-seo.json appear immediately
 export const revalidate = 0;
@@ -19,11 +20,30 @@ export default function sitemap(): MetadataRoute.Sitemap {
     '/for',
     '/seo',
     '/articles',
+    '/articles/workflows',
   ].map((route) => ({
     url: `${baseUrl}${route ? route : '/'}`,
     lastModified: new Date(),
     changeFrequency: 'weekly',
     priority: route === '' ? 1 : 0.7,
+  }));
+
+  const existingArticleSlugs = [
+    'local-business-outreach-2025',
+    'cold-email-strategies-2025',
+    'future-b2b-lead-generation-2025',
+    'google-maps-lead-generation-2025',
+    'escapespark-case-study-ai-outreach',
+  ];
+
+  const articleEntries: MetadataRoute.Sitemap = [
+    ...existingArticleSlugs,
+    ...workflowArticles.map((article) => article.slug),
+  ].map((slug) => ({
+    url: `${baseUrl}/articles/${slug}`,
+    lastModified: new Date(),
+    changeFrequency: 'weekly',
+    priority: 0.8,
   }));
 
   // Industry pages (/for/*)
@@ -85,7 +105,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     }));
   }
 
-  return [...staticRoutes, ...industryEntries, ...seoEntries, ...countryEntries];
+  return [...staticRoutes, ...articleEntries, ...industryEntries, ...seoEntries, ...countryEntries];
 }
 
 

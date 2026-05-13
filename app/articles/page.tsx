@@ -4,6 +4,7 @@ import { useState } from 'react';
 import PulsingBorderShader from "../../components/PulsingBorderShader";
 import Logo from "../../components/Logo";
 import SEOHead from "../../components/SEOHead";
+import { workflowArticles } from "../../data/workflowArticles";
 
 export default function ArticlesPage() {
   const articles = [
@@ -53,6 +54,18 @@ export default function ArticlesPage() {
       category: "Case Study"
     }
   ];
+
+  const workflowArticleCards = workflowArticles.map((article, index) => ({
+    id: `workflow-${index}`,
+    title: article.title,
+    excerpt: article.metaDescription,
+    slug: article.slug,
+    date: article.date,
+    readTime: article.readTime,
+    category: article.category
+  }));
+
+  const allArticles = [...workflowArticleCards, ...articles];
 
   return (
     <>
@@ -131,11 +144,17 @@ export default function ArticlesPage() {
               <p className="text-lg sm:text-xl text-slate-600 max-w-3xl mx-auto">
                 Proven strategies and tactics for local business outreach, cold email success, and lead generation that actually work in 2025.
               </p>
+              <a
+                href="/articles/workflows"
+                className="mt-6 inline-block rounded-xl bg-violet-600 px-6 py-3 font-semibold text-white shadow-lg shadow-violet-600/20 transition-colors hover:bg-violet-700"
+              >
+                Browse Workflow Guides
+              </a>
             </div>
 
             {/* Articles Grid */}
             <div className="grid gap-8 md:grid-cols-2 max-w-6xl mx-auto">
-              {articles.map((article) => (
+              {allArticles.map((article) => (
                 <article key={article.id} className="group">
                   <a href={`/articles/${article.slug}`} className="block">
                     <div className="bg-white/10 backdrop-blur-sm rounded-2xl p-8 border border-white/20 hover:bg-white/15 hover:border-white/30 transition-all duration-300 group-hover:shadow-xl group-hover:shadow-violet-500/10">
