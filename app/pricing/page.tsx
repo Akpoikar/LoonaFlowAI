@@ -3,25 +3,10 @@
 import Link from 'next/link';
 import Logo from '../../components/Logo';
 import Footer from '@/components/Footer';
-import SEOHead from '../../components/SEOHead';
 
 export default function PricingPage() {
   return (
     <>
-      <SEOHead 
-        title="LoonaFlow AI Pricing - Simple, Transparent Plans for Local Business Outreach"
-        description="Choose from our simple pricing plans starting at $0. Scale your local business outreach with AI-powered lead generation and email automation. No hidden fees."
-        keywords={[
-          "loonaflow pricing",
-          "local business outreach pricing",
-          "lead generation pricing",
-          "email automation pricing",
-          "business outreach plans",
-          "loonaflow ai pricing",
-          "local marketing pricing"
-        ]}
-        canonical="https://loonaflow.app/pricing"
-      />
       <div className="min-h-screen bg-gradient-to-br from-indigo-50 via-purple-50 to-pink-50">
       {/* Background elements */}
       <div className="pointer-events-none absolute inset-0">

@@ -14,6 +14,8 @@ Product Hunt: https://www.producthunt.com/products/loonaflow-ai
 - Articles: https://loonaflow.app/articles
 - Workflow Guides: https://loonaflow.app/articles/workflows
 - Find Leads by Country: https://loonaflow.app/geo
+- Find Leads by Industry: https://loonaflow.app/for
+- Comparisons vs Other Tools: https://loonaflow.app/vs
 - All Topics: https://loonaflow.app/slugs
 
 ## Human Workflow Guides
@@ -33,8 +35,17 @@ These pages explain practical, human ways to do local lead generation and outrea
 - Sitemap: https://loonaflow.app/sitemap.xml
 - Robots: https://loonaflow.app/robots.txt
 
+## Comparisons
+
+LoonaFlow AI publishes direct comparisons against other cold email and lead generation tools:
+
+- LoonaFlow AI vs Instantly: https://loonaflow.app/vs/instantly
+- LoonaFlow AI vs Apollo.io: https://loonaflow.app/vs/apollo
+- LoonaFlow AI vs Lemlist: https://loonaflow.app/vs/lemlist
+- LoonaFlow AI vs Smartlead: https://loonaflow.app/vs/smartlead
+
 ## Product Summary
 
-Key features include business scraping by niche and location, AI-powered email personalization, campaign creation, reply tracking, lead management, analytics, and email templates.
+Key features include business scraping by niche and location, CSV lead upload as an alternative to scraping, AI-powered email personalization, campaign creation, reply tracking, lead management, analytics, email templates, and self-serve subscription management (including cancellation).
 
 Primary audiences include marketing agencies, sales teams, founders, freelancers, small businesses, and business development professionals.

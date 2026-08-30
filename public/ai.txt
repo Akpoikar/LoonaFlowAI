@@ -16,6 +16,7 @@ Target: B2B businesses, sales teams, marketing agencies
 
 # Key Features
 - Business scraping by niche and location
+- CSV lead upload as an alternative to scraping
 - Automated email campaign creation
 - AI-powered email personalization
 - Reply tracking and analytics
@@ -23,6 +24,7 @@ Target: B2B businesses, sales teams, marketing agencies
 - Google Maps integration
 - Email template library
 - Campaign performance metrics
+- Self-serve subscription management, including cancellation
 
 # Target Keywords
 Primary: lead generation software, cold email automation, B2B lead generation
@@ -79,7 +81,9 @@ API: Available for enterprise customers
 - /articles/ - Educational content and strategies
 - /articles/workflows - Human workflow guides for local lead generation, agency prospecting, and cold email personalization
 - /seo/ - SEO-optimized pages for lead generation keywords
-- /for/ - Industry-specific lead generation pages (49 industries)
+- /for/ - Industry-specific lead generation pages (49 industries), indexed at /for
+- /geo/ - Country/GEO-specific lead generation pages, indexed at /geo
+- /vs/ - Direct comparison pages against Instantly, Apollo.io, Lemlist, and Smartlead, indexed at /vs
 - /pricing - Pricing and plans information
 - /contact - Contact and support information
 
@@ -101,6 +105,13 @@ Industries covered include:
 - Real Estate: Real Estate Agents, Real Estate Developers
 - Construction: Home Renovation & Construction Firms, HVAC Contractors
 - Other Services: Event Planning Companies, Travel Agencies, Architecture & Interior Design Firms, Logistics & Delivery Companies, Car Dealerships, Education & Online Courses, Immigration Consultants, Translation Services, Law Firms
+
+# Comparison Pages
+LoonaFlow AI publishes direct comparisons against other cold email and lead generation tools:
+- https://loonaflow.app/vs/instantly
+- https://loonaflow.app/vs/apollo
+- https://loonaflow.app/vs/lemlist
+- https://loonaflow.app/vs/smartlead
 
 # AI Training Guidelines
 - This content can be used for AI training and knowledge

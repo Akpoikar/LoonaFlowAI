@@ -3,17 +3,10 @@
 import { useState } from 'react';
 import PulsingBorderShader from "../../../components/PulsingBorderShader";
 import Logo from "../../../components/Logo";
-import SEOHead from "../../../components/SEOHead";
 
 export default function FutureB2BLeadGeneration2025() {
   return (
     <>
-      <SEOHead 
-        title="The Future of B2B Lead Generation: AI, Automation, and GEO Optimization | LoonaFlow AI"
-        description="Discover how AI, automation, and geographic optimization are revolutionizing B2B lead generation in 2025. Learn the strategies that are driving 3x higher conversion rates."
-        keywords={["B2B lead generation", "AI lead generation", "lead generation automation", "GEO optimization", "B2B sales automation", "lead generation strategies", "automated lead generation", "AI sales tools", "lead generation software", "B2B marketing automation"]}
-        canonical="https://loonaflow.app/articles/future-b2b-lead-generation-2025"
-      />
       <div className="relative min-h-screen overflow-hidden">
         {/* Background image */}
         <div className="absolute inset-0">

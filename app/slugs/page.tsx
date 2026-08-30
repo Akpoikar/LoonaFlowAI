@@ -1,6 +1,5 @@
 import Logo from '../../components/Logo';
 import PulsingBorderShader from '../../components/PulsingBorderShader';
-import SEOHead from '../../components/SEOHead';
 import industriesData from '../../data/industries.json';
 import keywordsData from '../../data/keywords.json';
 
@@ -16,8 +15,6 @@ export default function SlugsPage() {
 
   return (
     <>
-      <SEOHead title="All Topics" description="All industry and SEO pages" />
-
       <div className="relative min-h-screen overflow-hidden">
         {/* Background image */}
         <div className="absolute inset-0">

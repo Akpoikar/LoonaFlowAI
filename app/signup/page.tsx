@@ -6,7 +6,6 @@ import Link from 'next/link';
 import Logo from '../../components/Logo';
 import PulsingBorderShader from '@/components/PulsingBorderShader';
 import { apiClient } from '@/lib/api';
-import SEOHead from '../../components/SEOHead';
 
 export default function SignupPage() {
   const [formData, setFormData] = useState({
@@ -73,17 +72,6 @@ export default function SignupPage() {
   if (isSuccess) {
     return (
       <>
-        <SEOHead
-          title="Registration Successful - LoonaFlow AI"
-          description="Your account has been successfully created. Please login to access your dashboard."
-          keywords={[
-            "loonaflow registration success",
-            "account created",
-            "login required"
-          ]}
-          canonical="https://loonaflow.app/signup"
-          noIndex={true}
-        />
         <div className="min-h-screen bg-gradient-to-br from-indigo-50 via-purple-50 to-pink-50 flex items-center justify-center p-6 overflow-hidden">
           {/* Background elements */}
           <div className="pointer-events-none absolute inset-0 overflow-hidden">
@@ -140,21 +128,6 @@ export default function SignupPage() {
 
   return (
     <>
-      <SEOHead
-        title="Sign Up for LoonaFlow AI - Start Your Local Business Outreach Journey"
-        description="Create your free LoonaFlow AI account and start generating leads, automating emails, and growing your local business outreach today."
-        keywords={[
-          "loonaflow signup",
-          "loonaflow ai signup",
-          "local business outreach signup",
-          "lead generation signup",
-          "email automation signup",
-          "business outreach registration",
-          "free trial signup"
-        ]}
-        canonical="https://loonaflow.app/signup"
-        noIndex={true}
-      />
       <div className="min-h-screen bg-gradient-to-br from-indigo-50 via-purple-50 to-pink-50 flex items-center justify-center p-6 overflow-hidden">
       {/* Background elements */}
       <div className="pointer-events-none absolute inset-0 overflow-hidden">

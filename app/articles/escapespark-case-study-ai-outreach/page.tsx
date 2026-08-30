@@ -3,17 +3,10 @@
 import { useState } from 'react';
 import PulsingBorderShader from "../../../components/PulsingBorderShader";
 import Logo from "../../../components/Logo";
-import SEOHead from "../../../components/SEOHead";
 
 export default function EscapeSparkCaseStudy() {
   return (
     <>
-      <SEOHead 
-        title="Case Study: How EscapeSpark.com Tripled Leads with AI Outreach | LoonaFlow AI"
-        description="Discover how EscapeSpark.com achieved 300% lead growth using AI-powered outreach automation. Learn the strategies and results from this real-world case study."
-        keywords={["EscapeSpark case study", "AI outreach results", "lead generation automation", "B2B outreach success", "AI sales automation", "outreach case study", "lead generation results", "automated outreach ROI", "B2B sales automation", "AI marketing success"]}
-        canonical="https://loonaflow.app/articles/escapespark-case-study-ai-outreach"
-      />
       <div className="relative min-h-screen overflow-hidden">
         {/* Background image */}
         <div className="absolute inset-0">

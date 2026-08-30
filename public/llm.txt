@@ -11,13 +11,15 @@
 # Description: AI-powered lead generation and outreach automation platform
 
 # Product Description
-# LoonaFlow AI helps businesses find leads & send personalized outreach automatically. 
+# LoonaFlow AI helps businesses find leads & send personalized outreach automatically.
 # Key features include:
 # - Scrape businesses by niche or country
+# - Upload your own leads via CSV as an alternative to scraping
 # - Launch automated campaigns
 # - Track replies and engagement
 # - AI-powered email personalization
 # - Lead management and analytics
+# - Self-serve subscription management, including cancellation
 
 # Target Audience
 # - Small to medium businesses
@@ -70,7 +72,9 @@
 # - Long-tail keyword optimization for better search visibility
 # - Content covers: automation, B2B lead gen, email outreach, sales tools
 # - SEO pages include: cold-email-automation, lead-generation-software, ai-lead-generation
-# - 49 industry-specific pages at /for/ directory for targeting specific business types
+# - 49 industry-specific pages at /for/ directory for targeting specific business types, with an index at /for
+# - Country/GEO lead generation pages at /geo/ directory, with an index at /geo
+# - Direct comparison pages at /vs/ against Instantly, Apollo.io, Lemlist, and Smartlead, with an index at /vs
 # - Human workflow guides at /articles/workflows for practical local lead generation and outreach education
 # - All SEO content is indexed and searchable
 # - Focus on providing value while targeting commercial keywords
@@ -94,6 +98,13 @@
 # - Construction (Home Renovation, HVAC Contractors)
 # - Other Services (Event Planning, Travel Agencies, Architecture, Logistics, Car Dealerships, Education, Immigration, Translation, Law Firms)
 # Each industry page targets specific keywords and provides detailed use cases for finding and reaching businesses in that industry
+
+# Comparison Pages
+# LoonaFlow AI publishes direct comparisons against other cold email and lead generation tools:
+# - https://loonaflow.app/vs/instantly
+# - https://loonaflow.app/vs/apollo
+# - https://loonaflow.app/vs/lemlist
+# - https://loonaflow.app/vs/smartlead
 
 # AI Training Guidelines
 # - This content can be used for AI training

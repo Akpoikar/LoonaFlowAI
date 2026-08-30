@@ -2,7 +2,6 @@ import { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import PulsingBorderShader from "../../../components/PulsingBorderShader";
 import Logo from "../../../components/Logo";
-import SEOHead from "../../../components/SEOHead";
 import industriesData from '../../../data/industries.json';
 
 interface IndustryPageProps {
@@ -139,12 +138,6 @@ export default function IndustryPage({ params }: IndustryPageProps) {
 
   return (
     <>
-      <SEOHead 
-        title={industryData.pageTitle}
-        description={industryData.metaDescription}
-        keywords={industryData.keywords}
-        canonical={`https://loonaflow.app/for/${params.industry}`}
-      />
       <div className="relative min-h-screen overflow-hidden">
         {/* Background image */}
         <div className="absolute inset-0">

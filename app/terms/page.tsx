@@ -1,23 +1,8 @@
-import SEOHead from '../../components/SEOHead';
 import Logo from '../../components/Logo';
 
 export default function TermsPage() {
   return (
     <>
-      <SEOHead
-        title="Terms of Service - LoonaFlow AI | Legal Terms and Conditions"
-        description="Read the terms and conditions for using LoonaFlow AI's local business outreach platform. Understand your rights and obligations."
-        keywords={[
-          "loonaflow terms of service",
-          "terms and conditions",
-          "legal terms",
-          "user agreement",
-          "loonaflow ai terms",
-          "service agreement",
-          "platform terms"
-        ]}
-        canonical="https://loonaflow.app/terms"
-      />
       <div className="min-h-screen bg-gradient-to-br from-indigo-50 via-purple-50 to-pink-50">
         {/* Navigation Header */}
         <nav className="bg-white/20 backdrop-blur-md border-b border-white/30">

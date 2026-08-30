@@ -3,7 +3,6 @@
 import { useState } from 'react';
 import PulsingBorderShader from "../../components/PulsingBorderShader";
 import Logo from "../../components/Logo";
-import SEOHead from "../../components/SEOHead";
 import { workflowArticles } from "../../data/workflowArticles";
 
 export default function ArticlesPage() {
@@ -69,12 +68,6 @@ export default function ArticlesPage() {
 
   return (
     <>
-      <SEOHead 
-        title="Articles - LoonaFlow AI | Local Business Outreach Strategies"
-        description="Expert insights on local business outreach, cold email strategies, and lead generation techniques that actually work in 2025."
-        keywords={["local business outreach", "cold email strategies", "lead generation", "business development", "email marketing"]}
-        canonical="https://loonaflow.app/articles"
-      />
       <div className="relative min-h-screen overflow-hidden">
         {/* Background image */}
         <div className="absolute inset-0">

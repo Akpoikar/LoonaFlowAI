@@ -19,8 +19,10 @@ export default function sitemap(): MetadataRoute.Sitemap {
     '/geo',
     '/for',
     '/seo',
+    '/slugs',
     '/articles',
     '/articles/workflows',
+    '/vs',
   ].map((route) => ({
     url: `${baseUrl}${route ? route : '/'}`,
     lastModified: new Date(),
@@ -105,7 +107,24 @@ export default function sitemap(): MetadataRoute.Sitemap {
     }));
   }
 
-  return [...staticRoutes, ...articleEntries, ...industryEntries, ...seoEntries, ...countryEntries];
+  // Comparison pages (/vs/*) — only published (fact-checked) pages are indexed
+  let competitorEntries: MetadataRoute.Sitemap = [];
+  try {
+    const competitorsRaw = fs.readFileSync(path.join(process.cwd(), 'data', 'competitors.json'), 'utf8');
+    const competitors: Array<{ slug: string; published?: boolean }> = JSON.parse(competitorsRaw);
+    if (Array.isArray(competitors) && competitors.length) {
+      competitorEntries = competitors
+        .filter((c) => typeof c?.slug === 'string' && c.slug.length > 0 && c.published)
+        .map((c) => ({
+          url: `${baseUrl}/vs/${c.slug}`,
+          lastModified: new Date(),
+          changeFrequency: 'monthly',
+          priority: 0.7,
+        }));
+    }
+  } catch {}
+
+  return [...staticRoutes, ...articleEntries, ...industryEntries, ...seoEntries, ...countryEntries, ...competitorEntries];
 }
 
 

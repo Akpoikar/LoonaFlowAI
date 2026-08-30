@@ -1,23 +1,8 @@
-import SEOHead from '../../components/SEOHead';
 import Logo from '../../components/Logo';
 
 export default function PrivacyPage() {
   return (
     <>
-      <SEOHead
-        title="Privacy Policy - LoonaFlow AI | How We Use Your Data"
-        description="Learn about how LoonaFlow AI collects, uses, and protects your personal information and data privacy practices."
-        keywords={[
-          "loonaflow privacy policy",
-          "data protection",
-          "cookie policy",
-          "privacy practices",
-          "loonaflow ai privacy",
-          "user data protection",
-          "GDPR compliance"
-        ]}
-        canonical="https://loonaflow.app/privacy"
-      />
       <div className="min-h-screen bg-gradient-to-br from-indigo-50 via-purple-50 to-pink-50">
         {/* Navigation Header */}
         <nav className="bg-white/20 backdrop-blur-md border-b border-white/30">

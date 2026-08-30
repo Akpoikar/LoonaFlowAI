@@ -1,0 +1,86 @@
+[
+  {
+    "slug": "instantly",
+    "name": "Instantly",
+    "pageTitle": "LoonaFlow AI vs Instantly: Which Is Right for Your Outreach? | LoonaFlow AI",
+    "metaDescription": "Compare LoonaFlow AI and Instantly on lead sourcing, AI personalization, and pricing. See which cold email platform fits your business.",
+    "heading": "LoonaFlow AI vs Instantly",
+    "intro": "Instantly is a well-known cold email sending platform built around inbox rotation, email warmup, and high-volume sending infrastructure. LoonaFlow AI takes a different starting point: it finds your leads for you by scraping businesses by niche or location, then automates personalized outreach to them — combining lead sourcing and sending in one workflow.",
+    "theirStrength": "Instantly's core strength is deliverability infrastructure — unlimited email accounts, automated warmup, and inbox rotation designed for teams sending high volumes of cold email across many inboxes.",
+    "differentiators": [
+      "Lead sourcing: LoonaFlow AI includes built-in business scraping by industry and location, so you don't need to bring your own list. Instantly is primarily a sending and warmup tool — you typically supply leads from elsewhere.",
+      "Workflow: LoonaFlow AI is built for local and niche business outreach end-to-end (find → personalize → send → track). Instantly is optimized for teams running very high email volumes across many accounts.",
+      "Best fit: choose LoonaFlow AI if you want lead discovery and outreach in one platform; choose Instantly if you already have lead lists and need best-in-class sending infrastructure at scale."
+    ],
+    "faq": [
+      {
+        "question": "Does LoonaFlow AI replace Instantly?",
+        "answer": "It depends on your workflow. If you need a tool that finds businesses for you and automates outreach in one place, LoonaFlow AI covers that end-to-end. If you already have your own lead lists and need high-volume sending infrastructure across many inboxes, Instantly is purpose-built for that."
+      }
+    ],
+    "published": true
+  },
+  {
+    "slug": "apollo",
+    "name": "Apollo.io",
+    "pageTitle": "LoonaFlow AI vs Apollo.io: Which Is Right for Your Outreach? | LoonaFlow AI",
+    "metaDescription": "Compare LoonaFlow AI and Apollo.io on lead databases, outreach automation, and pricing to find the best fit for your prospecting workflow.",
+    "heading": "LoonaFlow AI vs Apollo.io",
+    "intro": "Apollo.io is a large, pre-built B2B contact database paired with a sales engagement platform, popular with sales teams targeting corporate contacts by title and company. LoonaFlow AI takes a different approach: it scrapes real-time, local and niche business data by industry or location, then automates AI-personalized outreach to those businesses.",
+    "theirStrength": "Apollo's core strength is the size and depth of its existing contact database — millions of pre-verified B2B contacts searchable by role, company, and firmographic filters.",
+    "differentiators": [
+      "Data approach: Apollo relies on a static, pre-built contact database. LoonaFlow AI scrapes fresh, real-time data for local and niche businesses (e.g. dental clinics, law firms) that may not be well represented in a general B2B database.",
+      "Use case: Apollo is strongest for corporate B2B prospecting by title/seniority. LoonaFlow AI is built for finding and reaching local or industry-specific businesses at scale.",
+      "Best fit: choose Apollo if you need a broad, searchable database of corporate contacts; choose LoonaFlow AI if you need to find and personalize outreach to local or niche businesses by location or industry."
+    ],
+    "faq": [
+      {
+        "question": "Is LoonaFlow AI a lead database like Apollo?",
+        "answer": "Not exactly. Apollo is a pre-built, searchable database of B2B contacts. LoonaFlow AI sources leads by scraping businesses in real time based on the niche or location you specify, which is better suited to local and industry-specific prospecting than searching a static database."
+      }
+    ],
+    "published": true
+  },
+  {
+    "slug": "lemlist",
+    "name": "Lemlist",
+    "pageTitle": "LoonaFlow AI vs Lemlist: Which Is Right for Your Outreach? | LoonaFlow AI",
+    "metaDescription": "Compare LoonaFlow AI and Lemlist on multichannel outreach, personalization, and lead sourcing to find the best fit for your team.",
+    "heading": "LoonaFlow AI vs Lemlist",
+    "intro": "Lemlist is known for multichannel outreach sequences — combining email, LinkedIn steps, and calls — along with personalized images and video in email. LoonaFlow AI focuses on end-to-end automation for local and niche business outreach: finding businesses by industry or location, then launching AI-personalized email campaigns to them.",
+    "theirStrength": "Lemlist's core strength is multichannel sequence building and creative personalization — dynamic images, video, and LinkedIn steps layered into outreach sequences.",
+    "differentiators": [
+      "Channels: Lemlist supports multichannel sequences (email + LinkedIn + calls). LoonaFlow AI is focused on email outreach paired with automated lead sourcing.",
+      "Lead sourcing: LoonaFlow AI scrapes businesses by niche or location directly in the platform. Lemlist is primarily a sequence and personalization tool — you typically bring your own leads.",
+      "Best fit: choose Lemlist if multichannel sequences and creative personalization are your priority; choose LoonaFlow AI if you want built-in lead discovery paired with automated email outreach."
+    ],
+    "faq": [
+      {
+        "question": "Does LoonaFlow AI support LinkedIn outreach like Lemlist?",
+        "answer": "LoonaFlow AI is focused on email outreach paired with automated lead sourcing by niche or location. Lemlist's multichannel sequences, including LinkedIn steps, are one of its main differentiators — if multichannel is a priority, evaluate that against LoonaFlow AI's built-in lead discovery."
+      }
+    ],
+    "published": true
+  },
+  {
+    "slug": "smartlead",
+    "name": "Smartlead",
+    "pageTitle": "LoonaFlow AI vs Smartlead: Which Is Right for Your Outreach? | LoonaFlow AI",
+    "metaDescription": "Compare LoonaFlow AI and Smartlead on deliverability, lead sourcing, and AI personalization to find the best fit for your cold email strategy.",
+    "heading": "LoonaFlow AI vs Smartlead",
+    "intro": "Smartlead is built around cold email deliverability at scale, with unlimited warmup and inbox rotation across many accounts. LoonaFlow AI pairs outreach automation with built-in lead sourcing — so you can find businesses by niche or location and reach them without stitching together separate tools for data and sending.",
+    "theirStrength": "Smartlead's core strength is deliverability infrastructure for high-volume senders — unlimited email accounts, automated warmup, and inbox rotation built for agencies and teams sending at scale.",
+    "differentiators": [
+      "Lead sourcing: LoonaFlow AI scrapes businesses by niche or location directly in the platform. Smartlead is primarily a sending and deliverability tool — you typically bring your own lead lists.",
+      "Scale focus: Smartlead is optimized for very high email volumes across many inboxes, often used by agencies. LoonaFlow AI is built for finding and reaching local or niche businesses end-to-end.",
+      "Best fit: choose Smartlead if you need best-in-class deliverability infrastructure for high-volume sending; choose LoonaFlow AI if you want lead discovery and outreach automation in one platform."
+    ],
+    "faq": [
+      {
+        "question": "Does LoonaFlow AI include email warmup like Smartlead?",
+        "answer": "LoonaFlow AI focuses on finding businesses and automating personalized outreach to them. Smartlead's core differentiator is its deliverability and warmup infrastructure for high-volume senders — if that's your primary need, weigh it against LoonaFlow AI's built-in lead sourcing."
+      }
+    ],
+    "published": true
+  }
+]

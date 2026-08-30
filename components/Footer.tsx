@@ -43,6 +43,8 @@ export default function Footer() {
               <li><a href="/login" className="text-slate-600 hover:text-violet-600 transition-colors">Login</a></li>
               <li><a href="/signup" className="text-slate-600 hover:text-violet-600 transition-colors">Sign Up</a></li>
               <li><a href="/geo" className="text-slate-600 hover:text-violet-600 transition-colors">Find Leads by Country</a></li>
+              <li><a href="/for" className="text-slate-600 hover:text-violet-600 transition-colors">Find Leads by Industry</a></li>
+              <li><a href="/vs" className="text-slate-600 hover:text-violet-600 transition-colors">Compare Alternatives</a></li>
               <li><a href="/articles/workflows" className="text-slate-600 hover:text-violet-600 transition-colors">Workflow Guides</a></li>
             </ul>
           </div>

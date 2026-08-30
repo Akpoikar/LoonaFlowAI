@@ -2,7 +2,6 @@ import { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import PulsingBorderShader from "../../../components/PulsingBorderShader";
 import Logo from "../../../components/Logo";
-import SEOHead from "../../../components/SEOHead";
 import keywordsData from '../../../data/keywords.json';
 
 interface SEOPageProps {
@@ -175,12 +174,6 @@ export default function SEOPage({ params }: SEOPageProps) {
 
   return (
     <>
-      <SEOHead 
-        title={keywordData.title}
-        description={keywordData.metaDescription}
-        keywords={[keywordData.keyword, ...keywordData.related]}
-        canonical={`https://loonaflow.app/seo/${keywordData.slug}`}
-      />
       <div className="relative min-h-screen overflow-hidden">
         {/* Background image */}
         <div className="absolute inset-0">

@@ -29,6 +29,7 @@ Allow: /articles
 Allow: /articles/workflows
 Allow: /seo/
 Allow: /for/
+Allow: /vs/
 Allow: /llms.txt
 Allow: /llm.txt
 Allow: /ai.txt
