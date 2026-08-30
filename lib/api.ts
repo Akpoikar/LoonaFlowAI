@@ -14,9 +14,13 @@ class ApiClient {
     options: RequestInit = {}
   ): Promise<ApiResponse<T>> {
     try {
+      // Don't force a JSON content-type on FormData bodies - the browser needs
+      // to set its own multipart/form-data boundary.
+      const isFormData = options.body instanceof FormData;
+
       const response = await fetch(`${API_BASE}${endpoint}`, {
         headers: {
-          'Content-Type': 'application/json',
+          ...(isFormData ? {} : { 'Content-Type': 'application/json' }),
           ...options.headers,
         },
         credentials: 'include', // Include cookies in requests
@@ -84,12 +88,13 @@ class ApiClient {
   }
 
   async createCampaign(campaign: {
-    businessType: string;
-    location: string;
+    businessType?: string;
+    location?: string;
     selectedLocations?: string[];
     maximumResults: number;
     emailsPerDay: number;
     emailTemplate: string;
+    dataSource?: 'scrape' | 'upload';
   }) {
     return this.request('/campaigns', {
       method: 'POST',
@@ -129,6 +134,30 @@ class ApiClient {
   async startSending(campaignId: string) {
     return this.request(`/campaigns/${campaignId}/start-sending`, {
       method: 'POST',
+    });
+  }
+
+  async uploadLeads(campaignId: string, file: Blob, fileName: string) {
+    const formData = new FormData();
+    formData.append('file', file, fileName);
+
+    return this.request<{ leadCount: number; fileName: string }>(
+      `/campaigns/${campaignId}/upload-leads`,
+      {
+        method: 'POST',
+        body: formData,
+      }
+    );
+  }
+
+  async getCampaignLeads(campaignId: string) {
+    return this.request<CampaignLeadsResponse>(`/campaigns/${campaignId}/leads`);
+  }
+
+  async updateSkippedLeads(campaignId: string, skippedRowIndices: number[]) {
+    return this.request<{ skippedRowIndices: number[] }>(`/campaigns/${campaignId}/skipped-leads`, {
+      method: 'PUT',
+      body: JSON.stringify({ skippedRowIndices }),
     });
   }
 
@@ -277,8 +306,10 @@ export interface User {
 export interface Campaign {
   _id: string; // Backend uses _id
   id?: string; // Frontend might use id
-  businessType: string;
-  location: string;
+  dataSource?: 'scrape' | 'upload';
+  businessType?: string;
+  location?: string;
+  uploadedFileName?: string;
   maximumResults: number;
   currentResults: number;
   emailsPerDay: number;
@@ -297,6 +328,25 @@ export interface Campaign {
   user?: string;
   createdAt: string;
   updatedAt: string;
+}
+
+// A single scraped lead row for a campaign. `row_index` is the stable,
+// 0-based identifier for the row in the underlying CSV — use it as the
+// React key and for tracking checkbox/skip state, not array position.
+// Besides row_index/name/email_1, other columns are dynamic and vary
+// by campaign (e.g. phone, site, full_address, category).
+export interface LeadRow {
+  row_index: number;
+  name: string;
+  email_1: string;
+  [key: string]: string | number | undefined;
+}
+
+export interface CampaignLeadsResponse {
+  success: boolean;
+  totalRows: number;
+  skippedRowIndices: number[];
+  leads: LeadRow[];
 }
 
 export interface EmailTemplate {

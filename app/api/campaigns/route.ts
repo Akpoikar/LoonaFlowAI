@@ -47,9 +47,16 @@ export async function GET(request: NextRequest) {
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
-    const { businessType, location, selectedLocations, maximumResults, emailsPerDay, emailTemplate } = body;
+    const { businessType, location, selectedLocations, maximumResults, emailsPerDay, emailTemplate, dataSource } = body;
 
-    if (!businessType || !location || !emailTemplate) {
+    if (dataSource === 'upload') {
+      if (!emailTemplate) {
+        return NextResponse.json(
+          { error: 'Email template is required' },
+          { status: 400 }
+        );
+      }
+    } else if (!businessType || !location || !emailTemplate) {
       return NextResponse.json(
         { error: 'Business type, location, and email template are required' },
         { status: 400 }
@@ -57,7 +64,7 @@ export async function POST(request: NextRequest) {
     }
 
     const headers = getAuthHeaders();
-    
+
     if (!headers.Authorization) {
       return NextResponse.json(
         { error: 'Authentication required' },
@@ -75,14 +82,19 @@ export async function POST(request: NextRequest) {
         maximumResults,
         emailTemplate,
         emailsPerDay,
+        dataSource,
       }),
     });
 
     const data = await response.json();
 
     if (!response.ok) {
+      console.error('Create campaign backend error:', JSON.stringify(data));
+      const detailMessage = Array.isArray(data.details)
+        ? data.details.map((d: any) => `${d.field}: ${d.message}`).join('; ')
+        : null;
       return NextResponse.json(
-        { error: data.message || 'Failed to create campaign' },
+        { error: detailMessage || data.error_description || data.message || data.error || 'Failed to create campaign' },
         { status: response.status }
       );
     }

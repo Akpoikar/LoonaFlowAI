@@ -1,11 +1,25 @@
 "use client";
 
 import { useState, useEffect } from 'react';
+import Papa from 'papaparse';
 import { Campaign } from '../../types/dashboard';
-import { apiClient, Campaign as ApiCampaign } from '@/lib/api';
+import { apiClient, Campaign as ApiCampaign, LeadRow } from '@/lib/api';
 import Modal from '../Modal';
 import { countryCodes, getCountryByCode, type CountryCode } from '@/lib/countryCodes';
 import Flag from '../Flag';
+
+const MAX_CSV_UPLOAD_BYTES = 5 * 1024 * 1024; // 5 MB
+const REQUIRED_LEAD_FIELDS = [
+  { key: 'name', label: 'Business Name' },
+  { key: 'email_1', label: 'Email' },
+] as const;
+
+interface ParsedLeadsCsv {
+  fileName: string;
+  fileSize: number;
+  headers: string[];
+  rows: Record<string, string>[];
+}
 
 interface CampaignsProps {
   campaigns?: Campaign[];
@@ -93,6 +107,23 @@ export default function Campaigns({ campaigns: propCampaigns, onTabChange }: Cam
   const [selectedLocations, setSelectedLocations] = useState<string[]>([]);
   const [showLocationModal, setShowLocationModal] = useState(false);
   const [hasEmailConfig, setHasEmailConfig] = useState(true);
+
+  // CSV upload (alternative lead source) state
+  const [dataSource, setDataSource] = useState<'scrape' | 'upload'>('scrape');
+  const [parsedCsv, setParsedCsv] = useState<ParsedLeadsCsv | null>(null);
+  const [columnMapping, setColumnMapping] = useState<Record<string, string>>({});
+  const [csvError, setCsvError] = useState('');
+  const [isUploadingLeads, setIsUploadingLeads] = useState(false);
+
+  // Review Leads modal state
+  const [showLeadsModal, setShowLeadsModal] = useState(false);
+  const [reviewingCampaignId, setReviewingCampaignId] = useState<string | null>(null);
+  const [isLoadingLeads, setIsLoadingLeads] = useState(false);
+  const [leadsError, setLeadsError] = useState('');
+  const [leads, setLeads] = useState<LeadRow[]>([]);
+  const [checkedRowIndices, setCheckedRowIndices] = useState<Set<number>>(new Set());
+  const [isSavingSkippedLeads, setIsSavingSkippedLeads] = useState(false);
+  const [saveLeadsSuccess, setSaveLeadsSuccess] = useState(false);
 
   // Helper function to check if campaign editing should be restricted
   const isCampaignEditingRestricted = (): boolean => {
@@ -262,9 +293,166 @@ export default function Campaigns({ campaigns: propCampaigns, onTabChange }: Cam
     }
   };
 
-  const handleCreateCampaign = async (e: React.FormEvent) => {
+  const guessColumnForField = (fieldKey: string, headers: string[]): string => {
+    const normalized = headers.map(h => ({ header: h, lower: h.toLowerCase().replace(/[^a-z0-9]/g, '') }));
+    if (fieldKey === 'name') {
+      const match = normalized.find(h => h.lower.includes('business') || h.lower.includes('company') || h.lower === 'name');
+      return match?.header || '';
+    }
+    if (fieldKey === 'email_1') {
+      const match = normalized.find(h => h.lower.includes('email'));
+      return match?.header || '';
+    }
+    return '';
+  };
+
+  const handleCsvFileSelect = (file: File) => {
+    setCsvError('');
+    setParsedCsv(null);
+    setColumnMapping({});
+
+    if (!file.name.toLowerCase().endsWith('.csv')) {
+      setCsvError('Please upload a .csv file');
+      return;
+    }
+
+    if (file.size > MAX_CSV_UPLOAD_BYTES) {
+      setCsvError(`File exceeds the 5 MB size limit (this file is ${(file.size / (1024 * 1024)).toFixed(1)} MB)`);
+      return;
+    }
+
+    Papa.parse<Record<string, string>>(file, {
+      header: true,
+      skipEmptyLines: true,
+      complete: (results) => {
+        const headers = results.meta.fields || [];
+        if (headers.length === 0 || results.data.length === 0) {
+          setCsvError('Could not find any data rows in this CSV');
+          return;
+        }
+
+        setParsedCsv({
+          fileName: file.name,
+          fileSize: file.size,
+          headers,
+          rows: results.data
+        });
+
+        const initialMapping: Record<string, string> = {};
+        REQUIRED_LEAD_FIELDS.forEach(field => {
+          initialMapping[field.key] = guessColumnForField(field.key, headers);
+        });
+        setColumnMapping(initialMapping);
+      },
+      error: (err) => {
+        setCsvError(`Could not parse CSV file: ${err.message}`);
+      }
+    });
+  };
+
+  const buildNormalizedLeadsCsv = (): Blob | null => {
+    if (!parsedCsv) return null;
+
+    const nameColumn = columnMapping['name'];
+    const emailColumn = columnMapping['email_1'];
+    if (!nameColumn || !emailColumn) return null;
+
+    const normalizedRows = parsedCsv.rows.map(row => ({
+      name: row[nameColumn] ?? '',
+      email_1: row[emailColumn] ?? ''
+    }));
+
+    const csvText = Papa.unparse(normalizedRows, { columns: ['name', 'email_1'] });
+    return new Blob([csvText], { type: 'text/csv' });
+  };
+
+  const resetUploadState = () => {
+    setDataSource('scrape');
+    setParsedCsv(null);
+    setColumnMapping({});
+    setCsvError('');
+  };
+
+  const handleCreateCampaignViaUpload = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+    setError('');
+
+    if (!formData.emailTemplate) {
+      setError('Please select an email template');
+      return;
+    }
+
+    if (formData.emailsPerDay < 1 || formData.emailsPerDay > 500) {
+      setError('Emails per day must be between 1 and 500');
+      return;
+    }
+
+    if (!parsedCsv) {
+      setCsvError('Please choose a CSV file to upload');
+      return;
+    }
+
+    if (!columnMapping['name'] || !columnMapping['email_1']) {
+      setCsvError('Please map both Business Name and Email to a column before continuing');
+      return;
+    }
+
+    const normalizedCsv = buildNormalizedLeadsCsv();
+    if (!normalizedCsv) {
+      setCsvError('Could not prepare the CSV for upload');
+      return;
+    }
+
+    setIsCreating(true);
+
+    try {
+      const createResult = await apiClient.createCampaign({
+        maximumResults: parsedCsv.rows.length,
+        emailsPerDay: formData.emailsPerDay,
+        emailTemplate: formData.emailTemplate,
+        dataSource: 'upload'
+      });
+
+      if (createResult.error || !createResult.data) {
+        setError(createResult.error || 'Failed to create campaign');
+        return;
+      }
+
+      const campaignId = (createResult.data as any)._id || (createResult.data as any).id;
+
+      setIsUploadingLeads(true);
+      const uploadResult = await apiClient.uploadLeads(campaignId, normalizedCsv, parsedCsv.fileName);
+
+      if (uploadResult.error) {
+        setError(uploadResult.error);
+        return;
+      }
+
+      await loadCampaigns();
+      setShowCreateForm(false);
+      resetUploadState();
+      setFormData({
+        businessType: '',
+        location: '',
+        maximumResults: 100,
+        emailsPerDay: 50,
+        emailTemplate: ''
+      });
+    } catch (error) {
+      setError('Failed to create campaign from uploaded leads');
+    } finally {
+      setIsCreating(false);
+      setIsUploadingLeads(false);
+    }
+  };
+
+  const handleCreateCampaign = async (e: React.FormEvent) => {
+    if (dataSource === 'upload') {
+      return handleCreateCampaignViaUpload(e);
+    }
+
+    e.preventDefault();
+
     // Validate country code
     if (!formData.location || !getCountryByCode(formData.location)) {
       setError('Please select a valid country');
@@ -391,9 +579,10 @@ export default function Campaigns({ campaigns: propCampaigns, onTabChange }: Cam
 
   const handleEditClick = (campaign: ApiCampaign) => {
     setEditingCampaign(campaign);
+    setDataSource(campaign.dataSource === 'upload' ? 'upload' : 'scrape');
     setFormData({
-      businessType: campaign.businessType,
-      location: campaign.location,
+      businessType: campaign.businessType || '',
+      location: campaign.location || '',
       maximumResults: campaign.maximumResults,
       emailsPerDay: campaign.emailsPerDay,
       emailTemplate: campaign.emailTemplate._id || campaign.emailTemplate.id || ''
@@ -404,6 +593,7 @@ export default function Campaigns({ campaigns: propCampaigns, onTabChange }: Cam
   const handleCancelEdit = () => {
     setEditingCampaign(null);
     setShowCreateForm(false);
+    resetUploadState();
     setFormData({
       businessType: '',
       location: '',
@@ -503,7 +693,7 @@ export default function Campaigns({ campaigns: propCampaigns, onTabChange }: Cam
       link.href = fileUrl;
       link.download = `scraped_data_${new Date().toISOString().split('T')[0]}.csv`;
       link.target = '_blank';
-      
+
       // Append to body, click, and remove
       document.body.appendChild(link);
       link.click();
@@ -513,7 +703,163 @@ export default function Campaigns({ campaigns: propCampaigns, onTabChange }: Cam
     }
   };
 
+  // Dynamic columns present on a lead row, besides the always-shown name/email_1
+  const getDynamicLeadColumns = (rows: LeadRow[]): string[] => {
+    const columns = new Set<string>();
+    rows.forEach((row) => {
+      Object.keys(row).forEach((key) => {
+        if (key !== 'row_index' && key !== 'name' && key !== 'email_1') {
+          columns.add(key);
+        }
+      });
+    });
+    return Array.from(columns);
+  };
 
+  const formatColumnHeader = (key: string): string => {
+    return key
+      .split('_')
+      .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+      .join(' ');
+  };
+
+  const handleOpenLeadsModal = async (campaignId: string) => {
+    setReviewingCampaignId(campaignId);
+    setShowLeadsModal(true);
+    setIsLoadingLeads(true);
+    setLeadsError('');
+    setLeads([]);
+    setCheckedRowIndices(new Set());
+    setSaveLeadsSuccess(false);
+
+    try {
+      const result = await apiClient.getCampaignLeads(campaignId);
+
+      if (result.error) {
+        setLeadsError(result.error);
+      } else if (result.data) {
+        const leadsArray = result.data.leads || [];
+        const skippedSet = new Set(result.data.skippedRowIndices || []);
+        setLeads(leadsArray);
+        // Checked by default = row_index is NOT in the initial skippedRowIndices
+        setCheckedRowIndices(
+          new Set(leadsArray.filter((lead) => !skippedSet.has(lead.row_index)).map((lead) => lead.row_index))
+        );
+      }
+    } catch (error) {
+      setLeadsError('Failed to load leads');
+    } finally {
+      setIsLoadingLeads(false);
+    }
+  };
+
+  const handleCloseLeadsModal = () => {
+    setShowLeadsModal(false);
+    setReviewingCampaignId(null);
+    setLeads([]);
+    setCheckedRowIndices(new Set());
+    setLeadsError('');
+    setSaveLeadsSuccess(false);
+  };
+
+  const handleToggleLeadRow = (rowIndex: number) => {
+    setCheckedRowIndices((prev) => {
+      const next = new Set(prev);
+      if (next.has(rowIndex)) {
+        next.delete(rowIndex);
+      } else {
+        next.add(rowIndex);
+      }
+      return next;
+    });
+  };
+
+  const handleToggleSelectAllLeads = () => {
+    if (checkedRowIndices.size === leads.length) {
+      setCheckedRowIndices(new Set());
+    } else {
+      setCheckedRowIndices(new Set(leads.map((lead) => lead.row_index)));
+    }
+  };
+
+  const handleSaveSkippedLeads = async () => {
+    if (!reviewingCampaignId) return;
+
+    setIsSavingSkippedLeads(true);
+    setLeadsError('');
+    setSaveLeadsSuccess(false);
+
+    try {
+      const skippedRowIndices = leads
+        .map((lead) => lead.row_index)
+        .filter((rowIndex) => !checkedRowIndices.has(rowIndex));
+
+      const result = await apiClient.updateSkippedLeads(reviewingCampaignId, skippedRowIndices);
+
+      if (result.error) {
+        setLeadsError(result.error);
+      } else {
+        setSaveLeadsSuccess(true);
+        // Refresh the campaigns list so any downstream state reflects the saved selection
+        await loadCampaigns();
+        setTimeout(() => {
+          handleCloseLeadsModal();
+        }, 900);
+      }
+    } catch (error) {
+      setLeadsError('Failed to save your selection');
+    } finally {
+      setIsSavingSkippedLeads(false);
+    }
+  };
+
+  // Escapes a single CSV field per RFC 4180: wrap in quotes if it contains a
+  // comma, quote, or newline, and double up any internal quotes.
+  const escapeCsvField = (value: unknown): string => {
+    const stringValue = value === null || value === undefined ? '' : String(value);
+    if (/[",\n\r]/.test(stringValue)) {
+      return `"${stringValue.replace(/"/g, '""')}"`;
+    }
+    return stringValue;
+  };
+
+  const handleDownloadLeadsCsv = () => {
+    if (!reviewingCampaignId) return;
+
+    // Export exactly the rows currently checked, matching what the user sees/selected
+    const selectedLeads = leads.filter((lead) => checkedRowIndices.has(lead.row_index));
+    const dynamicColumns = getDynamicLeadColumns(leads);
+    const columns = ['name', 'email_1', ...dynamicColumns];
+
+    const headerRow = ['Name', 'Email', ...dynamicColumns.map(formatColumnHeader)];
+    const csvRows = [
+      headerRow.map(escapeCsvField).join(','),
+      ...selectedLeads.map((lead) => columns.map((col) => escapeCsvField(lead[col])).join(',')),
+    ];
+    const csvContent = csvRows.join('\r\n');
+
+    try {
+      const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = `campaign-${reviewingCampaignId}-leads.csv`;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      URL.revokeObjectURL(url);
+    } catch (error) {
+      setLeadsError('Failed to download CSV');
+    }
+  };
+
+  const canReviewLeads = (status: string): boolean => {
+    return (
+      status === 'scraping is done' ||
+      status === 'sending emails in progress' ||
+      status === 'everything is done'
+    );
+  };
 
   return (
     <div className="space-y-6 sm:space-y-8 px-4 sm:px-0">
@@ -568,7 +914,7 @@ export default function Campaigns({ campaigns: propCampaigns, onTabChange }: Cam
            </button>
          </div>
          <button 
-           onClick={() => setShowCreateForm(true)}
+           onClick={() => { resetUploadState(); setShowCreateForm(true); }}
            className="rounded-xl bg-gradient-to-r from-violet-600 to-purple-600 px-4 sm:px-6 py-3 font-semibold text-white shadow-lg shadow-violet-600/25 hover:shadow-violet-600/40 transition-colors relative z-10 text-sm sm:text-base w-full sm:w-auto"
          >
            + Create Campaign
@@ -578,7 +924,7 @@ export default function Campaigns({ campaigns: propCampaigns, onTabChange }: Cam
                     {/* Create Campaign Modal */}
        <Modal
          isOpen={showCreateForm}
-         onClose={editingCampaign ? handleCancelEdit : () => setShowCreateForm(false)}
+         onClose={editingCampaign ? handleCancelEdit : () => { resetUploadState(); setShowCreateForm(false); }}
          title={editingCampaign ? `Edit Campaign${editingCampaign.status !== 'idle' ? ' (Limited Editing)' : ''}` : 'Create New Campaign'}
          size="xl"
        >
@@ -604,6 +950,130 @@ export default function Campaigns({ campaigns: propCampaigns, onTabChange }: Cam
           <div className="flex flex-col xl:flex-row gap-6 xl:gap-8">
              {/* Form */}
             <div className="flex-1 space-y-4">
+                 {/* Data Source Toggle */}
+                 {!editingCampaign && (
+                   <div>
+                     <label className="block text-sm font-medium text-slate-700 mb-2">
+                       Lead Source
+                     </label>
+                     <div className="grid grid-cols-2 gap-3">
+                       <button
+                         type="button"
+                         onClick={() => { setDataSource('scrape'); setCsvError(''); }}
+                         className={`px-4 py-3 rounded-xl border text-sm font-medium transition-all text-left ${
+                           dataSource === 'scrape'
+                             ? 'border-violet-500 bg-violet-50 text-violet-700 ring-2 ring-violet-200'
+                             : 'border-slate-200 bg-white/50 text-slate-600 hover:border-slate-300'
+                         }`}
+                       >
+                         🔍 Scrape automatically
+                         <p className="text-xs font-normal text-slate-500 mt-1">We find businesses for you</p>
+                       </button>
+                       <button
+                         type="button"
+                         onClick={() => setDataSource('upload')}
+                         className={`px-4 py-3 rounded-xl border text-sm font-medium transition-all text-left ${
+                           dataSource === 'upload'
+                             ? 'border-violet-500 bg-violet-50 text-violet-700 ring-2 ring-violet-200'
+                             : 'border-slate-200 bg-white/50 text-slate-600 hover:border-slate-300'
+                         }`}
+                       >
+                         📄 Upload your own list
+                         <p className="text-xs font-normal text-slate-500 mt-1">Use a CSV you already have</p>
+                       </button>
+                     </div>
+                   </div>
+                 )}
+
+                 {dataSource === 'upload' && !editingCampaign ? (
+                   <div className="space-y-4">
+                     {/* File picker */}
+                     <div>
+                       <label className="block text-sm font-medium text-slate-700 mb-2">
+                         CSV File *
+                       </label>
+                       <label
+                         htmlFor="leads-csv-input"
+                         className="flex flex-col items-center justify-center gap-2 px-4 py-8 rounded-xl border-2 border-dashed border-slate-300 bg-white/50 hover:border-violet-400 hover:bg-violet-50/50 cursor-pointer transition-colors text-center"
+                       >
+                         <span className="text-3xl">📄</span>
+                         <span className="text-sm font-medium text-slate-700">
+                           {parsedCsv ? parsedCsv.fileName : 'Click to choose a CSV file'}
+                         </span>
+                         <span className="text-xs text-slate-500">Max 5 MB &middot; must include a business name and email column</span>
+                         <input
+                           id="leads-csv-input"
+                           type="file"
+                           accept=".csv,text/csv"
+                           className="hidden"
+                           onChange={(e) => {
+                             const file = e.target.files?.[0];
+                             if (file) handleCsvFileSelect(file);
+                           }}
+                         />
+                       </label>
+                       {csvError && (
+                         <p className="text-sm text-red-600 mt-2">{csvError}</p>
+                       )}
+                       {parsedCsv && !csvError && (
+                         <p className="text-xs text-slate-500 mt-2">
+                           {parsedCsv.rows.length} rows detected &middot; {(parsedCsv.fileSize / 1024).toFixed(0)} KB
+                         </p>
+                       )}
+                     </div>
+
+                     {/* Column mapping */}
+                     {parsedCsv && (
+                       <div className="space-y-3 p-4 rounded-xl border border-slate-200 bg-slate-50">
+                         <p className="text-sm font-medium text-slate-700">Map your columns</p>
+                         {REQUIRED_LEAD_FIELDS.map(field => (
+                           <div key={field.key}>
+                             <label className="block text-xs font-medium text-slate-600 mb-1">
+                               {field.label} *
+                             </label>
+                             <select
+                               required
+                               value={columnMapping[field.key] || ''}
+                               onChange={(e) => setColumnMapping(prev => ({ ...prev, [field.key]: e.target.value }))}
+                               className="w-full px-3 py-2 rounded-lg border border-slate-200 bg-white text-sm focus:ring-2 focus:ring-violet-500 focus:border-transparent"
+                             >
+                               <option value="">Select a column</option>
+                               {parsedCsv.headers.map(header => (
+                                 <option key={header} value={header}>{header}</option>
+                               ))}
+                             </select>
+                           </div>
+                         ))}
+                       </div>
+                     )}
+
+                     {/* Mapped preview */}
+                     {parsedCsv && columnMapping['name'] && columnMapping['email_1'] && (
+                       <div>
+                         <p className="text-xs font-medium text-slate-600 mb-2">Preview (first 5 rows)</p>
+                         <div className="overflow-x-auto rounded-xl border border-slate-200">
+                           <table className="w-full text-sm text-left">
+                             <thead className="text-xs text-slate-700 uppercase bg-slate-50 border-b border-slate-200">
+                               <tr>
+                                 <th className="px-3 py-2 font-semibold">Business Name</th>
+                                 <th className="px-3 py-2 font-semibold">Email</th>
+                               </tr>
+                             </thead>
+                             <tbody className="bg-white">
+                               {parsedCsv.rows.slice(0, 5).map((row, idx) => (
+                                 <tr key={idx} className="border-b border-slate-100 last:border-0">
+                                   <td className="px-3 py-2 text-slate-800">{row[columnMapping['name']] || '—'}</td>
+                                   <td className="px-3 py-2 text-slate-800">{row[columnMapping['email_1']] || '—'}</td>
+                                 </tr>
+                               ))}
+                             </tbody>
+                           </table>
+                         </div>
+                       </div>
+                     )}
+                   </div>
+                 ) : (
+                 <>
                  {/* Business Type */}
                  <div>
                    <label className={`block text-sm font-medium mb-2 ${isCampaignEditingRestricted() ? 'text-slate-400' : 'text-slate-700'}`}>
@@ -774,6 +1244,8 @@ export default function Campaigns({ campaigns: propCampaigns, onTabChange }: Cam
                    />
                    <p className="text-xs text-slate-500 mt-1">Min: 1, Max: 10,000</p>
                  </div>
+                 </>
+                 )}
 
                  {/* Emails Per Day */}
                  <div>
@@ -835,6 +1307,7 @@ export default function Campaigns({ campaigns: propCampaigns, onTabChange }: Cam
                </div>
 
             {/* Preview Table */}
+            {!(dataSource === 'upload' && !editingCampaign) && (
             <div className="w-full xl:w-1/2">
               <h4 className="text-lg font-semibold text-slate-900 mb-4">Preview Leads</h4>
               <p className="text-xs text-slate-500 mb-3">Sample format of the leads this campaign tries to collect.</p>
@@ -865,26 +1338,27 @@ export default function Campaigns({ campaigns: propCampaigns, onTabChange }: Cam
                 </table>
               </div>
                          </div>
+            )}
            </div>
            
            {/* Action Buttons */}
            <div className="flex gap-4 pt-6 border-t border-slate-200">
              <button
                type="button"
-               onClick={editingCampaign ? handleCancelEdit : () => setShowCreateForm(false)}
+               onClick={editingCampaign ? handleCancelEdit : () => { resetUploadState(); setShowCreateForm(false); }}
                className="flex-1 px-6 py-3 border border-slate-300 text-slate-700 rounded-xl font-medium hover:bg-slate-50 transition-colors"
              >
                Cancel
              </button>
              <button
                type="submit"
-               disabled={isCreating || isEditing}
+               disabled={isCreating || isEditing || (dataSource === 'upload' && !editingCampaign && !parsedCsv)}
                className="flex-1 px-6 py-3 bg-gradient-to-r from-violet-600 to-purple-600 text-white rounded-xl font-semibold hover:shadow-lg hover:shadow-violet-600/25 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
              >
                {isCreating || isEditing ? (
                  <>
                    <span className="inline-block animate-spin mr-2">⏳</span>
-                   {isCreating ? 'Creating...' : 'Saving...'}
+                   {isUploadingLeads ? 'Uploading leads...' : isCreating ? 'Creating...' : 'Saving...'}
                  </>
                ) : (
                  editingCampaign ? 'Save Changes' : '🚀 Launch Campaign'
@@ -893,6 +1367,141 @@ export default function Campaigns({ campaigns: propCampaigns, onTabChange }: Cam
            </div>
          </form>
        </Modal>
+
+      {/* Review Leads Modal */}
+      <Modal
+        isOpen={showLeadsModal}
+        onClose={handleCloseLeadsModal}
+        title="Review Leads"
+        size="xl"
+      >
+        <div className="space-y-4">
+          {isLoadingLeads ? (
+            <div className="text-center py-12">
+              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-violet-600 mx-auto mb-4"></div>
+              <p className="text-slate-600">Loading leads...</p>
+            </div>
+          ) : leadsError ? (
+            <div className="text-center py-12">
+              <div className="text-red-500 mb-4 text-3xl">⚠️</div>
+              <p className="text-red-600 mb-4">{leadsError}</p>
+              <button
+                onClick={() => reviewingCampaignId && handleOpenLeadsModal(reviewingCampaignId)}
+                className="px-6 py-3 bg-gradient-to-r from-violet-600 to-purple-600 text-white rounded-xl font-semibold hover:shadow-lg hover:shadow-violet-600/25 transition-all duration-300"
+              >
+                Retry
+              </button>
+            </div>
+          ) : leads.length === 0 ? (
+            <div className="text-center py-12">
+              <div className="text-4xl mb-4">📭</div>
+              <h3 className="text-lg font-semibold text-slate-900 mb-2">No leads found</h3>
+              <p className="text-slate-600">This campaign doesn't have any scraped leads to review yet.</p>
+            </div>
+          ) : (
+            <>
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                <div className="text-sm font-medium text-slate-700">
+                  {checkedRowIndices.size} of {leads.length} leads selected
+                </div>
+                {saveLeadsSuccess && (
+                  <div className="text-sm font-medium text-emerald-600 flex items-center gap-1">
+                    ✅ Saved successfully
+                  </div>
+                )}
+              </div>
+
+              <div className="overflow-x-auto rounded-xl border border-slate-200 shadow-lg max-h-[50vh] overflow-y-auto">
+                <table className="w-full text-sm text-left text-slate-900">
+                  <thead className="text-xs text-slate-700 uppercase bg-gradient-to-r from-violet-50 to-purple-50 border-b border-slate-200 sticky top-0">
+                    <tr>
+                      <th scope="col" className="px-4 py-3 font-semibold w-10">
+                        <input
+                          type="checkbox"
+                          checked={leads.length > 0 && checkedRowIndices.size === leads.length}
+                          onChange={handleToggleSelectAllLeads}
+                          className="w-4 h-4 rounded border-slate-300 text-violet-600 focus:ring-violet-500"
+                          title="Select all / Deselect all"
+                        />
+                      </th>
+                      <th scope="col" className="px-4 py-3 font-semibold">Name</th>
+                      <th scope="col" className="px-4 py-3 font-semibold">Email</th>
+                      {getDynamicLeadColumns(leads).map((col) => (
+                        <th key={col} scope="col" className="px-4 py-3 font-semibold">
+                          {formatColumnHeader(col)}
+                        </th>
+                      ))}
+                    </tr>
+                  </thead>
+                  <tbody className="bg-white">
+                    {leads.map((lead, index) => (
+                      <tr
+                        key={lead.row_index}
+                        className={`border-b border-slate-100 hover:bg-slate-50 transition-colors ${
+                          index % 2 === 0 ? 'bg-white' : 'bg-slate-25'
+                        }`}
+                      >
+                        <td className="px-4 py-3">
+                          <input
+                            type="checkbox"
+                            checked={checkedRowIndices.has(lead.row_index)}
+                            onChange={() => handleToggleLeadRow(lead.row_index)}
+                            className="w-4 h-4 rounded border-slate-300 text-violet-600 focus:ring-violet-500"
+                          />
+                        </td>
+                        <td className="px-4 py-3 font-semibold text-slate-900">{lead.name}</td>
+                        <td className="px-4 py-3 text-slate-700">{lead.email_1}</td>
+                        {getDynamicLeadColumns(leads).map((col) => (
+                          <td key={col} className="px-4 py-3 text-slate-700">
+                            {lead[col] !== undefined && lead[col] !== null ? String(lead[col]) : ''}
+                          </td>
+                        ))}
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </>
+          )}
+
+          {/* Action Buttons */}
+          <div className="flex flex-col sm:flex-row gap-4 pt-6 border-t border-slate-200">
+            <button
+              type="button"
+              onClick={handleCloseLeadsModal}
+              className="flex-1 px-6 py-3 border border-slate-300 text-slate-700 rounded-xl font-medium hover:bg-slate-50 transition-colors"
+            >
+              Cancel
+            </button>
+            {leads.length > 0 && !leadsError && (
+              <button
+                type="button"
+                onClick={handleDownloadLeadsCsv}
+                className="flex-1 px-6 py-3 border border-violet-300 text-violet-700 rounded-xl font-medium hover:bg-violet-50 transition-colors"
+              >
+                📥 Download CSV
+              </button>
+            )}
+            {leads.length > 0 && !leadsError && (
+              <button
+                type="button"
+                onClick={handleSaveSkippedLeads}
+                disabled={isSavingSkippedLeads}
+                className="flex-1 px-6 py-3 bg-gradient-to-r from-violet-600 to-purple-600 text-white rounded-xl font-semibold hover:shadow-lg hover:shadow-violet-600/25 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
+              >
+                {isSavingSkippedLeads ? (
+                  <>
+                    <span className="inline-block animate-spin mr-2">⏳</span>
+                    Saving...
+                  </>
+                ) : (
+                  'Save'
+                )}
+              </button>
+            )}
+          </div>
+        </div>
+      </Modal>
 
       {/* Existing Campaigns */}
       <div className="bg-white/40 backdrop-blur-md rounded-xl sm:rounded-2xl p-4 sm:p-8 ring-1 ring-white/30 shadow-lg shadow-purple-100/50">
@@ -940,13 +1549,21 @@ export default function Campaigns({ campaigns: propCampaigns, onTabChange }: Cam
                     </div>
                     <div className="min-w-0 flex-1">
                       <h3 className="font-semibold text-slate-900 text-base">
-                        {campaign.businessType} in 
-                        <span className="inline-flex items-center gap-2 ml-2">
-                          <Flag countryCode={campaign.location} size="sm" />
+                        {campaign.dataSource === 'upload' ? (
                           <span className="text-slate-700">
-                            {getCountryByCode(campaign.location)?.name || campaign.location}
+                            📄 Uploaded list{campaign.uploadedFileName ? ` (${campaign.uploadedFileName})` : ''}
                           </span>
-                        </span>
+                        ) : (
+                          <>
+                            {campaign.businessType} in
+                            <span className="inline-flex items-center gap-2 ml-2">
+                              <Flag countryCode={campaign.location || ''} size="sm" />
+                              <span className="text-slate-700">
+                                {getCountryByCode(campaign.location)?.name || campaign.location}
+                              </span>
+                            </span>
+                          </>
+                        )}
                       </h3>
                       <p className="text-xs text-slate-500 mt-1">
                         Created {new Date(campaign.createdAt).toLocaleDateString()}
@@ -1044,13 +1661,23 @@ export default function Campaigns({ campaigns: propCampaigns, onTabChange }: Cam
                       ✏️ Edit
                     </button>
 
-                    <button 
-                      title="Delete Campaign" 
+                    <button
+                      title="Delete Campaign"
                       className="px-3 py-2 rounded-lg text-red-600 hover:bg-red-100 hover:scale-110 transition-all duration-200 border border-red-200"
                       onClick={() => handleDeleteCampaign(campaign._id || campaign.id)}
                     >
                       🗑️ Delete
                     </button>
+
+                    {canReviewLeads(campaign.status) && (
+                      <button
+                        onClick={() => handleOpenLeadsModal(campaign._id || campaign.id || '')}
+                        className="px-3 py-2 rounded-lg text-violet-600 hover:bg-violet-100 hover:scale-110 transition-all duration-200 border border-violet-200"
+                        title="Review Leads"
+                      >
+                        📋 Review Leads
+                      </button>
+                    )}
 
                     {campaign.scrapedFileUrl && (
                       <button
@@ -1074,13 +1701,21 @@ export default function Campaigns({ campaigns: propCampaigns, onTabChange }: Cam
                       </div>
                       <div className="min-w-0">
                         <h3 className="font-semibold text-slate-900 text-base truncate">
-                          {campaign.businessType} in 
-                          <span className="inline-flex items-center gap-2 ml-2">
-                            <Flag countryCode={campaign.location} size="sm" />
+                          {campaign.dataSource === 'upload' ? (
                             <span className="text-slate-700">
-                              {getCountryByCode(campaign.location)?.name || campaign.location}
+                              📄 Uploaded list{campaign.uploadedFileName ? ` (${campaign.uploadedFileName})` : ''}
                             </span>
-                          </span>
+                          ) : (
+                            <>
+                              {campaign.businessType} in
+                              <span className="inline-flex items-center gap-2 ml-2">
+                                <Flag countryCode={campaign.location || ''} size="sm" />
+                                <span className="text-slate-700">
+                                  {getCountryByCode(campaign.location)?.name || campaign.location}
+                                </span>
+                              </span>
+                            </>
+                          )}
                         </h3>
                         <p className="text-xs text-slate-500 mt-1">
                           Created {new Date(campaign.createdAt).toLocaleDateString()}
@@ -1194,6 +1829,15 @@ export default function Campaigns({ campaigns: propCampaigns, onTabChange }: Cam
                            )}
                          </button>
                        )}
+                      {canReviewLeads(campaign.status) && (
+                        <button
+                          onClick={() => handleOpenLeadsModal(campaign._id || campaign.id || '')}
+                          className="px-3 py-2 rounded-lg text-sm font-medium bg-violet-600 text-white hover:bg-violet-700 transition-all duration-200 shadow-sm"
+                          title="Review Leads"
+                        >
+                          📋 Review Leads
+                        </button>
+                      )}
                       {campaign.scrapedFileUrl && (
                         <button
                           onClick={() => handleDownloadFile(campaign.scrapedFileUrl)}
@@ -1205,7 +1849,7 @@ export default function Campaigns({ campaigns: propCampaigns, onTabChange }: Cam
                       )}
                     </div>
                   </div>
-                  
+
                 </div>
               </div>
             ))}
@@ -1216,7 +1860,7 @@ export default function Campaigns({ campaigns: propCampaigns, onTabChange }: Cam
                   <h3 className="text-lg font-semibold text-slate-900 mb-2">No campaigns yet</h3>
                   <p className="text-slate-600 mb-6">Create your first campaign to start finding leads and sending emails.</p>
                   <button 
-                    onClick={() => setShowCreateForm(true)}
+                    onClick={() => { resetUploadState(); setShowCreateForm(true); }}
                     className="px-6 py-3 bg-gradient-to-r from-violet-600 to-purple-600 text-white rounded-xl font-semibold hover:shadow-lg hover:shadow-violet-600/25 transition-all duration-300"
                   >
                     Create Your First Campaign

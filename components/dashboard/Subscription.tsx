@@ -95,14 +95,13 @@ export default function Subscription() {
       }
 
       if (plan.price === 0) {
-        // Handle downgrade to free plan
-        if (confirm(`Are you sure you want to downgrade to the ${planKey} plan? This will cancel your current subscription.`)) {
+        // Handle downgrade to free plan (i.e. cancel the current paid subscription)
+        if (!confirm(`Are you sure you want to downgrade to the ${planKey} plan? This will cancel your current subscription.`)) {
           setUpgradingPlan(null);
           return;
         }
 
-        // Use the existing updateSubscription method for free plan
-        const result = await apiClient.updateSubscription(planKey);
+        const result = await apiClient.cancelSubscription();
         if (result.error) {
           setError(result.error);
         } else {

@@ -132,13 +132,9 @@ Warm regards,
     setError('');
     
     try {
-      // Add disclaimer to the content
-      const disclaimer = "\n\n---\n\nYou are receiving this email because your business contact information was made publicly available, and we believe our services may be of legitimate interest to you.\nIf you prefer not to receive further communications, simply reply to this email with \"Unsubscribe\" and we will remove you from our contact list.";
-      const contentWithDisclaimer = formData.content + disclaimer;
-      
       const result = await apiClient.createTemplate({
         subject: formData.subject,
-        content: contentWithDisclaimer
+        content: formData.content
       });
 
       if (result.error) {
@@ -167,13 +163,9 @@ Warm regards,
     setError('');
     
     try {
-      // Add disclaimer to the content
-      const disclaimer = "\n\n---\n\nYou are receiving this email because your business contact information was made publicly available, and we believe our services may be of legitimate interest to you.\nIf you prefer not to receive further communications, simply reply to this email with \"Unsubscribe\" and we will remove you from our contact list.";
-      const contentWithDisclaimer = formData.content + disclaimer;
-      
       const result = await apiClient.updateTemplate(editingTemplate._id || editingTemplate.id || '', {
         subject: formData.subject,
-        content: contentWithDisclaimer
+        content: formData.content
       });
 
       if (result.error) {
@@ -198,14 +190,10 @@ Warm regards,
 
   const handleEditClick = (template: ApiEmailTemplate) => {
     setEditingTemplate(template);
-    
-    // Remove disclaimer from content for editing
-    const disclaimer = "\n\n---\n\nYou are receiving this email because your business contact information was made publicly available, and we believe our services may be of legitimate interest to you.\nIf you prefer not to receive further communications, simply reply to this email with \"Unsubscribe\" and we will remove you from our contact list.";
-    const contentWithoutDisclaimer = template.content.replace(disclaimer, '');
-    
-    setFormData({ 
-      subject: template.subject, 
-      content: contentWithoutDisclaimer
+
+    setFormData({
+      subject: template.subject,
+      content: template.content
     });
     setShowCreateForm(true);
   };
@@ -277,7 +265,7 @@ Warm regards,
                 What you need to do
               </h4>
               <p className="text-sm text-emerald-700">
-                Write a subject and message body. We automatically append the unsubscribe disclaimer for you.
+                Write a subject and message body.
               </p>
             </div>
 
@@ -390,17 +378,6 @@ Warm regards,
                   </div>
                 </div>
               )}
-              
-              {/* Disclaimer Preview */}
-              <div className="mt-4 p-4 bg-slate-50 rounded-xl border border-slate-200">
-                <h4 className="text-sm font-semibold text-slate-700 mb-2">📋 Disclaimer (Automatically Added)</h4>
-                <div className="text-sm text-slate-600 bg-white p-3 rounded-lg border border-slate-200">
-                  <p className="mb-2">---</p>
-                  <p className="mb-2">You are receiving this email because your business contact information was made publicly available, and we believe our services may be of legitimate interest to you.</p>
-                  <p>If you prefer not to receive further communications, simply reply to this email with "Unsubscribe" and we will remove you from our contact list.</p>
-                </div>
-                <p className="text-xs text-slate-500 mt-2">This disclaimer will be automatically appended to all emails sent using this template.</p>
-              </div>
             </div>
 
             {/* Action Buttons */}

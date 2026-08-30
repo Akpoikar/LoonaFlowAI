@@ -149,7 +149,8 @@ export const countryCodes: CountryCode[] = [
   { code: 'BI', name: 'Burundi', flag: getFlagEmoji('BI') }
 ];
 
-export const getCountryByCode = (code: string): CountryCode | undefined => {
+export const getCountryByCode = (code?: string): CountryCode | undefined => {
+  if (!code) return undefined;
   return countryCodes.find(country => country.code === code.toUpperCase());
 };
 
