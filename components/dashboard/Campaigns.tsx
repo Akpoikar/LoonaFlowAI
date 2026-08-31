@@ -557,23 +557,27 @@ export default function Campaigns({ campaigns: propCampaigns, onTabChange }: Cam
   const handleEditCampaign = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!editingCampaign) return;
-    
-    // Validate country code
-    if (!formData.location || !getCountryByCode(formData.location)) {
-      setError('Please select a valid country');
-      return;
-    }
 
-    // Validate business type length
-    if (formData.businessType.length > 100) {
-      setError('Business type cannot exceed 100 characters');
-      return;
-    }
+    const isUpload = editingCampaign.dataSource === 'upload';
 
-    // Validate maximum results
-    if (formData.maximumResults < 1 || formData.maximumResults > 10000) {
-      setError('Maximum results must be between 1 and 10,000');
-      return;
+    if (!isUpload) {
+      // Validate country code
+      if (!formData.location || !getCountryByCode(formData.location)) {
+        setError('Please select a valid country');
+        return;
+      }
+
+      // Validate business type length
+      if (formData.businessType.length > 100) {
+        setError('Business type cannot exceed 100 characters');
+        return;
+      }
+
+      // Validate maximum results
+      if (formData.maximumResults < 1 || formData.maximumResults > 10000) {
+        setError('Maximum results must be between 1 and 10,000');
+        return;
+      }
     }
 
     // Validate emails per day
@@ -590,15 +594,20 @@ export default function Campaigns({ campaigns: propCampaigns, onTabChange }: Cam
     setIsEditing(true);
     setError('');
 
-
-    const updatePayload = {
-      businessType: formData.businessType,
-      location: formData.location,
-      maximumResults: formData.maximumResults,
-      emailsPerDay: formData.emailsPerDay,
-      emailTemplate: formData.emailTemplate,
-      emailConfig: formData.emailConfig
-    };
+    const updatePayload = isUpload
+      ? {
+          emailsPerDay: formData.emailsPerDay,
+          emailTemplate: formData.emailTemplate,
+          emailConfig: formData.emailConfig
+        }
+      : {
+          businessType: formData.businessType,
+          location: formData.location,
+          maximumResults: formData.maximumResults,
+          emailsPerDay: formData.emailsPerDay,
+          emailTemplate: formData.emailTemplate,
+          emailConfig: formData.emailConfig
+        };
 
     try {
       const result : any = await apiClient.updateCampaign(editingCampaign._id || editingCampaign.id || '', updatePayload);
@@ -1041,7 +1050,19 @@ export default function Campaigns({ campaigns: propCampaigns, onTabChange }: Cam
                    </div>
                  )}
 
-                 {dataSource === 'upload' && !editingCampaign ? (
+                 {dataSource === 'upload' && editingCampaign ? (
+                   <div className="p-4 rounded-xl border border-slate-200 bg-slate-50 flex items-start gap-3">
+                     <span className="text-2xl">📄</span>
+                     <div className="min-w-0">
+                       <p className="text-sm font-medium text-slate-800">
+                         {editingCampaign.uploadedFileName || 'Uploaded list'}
+                       </p>
+                       <p className="text-xs text-slate-500 mt-0.5">
+                         {(editingCampaign.maximumResults || 0).toLocaleString()} leads &middot; the uploaded file can't be changed here. Delete and recreate the campaign to use a different file.
+                       </p>
+                     </div>
+                   </div>
+                 ) : dataSource === 'upload' && !editingCampaign ? (
                    <div className="space-y-4">
                      {/* File picker */}
                      <div>
@@ -1401,7 +1422,7 @@ export default function Campaigns({ campaigns: propCampaigns, onTabChange }: Cam
                </div>
 
             {/* Preview Table */}
-            {!(dataSource === 'upload' && !editingCampaign) && (
+            {dataSource !== 'upload' && (
             <div className="w-full xl:w-1/2">
               <h4 className="text-lg font-semibold text-slate-900 mb-4">Preview Leads</h4>
               <p className="text-xs text-slate-500 mb-3">Sample format of the leads this campaign tries to collect.</p>
