@@ -1600,7 +1600,7 @@ export default function Campaigns({ campaigns: propCampaigns, onTabChange }: Cam
       {/* Existing Campaigns */}
       <div className="bg-white/40 backdrop-blur-md rounded-xl sm:rounded-2xl p-4 sm:p-8 ring-1 ring-white/30 shadow-lg shadow-purple-100/50">
         <h3 className="text-lg sm:text-xl font-bold text-slate-900 mb-6">Your Campaigns</h3>
-        
+
         {isLoading ? (
           <div className="text-center py-12">
             <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-violet-600 mx-auto mb-4"></div>
@@ -1610,7 +1610,7 @@ export default function Campaigns({ campaigns: propCampaigns, onTabChange }: Cam
           <div className="text-center py-12">
             <div className="text-red-500 mb-4">⚠️</div>
             <p className="text-red-600 mb-4">{error}</p>
-            <button 
+            <button
               onClick={loadCampaigns}
               className="px-6 py-3 bg-gradient-to-r from-violet-600 to-purple-600 text-white rounded-xl font-semibold hover:shadow-lg hover:shadow-violet-600/25 transition-all duration-300"
             >
@@ -1619,154 +1619,148 @@ export default function Campaigns({ campaigns: propCampaigns, onTabChange }: Cam
           </div>
         ) : (
           <div className="space-y-4">
-            {/* Table Header - Hidden on mobile */}
-            <div className="hidden lg:block bg-white/40 backdrop-blur-md rounded-xl p-4 border border-[rgba(100,100,111,0.2)] shadow-sm">
-              <div className="grid grid-cols-10 gap-4 items-center text-sm font-semibold text-slate-700">
-                <div className="col-span-3">Campaign</div>
-                <div className="col-span-1 text-center">Results</div>
-                <div className="col-span-1 text-center">Emails/Run</div>
-                <div className="col-span-2 text-center">Sent/Failed/Skipped</div>
-                <div className="col-span-2 text-center">Status</div>
-                <div className="col-span-1 text-center">Action</div>
-              </div>
-            </div>
+            {Array.isArray(campaigns) && campaigns.map((campaign: any) => {
+              const campaignId = campaign._id || campaign.id || '';
+              const resultsCount = campaign.status !== 'scraping in progress' && campaign.status !== 'idle'
+                ? campaign.maximumResults || 0
+                : campaign.currentResults || 0;
+              const isScraping = scrapingCampaigns.has(campaignId);
+              const isSending = sendingCampaigns.has(campaignId);
 
-            {/* Campaign Rows */}
-            {Array.isArray(campaigns) && campaigns.map((campaign: any) => (
-              <div key={campaign._id || campaign.id} className="bg-white/30 backdrop-blur-md rounded-xl border border-[rgba(100,100,111,0.2)] shadow-sm hover:shadow-md transition-all duration-200">
-                {/* Mobile Layout */}
-                <div className="lg:hidden p-4 space-y-4">
-                  {/* Campaign Header */}
-                  <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 bg-violet-100 rounded-lg flex items-center justify-center flex-shrink-0">
-                      <span className="text-lg">📧</span>
-                    </div>
-                    <div className="min-w-0 flex-1">
-                      <h3 className="font-semibold text-slate-900 text-base">
-                        {campaign.dataSource === 'upload' ? (
-                          <span className="text-slate-700">
-                            📄 Uploaded list{campaign.uploadedFileName ? ` (${campaign.uploadedFileName})` : ''}
-                          </span>
-                        ) : (
-                          <>
-                            {campaign.businessType} in
-                            <span className="inline-flex items-center gap-2 ml-2">
-                              <Flag countryCode={campaign.location || ''} size="sm" />
-                              <span className="text-slate-700">
+              return (
+                <div
+                  key={campaignId}
+                  className="bg-white/60 rounded-2xl border border-slate-200/70 shadow-sm hover:shadow-md hover:border-violet-200 transition-all duration-200 overflow-hidden"
+                >
+                  {/* Header: identity + quick actions */}
+                  <div className="flex items-start justify-between gap-3 p-4 sm:p-5 pb-3 sm:pb-4">
+                    <div className="flex items-start gap-3 min-w-0">
+                      <div className="w-11 h-11 bg-violet-100 rounded-xl flex items-center justify-center flex-shrink-0">
+                        <span className="text-lg">📧</span>
+                      </div>
+                      <div className="min-w-0">
+                        <h4 className="font-semibold text-slate-900 text-base leading-snug break-words">
+                          {campaign.dataSource === 'upload' ? (
+                            <span className="text-slate-800">
+                              📄 Uploaded list{campaign.uploadedFileName ? ` — ${campaign.uploadedFileName}` : ''}
+                            </span>
+                          ) : (
+                            <span className="inline-flex flex-wrap items-center gap-x-2 gap-y-1">
+                              <span>{campaign.businessType}</span>
+                              <span className="text-slate-400 font-normal">in</span>
+                              <span className="inline-flex items-center gap-1.5">
+                                <Flag countryCode={campaign.location || ''} size="sm" />
                                 {getCountryByCode(campaign.location)?.name || campaign.location}
                               </span>
                             </span>
-                          </>
-                        )}
-                      </h3>
-                      <p className="text-xs text-slate-500 mt-1">
-                        Created {new Date(campaign.createdAt).toLocaleDateString()}
-                      </p>
+                          )}
+                        </h4>
+                        <p className="text-xs text-slate-500 mt-1">
+                          Created {new Date(campaign.createdAt).toLocaleDateString()}
+                        </p>
+                      </div>
+                    </div>
+
+                    <div className="flex items-center gap-1 flex-shrink-0">
+                      <button
+                        title="Edit Campaign"
+                        className="w-8 h-8 flex items-center justify-center rounded-lg text-slate-500 hover:text-green-600 hover:bg-green-50 transition-colors duration-150"
+                        onClick={() => handleEditClick(campaign)}
+                      >
+                        ✏️
+                      </button>
+                      <button
+                        title="Delete Campaign"
+                        className="w-8 h-8 flex items-center justify-center rounded-lg text-slate-500 hover:text-red-600 hover:bg-red-50 transition-colors duration-150"
+                        onClick={() => handleDeleteCampaign(campaign._id || campaign.id)}
+                      >
+                        🗑️
+                      </button>
                     </div>
                   </div>
 
-                  {/* Mobile Stats Grid */}
-                  <div className="grid grid-cols-2 gap-4 text-sm">
-                    <div className="text-center p-3 bg-white/20 rounded-lg">
-                      <div className="text-xs text-slate-600 mb-1">Results</div>
-                      <div className="font-semibold text-slate-900">
-                        {campaign.status !== 'scraping in progress' && campaign.status !== 'idle'
-                          ? `${campaign.maximumResults || 0} / ${campaign.maximumResults || 0}`
-                          : `${campaign.currentResults || 0} / ${campaign.maximumResults || 0}`
-                        }
-                      </div>
-                    </div>
-                    <div className="text-center p-3 bg-white/20 rounded-lg">
-                      <div className="text-xs text-slate-600 mb-1">Emails/Run</div>
-                      <div className="font-semibold text-slate-900">{campaign.emailsPerDay || 50}</div>
-                    </div>
-                    <div className="text-center p-3 bg-white/20 rounded-lg">
-                      <div className="text-xs text-slate-600 mb-1">Sent/Failed</div>
-                      <div className="font-semibold text-slate-900">
-                        {campaign.emailsSent || 0} / {campaign.emailsFailed || 0}
-                      </div>
-                    </div>
-                                         <div className="text-center p-3 bg-white/20 rounded-lg">
-                       <div className="text-xs text-slate-600 mb-1">Status</div>
-                       <span className={`inline-block px-2 py-1 rounded-full text-xs font-semibold ${getStatusColor(campaign.status)}`}>
-                         {getStatusIcon(campaign.status)} {campaign.status.charAt(0).toUpperCase() + campaign.status.slice(1)}
-                       </span>
-                       <div className="text-xs text-slate-500 mt-1 px-2">
-                         {getStatusDescription(campaign.status)}
-                       </div>
-                     </div>
+                  {/* Status */}
+                  <div className="px-4 sm:px-5">
+                    <span className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold ${getStatusColor(campaign.status)}`}>
+                      {getStatusIcon(campaign.status)} {campaign.status.charAt(0).toUpperCase() + campaign.status.slice(1)}
+                    </span>
+                    <span className="block sm:inline text-xs text-slate-500 mt-1.5 sm:mt-0 sm:ml-2">
+                      {getStatusDescription(campaign.status)}
+                    </span>
                   </div>
 
-                  {/* Mobile Actions */}
-                  <div className="flex flex-wrap gap-2">
-                                         {campaign.status === 'idle' && (
-                       <button 
-                         className={`px-3 py-2 rounded-lg text-sm font-medium transition-all duration-200 ${
-                           scrapingCampaigns.has(campaign._id || campaign.id || '')
-                             ? 'bg-blue-200 text-blue-600 cursor-not-allowed'
-                             : 'bg-blue-500 text-white hover:bg-blue-600 hover:scale-105 shadow-sm'
-                         }`}
-                         onClick={() => {
-                           if (confirm('Start scraping? This process may take several minutes to complete.')) {
-                             handleStartScraping(campaign._id || campaign.id);
-                           }
-                         }}
-                         disabled={scrapingCampaigns.has(campaign._id || campaign.id || '')}
-                         title="Start Scraping - May take several minutes"
-                       >
-                         {scrapingCampaigns.has(campaign._id || campaign.id || '') ? (
-                           <span className="inline-block animate-spin mr-2">⏳</span>
-                         ) : (
-                           '🔍 Scrape'
-                         )}
-                       </button>
-                     )}
-                    
+                  {/* Stats strip */}
+                  <div className="grid grid-cols-3 gap-2 sm:gap-3 mx-4 sm:mx-5 mt-3 p-3 bg-slate-50/80 rounded-xl text-center">
+                    <div>
+                      <div className="text-base sm:text-lg font-bold text-slate-900 tabular-nums">
+                        {resultsCount}<span className="text-slate-400 font-medium">/{campaign.maximumResults || 0}</span>
+                      </div>
+                      <div className="text-[11px] sm:text-xs text-slate-500 mt-0.5">Leads found</div>
+                    </div>
+                    <div>
+                      <div className="text-base sm:text-lg font-bold text-slate-900 tabular-nums">
+                        {campaign.emailsPerDay || 50}
+                      </div>
+                      <div className="text-[11px] sm:text-xs text-slate-500 mt-0.5">Emails/run</div>
+                    </div>
+                    <div>
+                      <div className="text-base sm:text-lg font-bold text-slate-900 tabular-nums">
+                        <span className="text-emerald-600">{campaign.emailsSent || 0}</span>
+                        <span className="text-slate-300"> / </span>
+                        <span className="text-red-500">{campaign.emailsFailed || 0}</span>
+                        <span className="text-slate-300"> / </span>
+                        <span className="text-amber-500">{campaign.emailsSkipped || 0}</span>
+                      </div>
+                      <div className="text-[11px] sm:text-xs text-slate-500 mt-0.5">Sent / Failed / Skipped</div>
+                    </div>
+                  </div>
+
+                  {/* Actions */}
+                  <div className="flex flex-wrap gap-2 p-4 sm:p-5 pt-3 sm:pt-4">
+                    {campaign.status === 'idle' && (
+                      <button
+                        className={`inline-flex items-center gap-1.5 px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 ${
+                          isScraping
+                            ? 'bg-blue-200 text-blue-600 cursor-not-allowed'
+                            : 'bg-blue-500 text-white hover:bg-blue-600 shadow-sm'
+                        }`}
+                        onClick={() => {
+                          if (confirm('Start scraping? This process may take several minutes to complete.')) {
+                            handleStartScraping(campaignId);
+                          }
+                        }}
+                        disabled={isScraping}
+                        title="Start Scraping - May take several minutes"
+                      >
+                        {isScraping ? <span className="animate-spin">⏳</span> : '🔍'} {isScraping ? 'Scraping…' : 'Start Scraping'}
+                      </button>
+                    )}
+
                     {campaign.status === 'scraping is done' && (
-                       <button 
-                         className={`px-3 py-2 rounded-lg text-sm font-medium transition-all duration-200 ${
-                           !hasEmailConfig
-                             ? 'bg-slate-200 text-slate-500 cursor-not-allowed'
-                             : sendingCampaigns.has(campaign._id || campaign.id || '')
-                             ? 'bg-green-200 text-green-600 cursor-not-allowed'
-                             : 'bg-green-500 text-white hover:bg-green-600 hover:scale-105 shadow-sm'
-                         }`}
-                         onClick={() => {
-                           if (confirm('Start sending emails? This process may take some time depending on the volume of emails.')) {
-                             handleStartSending(campaign._id || campaign.id);
-                           }
-                         }}
-                         disabled={!hasEmailConfig || sendingCampaigns.has(campaign._id || campaign.id || '')}
-                         title={hasEmailConfig ? 'Start Sending - May take some time' : 'Set up email configuration in Settings first'}
-                       >
-                         {sendingCampaigns.has(campaign._id || campaign.id || '') ? (
-                           <span className="inline-block animate-spin mr-2">⏳</span>
-                         ) : (
-                           '📧 Send'
-                         )}
-                       </button>
-                     )}
-
-                    <button 
-                      title="Edit Campaign" 
-                      className="px-3 py-2 rounded-lg text-green-600 hover:bg-green-100 hover:scale-110 transition-all duration-200 border border-green-200"
-                      onClick={() => handleEditClick(campaign)}
-                    >
-                      ✏️ Edit
-                    </button>
-
-                    <button
-                      title="Delete Campaign"
-                      className="px-3 py-2 rounded-lg text-red-600 hover:bg-red-100 hover:scale-110 transition-all duration-200 border border-red-200"
-                      onClick={() => handleDeleteCampaign(campaign._id || campaign.id)}
-                    >
-                      🗑️ Delete
-                    </button>
+                      <button
+                        className={`inline-flex items-center gap-1.5 px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 ${
+                          !hasEmailConfig
+                            ? 'bg-slate-200 text-slate-500 cursor-not-allowed'
+                            : isSending
+                            ? 'bg-green-200 text-green-600 cursor-not-allowed'
+                            : 'bg-green-500 text-white hover:bg-green-600 shadow-sm'
+                        }`}
+                        onClick={() => {
+                          if (confirm('Start sending emails? This process may take some time depending on the volume of emails.')) {
+                            handleStartSending(campaignId);
+                          }
+                        }}
+                        disabled={!hasEmailConfig || isSending}
+                        title={hasEmailConfig ? 'Start Sending - May take some time' : 'Set up email configuration in Settings first'}
+                      >
+                        {isSending ? <span className="animate-spin">⏳</span> : '📧'} {isSending ? 'Sending…' : 'Start Sending'}
+                      </button>
+                    )}
 
                     {canReviewLeads(campaign.status) && (
                       <button
-                        onClick={() => handleOpenLeadsModal(campaign._id || campaign.id || '')}
-                        className="px-3 py-2 rounded-lg text-violet-600 hover:bg-violet-100 hover:scale-110 transition-all duration-200 border border-violet-200"
+                        onClick={() => handleOpenLeadsModal(campaignId)}
+                        className="inline-flex items-center gap-1.5 px-4 py-2 rounded-lg text-sm font-medium bg-violet-100 text-violet-700 hover:bg-violet-200 transition-colors duration-150"
                         title="Review Leads"
                       >
                         📋 Review Leads
@@ -1776,192 +1770,31 @@ export default function Campaigns({ campaigns: propCampaigns, onTabChange }: Cam
                     {campaign.scrapedFileUrl && (
                       <button
                         onClick={() => handleDownloadFile(campaign.scrapedFileUrl)}
-                        className="px-3 py-2 rounded-lg text-blue-600 hover:bg-blue-100 hover:scale-110 transition-all duration-200 border border-blue-200"
+                        className="inline-flex items-center gap-1.5 px-4 py-2 rounded-lg text-sm font-medium bg-blue-100 text-blue-700 hover:bg-blue-200 transition-colors duration-150"
                         title="Download Scraped Data File"
                       >
-                        📥 Download
+                        📥 Download CSV
                       </button>
                     )}
                   </div>
                 </div>
+              );
+            })}
 
-                {/* Desktop Layout */}
-                <div className="hidden lg:grid grid-cols-10 gap-4 items-center p-4">
-                  {/* Campaign Column */}
-                  <div className="col-span-3">
-                    <div className="flex items-center gap-3">
-                      <div className="w-10 h-10 bg-violet-100 rounded-lg flex items-center justify-center flex-shrink-0">
-                        <span className="text-lg">📧</span>
-                      </div>
-                      <div className="min-w-0">
-                        <h3 className="font-semibold text-slate-900 text-base truncate">
-                          {campaign.dataSource === 'upload' ? (
-                            <span className="text-slate-700">
-                              📄 Uploaded list{campaign.uploadedFileName ? ` (${campaign.uploadedFileName})` : ''}
-                            </span>
-                          ) : (
-                            <>
-                              {campaign.businessType} in
-                              <span className="inline-flex items-center gap-2 ml-2">
-                                <Flag countryCode={campaign.location || ''} size="sm" />
-                                <span className="text-slate-700">
-                                  {getCountryByCode(campaign.location)?.name || campaign.location}
-                                </span>
-                              </span>
-                            </>
-                          )}
-                        </h3>
-                        <p className="text-xs text-slate-500 mt-1">
-                          Created {new Date(campaign.createdAt).toLocaleDateString()}
-                          <button 
-                        title="Edit Campaign" 
-                        className="ml-2 p-1.5 rounded-lg text-green-600 hover:bg-green-100 hover:scale-110 transition-all duration-200"
-
-                        onClick={() => handleEditClick(campaign)}
-                      >
-                        ✏️
-                      </button>
-
-                      {/* Delete Button */}
-                      <button 
-                        title="Delete Campaign" 
-                        className="ml-2 p-1.5 rounded-lg text-red-600 hover:bg-red-100 hover:scale-110 transition-all duration-200"
-
-                        onClick={() => handleDeleteCampaign(campaign._id || campaign.id)}
-                      >
-                        🗑️
-                      </button>
-                        </p>
-                     
-                      </div>
-                    
-                    </div>
-             
-                  </div>
-
-                  {/* Results Scraped Column */}
-                  <div className="col-span-1 text-center">
-                    <div className="text-lg font-semibold text-slate-900">
-                      {campaign.status !== 'scraping in progress' && campaign.status !== 'idle'
-                        ? `${campaign.maximumResults || 0} / ${campaign.maximumResults || 0}`
-                        : `${campaign.currentResults || 0} / ${campaign.maximumResults || 0}`
-                      }
-                    </div>
-                  </div>
-
-                  {/* Emails/Day Column */}
-                  <div className="col-span-1 text-center">
-                    <div className="text-lg font-semibold text-slate-900">
-                      {campaign.emailsPerDay || 50}
-                    </div>
-                  </div>
-
-                  {/* Emails Sent/Failed/Skipped Column */}
-                  <div className="col-span-2 text-center">
-                    <div className="text-lg font-semibold text-slate-900">
-                      {campaign.emailsSent || 0} / {campaign.emailsFailed || 0} / {campaign.emailsSkipped || 0}
-                    </div>
-                  </div>
-
-                                     {/* Status Column */}
-                   <div className="col-span-2 text-center">
-                     <span className={`inline-block px-3 py-1 rounded-full text-xs font-semibold ${getStatusColor(campaign.status)}`}>
-                       {getStatusIcon(campaign.status)} {campaign.status.charAt(0).toUpperCase() + campaign.status.slice(1)}
-                     </span>
-                     <div className="text-xs text-slate-500 mt-1 px-2">
-                       {getStatusDescription(campaign.status)}
-                     </div>
-                   </div>
-
-                  {/* Job Actions Column */}
-                  <div className="col-span-1 text-center">
-                    <div className="flex flex-col items-center justify-center gap-2">
-                                             {campaign.status === 'idle' && (
-                         <button 
-                           className={`px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 ${
-                             scrapingCampaigns.has(campaign._id || campaign.id || '')
-                               ? 'bg-blue-200 text-blue-600 cursor-not-allowed'
-                               : 'bg-blue-500 text-white hover:bg-blue-600 hover:scale-105 shadow-sm'
-                           }`}
-                           onClick={() => {
-                             if (confirm('Start scraping? This process may take several minutes to complete.')) {
-                               handleStartScraping(campaign._id || campaign.id);
-                             }
-                           }}
-                           disabled={scrapingCampaigns.has(campaign._id || campaign.id || '')}
-                           title="Start Scraping - May take several minutes"
-                         >
-                           {scrapingCampaigns.has(campaign._id || campaign.id || '') ? (
-                             <span className="inline-block animate-spin mr-2">⏳</span>
-                           ) : (
-                             '🔍 Scrape'
-                           )}
-                         </button>
-                       )}
-                      
-                                             {campaign.status === 'scraping is done' && (
-                         <button 
-                           className={`px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 ${
-                             !hasEmailConfig
-                               ? 'bg-slate-200 text-slate-500 cursor-not-allowed'
-                               : sendingCampaigns.has(campaign._id || campaign.id || '')
-                               ? 'bg-green-200 text-green-600 cursor-not-allowed'
-                               : 'bg-green-500 text-white hover:bg-green-600 hover:scale-105 shadow-sm'
-                           }`}
-                           onClick={() => {
-                             if (confirm('Start sending emails? This process may take some time depending on the volume of emails.')) {
-                               handleStartSending(campaign._id || campaign.id);
-                             }
-                           }}
-                           disabled={!hasEmailConfig || sendingCampaigns.has(campaign._id || campaign.id || '')}
-                           title={hasEmailConfig ? 'Start Sending - May take some time' : 'Set up email configuration in Settings first'}
-                         >
-                           {sendingCampaigns.has(campaign._id || campaign.id || '') ? (
-                             <span className="inline-block animate-spin mr-2">⏳</span>
-                           ) : (
-                             '📧 Send'
-                           )}
-                         </button>
-                       )}
-                      {canReviewLeads(campaign.status) && (
-                        <button
-                          onClick={() => handleOpenLeadsModal(campaign._id || campaign.id || '')}
-                          className="px-3 py-2 rounded-lg text-sm font-medium bg-violet-600 text-white hover:bg-violet-700 transition-all duration-200 shadow-sm"
-                          title="Review Leads"
-                        >
-                          📋 Review Leads
-                        </button>
-                      )}
-                      {campaign.scrapedFileUrl && (
-                        <button
-                          onClick={() => handleDownloadFile(campaign.scrapedFileUrl)}
-                          className="px-3 py-2 rounded-lg text-sm font-medium bg-blue-600 text-white hover:bg-blue-700 transition-all duration-200 shadow-sm"
-                          title="Download scraped data"
-                        >
-                          📥 Download CSV
-                        </button>
-                      )}
-                    </div>
-                  </div>
-
-                </div>
+            {(!Array.isArray(campaigns) || campaigns.length === 0) && (
+              <div className="text-center py-12">
+                <div className="text-4xl mb-4">🚀</div>
+                <h3 className="text-lg font-semibold text-slate-900 mb-2">No campaigns yet</h3>
+                <p className="text-slate-600 mb-6">Create your first campaign to start finding leads and sending emails.</p>
+                <button
+                  onClick={() => { resetUploadState(); setShowCreateForm(true); }}
+                  className="px-6 py-3 bg-gradient-to-r from-violet-600 to-purple-600 text-white rounded-xl font-semibold hover:shadow-lg hover:shadow-violet-600/25 transition-all duration-300"
+                >
+                  Create Your First Campaign
+                </button>
               </div>
-            ))}
-              
-              {(!Array.isArray(campaigns) || campaigns.length === 0) && (
-                <div className="text-center py-12">
-                  <div className="text-4xl mb-4">🚀</div>
-                  <h3 className="text-lg font-semibold text-slate-900 mb-2">No campaigns yet</h3>
-                  <p className="text-slate-600 mb-6">Create your first campaign to start finding leads and sending emails.</p>
-                  <button 
-                    onClick={() => { resetUploadState(); setShowCreateForm(true); }}
-                    className="px-6 py-3 bg-gradient-to-r from-violet-600 to-purple-600 text-white rounded-xl font-semibold hover:shadow-lg hover:shadow-violet-600/25 transition-all duration-300"
-                  >
-                    Create Your First Campaign
-                  </button>
-                </div>
-              )}
-            </div>
+            )}
+          </div>
         )}
       </div>
 

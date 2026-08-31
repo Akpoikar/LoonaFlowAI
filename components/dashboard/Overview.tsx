@@ -59,8 +59,14 @@ export default function Overview({ user, campaigns, onTabChange, hasEmailConfig 
           apiClient.getCampaigns(),
         ]);
 
-        const templatesData = (templatesResult?.data as any)?.data || templatesResult?.data || [];
-        const campaignsData = (campaignsResult?.data as any)?.data || campaignsResult?.data || [];
+        const templatesData = (templatesResult?.data as any)?.templates
+          || (templatesResult?.data as any)?.data
+          || templatesResult?.data
+          || [];
+        const campaignsData = (campaignsResult?.data as any)?.campaigns
+          || (campaignsResult?.data as any)?.data
+          || campaignsResult?.data
+          || [];
 
         if (Array.isArray(templatesData)) {
           setTemplateCount(templatesData.length);
