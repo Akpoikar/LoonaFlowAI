@@ -13,6 +13,8 @@ Disallow: /private/
 Disallow: /api/
 Disallow: /static/
 Disallow: /_next/
+Disallow: /dashboard/
+Disallow: /test
 
 # Allow important pages
 Allow: /pricing

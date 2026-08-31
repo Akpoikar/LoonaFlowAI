@@ -1,3 +1,4 @@
+import Image from "next/image";
 import PulsingBorderShader from "../components/PulsingBorderShader";
 import Hero from "../components/Hero";
 import Journey from "../components/Journey";
@@ -17,10 +18,13 @@ export default function Page() {
     <div className="relative min-h-screen overflow-hidden">
       {/* Background image */}
       <div className="absolute inset-0">
-        <img
+        <Image
           src="/images/background.png"
-          alt="Background"
-          className="w-full h-full object-cover"
+          alt=""
+          fill
+          priority
+          sizes="100vw"
+          className="object-cover"
         />
       </div>
 
