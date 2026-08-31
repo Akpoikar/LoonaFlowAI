@@ -54,10 +54,10 @@ export async function PUT(
   try {
     const { id } = params;
     const body = await request.json();
-    const { businessType, location, maximumResults, emailsPerDay, emailTemplate } = body;
+    const { businessType, location, maximumResults, emailsPerDay, emailTemplate, emailConfig } = body;
 
     const headers = getAuthHeaders();
-    
+
     if (!headers.Authorization) {
       return NextResponse.json(
         { error: 'Authentication required' },
@@ -74,6 +74,7 @@ export async function PUT(
         maximumResults,
         emailsPerDay,
         emailTemplate,
+        emailConfig,
       }),
     });
 

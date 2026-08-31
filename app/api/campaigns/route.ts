@@ -47,7 +47,7 @@ export async function GET(request: NextRequest) {
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
-    const { businessType, location, selectedLocations, maximumResults, emailsPerDay, emailTemplate, dataSource } = body;
+    const { businessType, location, selectedLocations, maximumResults, emailsPerDay, emailTemplate, emailConfig, dataSource } = body;
 
     if (dataSource === 'upload') {
       if (!emailTemplate) {
@@ -59,6 +59,13 @@ export async function POST(request: NextRequest) {
     } else if (!businessType || !location || !emailTemplate) {
       return NextResponse.json(
         { error: 'Business type, location, and email template are required' },
+        { status: 400 }
+      );
+    }
+
+    if (!emailConfig) {
+      return NextResponse.json(
+        { error: 'Email configuration is required' },
         { status: 400 }
       );
     }
@@ -81,6 +88,7 @@ export async function POST(request: NextRequest) {
         selectedLocations,
         maximumResults,
         emailTemplate,
+        emailConfig,
         emailsPerDay,
         dataSource,
       }),
