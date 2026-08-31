@@ -23,6 +23,8 @@ export default function Settings({ user }: SettingsProps) {
     emailPassword: ''
   });
   const [isCreatingEmailConfig, setIsCreatingEmailConfig] = useState(false);
+  const [testingConfigId, setTestingConfigId] = useState<string | null>(null);
+  const [testResults, setTestResults] = useState<Record<string, { success: boolean; message: string }>>({});
 
   // Load email configurations
   useEffect(() => {
@@ -89,6 +91,31 @@ export default function Settings({ user }: SettingsProps) {
     }
   };
 
+  const handleTestEmailConfig = async (configId: string) => {
+    setTestingConfigId(configId);
+    setTestResults(prev => {
+      const next = { ...prev };
+      delete next[configId];
+      return next;
+    });
+
+    try {
+      const result = await apiClient.testEmailConfig(configId);
+      if (result.error) {
+        setTestResults(prev => ({ ...prev, [configId]: { success: false, message: result.error as string } }));
+      } else {
+        setTestResults(prev => ({
+          ...prev,
+          [configId]: { success: true, message: (result.data as any)?.message || 'Test email sent successfully' }
+        }));
+      }
+    } catch (error) {
+      setTestResults(prev => ({ ...prev, [configId]: { success: false, message: 'Failed to send test email' } }));
+    } finally {
+      setTestingConfigId(null);
+    }
+  };
+
   const handleDeleteEmailConfig = async (configId: string) => {
     if (!confirm('Are you sure you want to delete this email configuration?')) {
       return;
@@ -99,6 +126,11 @@ export default function Settings({ user }: SettingsProps) {
       if (result.error) {
         setEmailConfigError(result.error);
       } else {
+        setTestResults(prev => {
+          const next = { ...prev };
+          delete next[configId];
+          return next;
+        });
         await loadEmailConfigs();
       }
     } catch (error) {
@@ -193,29 +225,52 @@ export default function Settings({ user }: SettingsProps) {
               </div>
             ) : (
               <div className="space-y-4">
-                {emailConfigs.map((config) => (
-                  <div key={config._id || config.id} className="flex flex-col sm:flex-row sm:items-center justify-between p-4 bg-white/30 rounded-xl gap-4">
-                    <div className="flex items-center gap-3">
-                      <div className="w-10 h-10 bg-violet-100 rounded-full flex items-center justify-center">
-                        <span className="text-lg">📧</span>
+                {emailConfigs.map((config) => {
+                  const configId = config._id || config.id || '';
+                  const testResult = testResults[configId];
+                  const isTesting = testingConfigId === configId;
+                  return (
+                    <div key={configId} className="p-4 bg-white/30 rounded-xl">
+                      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                        <div className="flex items-center gap-3">
+                          <div className="w-10 h-10 bg-violet-100 rounded-full flex items-center justify-center">
+                            <span className="text-lg">📧</span>
+                          </div>
+                          <div>
+                            <p className="font-medium text-slate-900">{config.name}</p>
+                            <p className="text-sm text-slate-600">
+                              {config.emailAddress} • {config.smtpServer}:{config.smtpPort}
+                            </p>
+                          </div>
+                        </div>
+                        <div className="flex flex-col sm:flex-row gap-2">
+                          <button
+                            onClick={() => handleTestEmailConfig(configId)}
+                            disabled={isTesting}
+                            className="px-4 py-2 text-violet-600 hover:bg-violet-50 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                          >
+                            {isTesting ? 'Sending test…' : 'Send Test Email'}
+                          </button>
+                          <button
+                            onClick={() => handleDeleteEmailConfig(configId)}
+                            className="px-4 py-2 text-red-600 hover:bg-red-50 rounded-lg transition-colors"
+                          >
+                            Delete
+                          </button>
+                        </div>
                       </div>
-                      <div>
-                        <p className="font-medium text-slate-900">{config.name}</p>
-                        <p className="text-sm text-slate-600">
-                          {config.emailAddress} • {config.smtpServer}:{config.smtpPort}
-                        </p>
-                      </div>
+                      {testResult && (
+                        <div className={`mt-3 text-sm rounded-lg p-3 ${
+                          testResult.success
+                            ? 'bg-emerald-50 text-emerald-700 border border-emerald-200'
+                            : 'bg-red-50 text-red-700 border border-red-200'
+                        }`}>
+                          {testResult.success ? '✅ ' : '❌ '}{testResult.message}
+                        </div>
+                      )}
                     </div>
-                    <div className="flex flex-col sm:flex-row gap-2">
-                      <button
-                        onClick={() => handleDeleteEmailConfig(config._id || config.id || '')}
-                        className="px-4 py-2 text-red-600 hover:bg-red-50 rounded-lg transition-colors"
-                      >
-                        Delete
-                      </button>
-                    </div>
-                  </div>
-                ))}
+                  );
+                })}
                 
                 {emailConfigs.length === 0 && (
                   <div className="text-center py-12">

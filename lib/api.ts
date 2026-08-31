@@ -245,6 +245,12 @@ class ApiClient {
     });
   }
 
+  async testEmailConfig(id: string) {
+    return this.request(`/email-config/${id}/test`, {
+      method: 'POST',
+    });
+  }
+
   // Subscription methods
   async getSubscriptionPlans() {
     return this.request('/subscription/plans');

@@ -920,7 +920,7 @@ export default function Campaigns({ campaigns: propCampaigns, onTabChange }: Cam
   return (
     <div className="space-y-6 sm:space-y-8 px-4 sm:px-0">
       {!isLoadingEmailConfig && !hasEmailConfig && (
-        <div className="bg-amber-50 border border-amber-200 rounded-xl p-4 sm:p-5">
+        <div className="bg-white/40 backdrop-blur-md rounded-xl p-4 sm:p-5 ring-1 ring-white/30 shadow-lg shadow-purple-100/40">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
             <div>
               <h3 className="text-sm sm:text-base font-semibold text-amber-900">
