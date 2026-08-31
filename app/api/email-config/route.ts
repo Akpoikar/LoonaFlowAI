@@ -42,8 +42,8 @@ export async function POST(request: NextRequest) {
     const authHeaders = await getAuthHeaders();
 
     // Validate required fields
-    const { name, smtpServer, smtpPort, emailAddress, emailPassword, isDefault } = body;
-    
+    const { name, smtpServer, smtpPort, emailAddress, emailPassword } = body;
+
     if (!name || !smtpServer || !smtpPort || !emailAddress || !emailPassword) {
       return NextResponse.json(
         { error: 'Missing required fields: name, smtpServer, smtpPort, emailAddress, emailPassword' },
@@ -62,8 +62,7 @@ export async function POST(request: NextRequest) {
         smtpServer,
         smtpPort,
         emailAddress,
-        emailPassword,
-        isDefault: isDefault || false
+        emailPassword
       })
     });
 

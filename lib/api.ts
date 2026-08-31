@@ -94,6 +94,7 @@ class ApiClient {
     maximumResults: number;
     emailsPerDay: number;
     emailTemplate: string;
+    emailConfig: string;
     dataSource?: 'scrape' | 'upload';
   }) {
     return this.request('/campaigns', {
@@ -110,6 +111,7 @@ class ApiClient {
       maximumResults?: number;
       emailsPerDay?: number;
       emailTemplate?: string;
+      emailConfig?: string;
       status?: string;
     }
   ) {
@@ -214,7 +216,6 @@ class ApiClient {
     smtpPort: number;
     emailAddress: string;
     emailPassword: string;
-    isDefault?: boolean;
   }) {
     return this.request('/email-config', {
       method: 'POST',
@@ -230,7 +231,6 @@ class ApiClient {
       smtpPort?: number;
       emailAddress?: string;
       emailPassword?: string;
-      isDefault?: boolean;
     }
   ) {
     return this.request(`/email-config/${id}`, {
@@ -324,6 +324,12 @@ export interface Campaign {
     content: string;
     id?:string;
   };
+  emailConfig?: {
+    _id: string;
+    name: string;
+    emailAddress: string;
+    id?: string;
+  } | string;
   scrapedFileUrl?: string; // URL to download the scraped data file
   user?: string;
   createdAt: string;
@@ -370,7 +376,6 @@ export interface EmailConfig {
   smtpServer: string;
   smtpPort: number;
   emailAddress: string;
-  isDefault: boolean;
   user?: string;
   createdAt: string;
   updatedAt: string;

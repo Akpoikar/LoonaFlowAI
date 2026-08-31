@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import Papa from 'papaparse';
 import { Campaign } from '../../types/dashboard';
-import { apiClient, Campaign as ApiCampaign, LeadRow } from '@/lib/api';
+import { apiClient, Campaign as ApiCampaign, LeadRow, EmailConfig } from '@/lib/api';
 import Modal from '../Modal';
 import { countryCodes, getCountryByCode, type CountryCode } from '@/lib/countryCodes';
 import Flag from '../Flag';
@@ -33,6 +33,7 @@ interface CampaignFormData {
   maximumResults: number;
   emailsPerDay: number;
   emailTemplate: string;
+  emailConfig: string;
 }
 
 const emailTemplates = [
@@ -77,6 +78,7 @@ const previewData = [
 export default function Campaigns({ campaigns: propCampaigns, onTabChange }: CampaignsProps) {
   const [campaigns, setCampaigns] = useState<ApiCampaign[]>([]);
   const [templates, setTemplates] = useState<any[]>([]);
+  const [emailConfigs, setEmailConfigs] = useState<EmailConfig[]>([]);
   const [showCreateForm, setShowCreateForm] = useState(false);
   const [editingCampaign, setEditingCampaign] = useState<ApiCampaign | null>(null);
   const [isEditing, setIsEditing] = useState(false);
@@ -87,7 +89,8 @@ export default function Campaigns({ campaigns: propCampaigns, onTabChange }: Cam
     selectedLocations: [],
     maximumResults: 100,
     emailsPerDay: 50,
-    emailTemplate: ''
+    emailTemplate: '',
+    emailConfig: ''
   });
   const [isCreating, setIsCreating] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
@@ -106,7 +109,11 @@ export default function Campaigns({ campaigns: propCampaigns, onTabChange }: Cam
   const [locationsError, setLocationsError] = useState('');
   const [selectedLocations, setSelectedLocations] = useState<string[]>([]);
   const [showLocationModal, setShowLocationModal] = useState(false);
-  const [hasEmailConfig, setHasEmailConfig] = useState(true);
+  // Defaults to false (banner shown) until we confirm configs exist — safer
+  // than defaulting to true, which would silently hide the "set up email"
+  // banner for good if this check ever fails or the response shape changes.
+  const [hasEmailConfig, setHasEmailConfig] = useState(false);
+  const [isLoadingEmailConfig, setIsLoadingEmailConfig] = useState(true);
 
   // CSV upload (alternative lead source) state
   const [dataSource, setDataSource] = useState<'scrape' | 'upload'>('scrape');
@@ -178,10 +185,32 @@ export default function Campaigns({ campaigns: propCampaigns, onTabChange }: Cam
   const loadEmailConfigStatus = async () => {
     try {
       const result: any = await apiClient.getEmailConfigs();
-      const configs = result?.data?.data || (Array.isArray(result?.data) ? result.data : []);
-      setHasEmailConfig(Array.isArray(configs) && configs.length > 0);
+
+      if (result?.error) {
+        console.warn('Failed to load email config status:', result.error);
+        setEmailConfigs([]);
+        setHasEmailConfig(false);
+        return;
+      }
+
+      // Backend response shape has varied (bare array, {data: [...]},
+      // {data: {data: [...]}}) — check all of them rather than assuming one.
+      const candidates = [
+        result?.data?.data,
+        result?.data?.configs,
+        result?.data,
+        result?.configs,
+        result,
+      ];
+      const configs = candidates.find((c) => Array.isArray(c)) || [];
+      setEmailConfigs(configs);
+      setHasEmailConfig(configs.length > 0);
     } catch (error) {
+      console.warn('Failed to load email config status:', error);
+      setEmailConfigs([]);
       setHasEmailConfig(false);
+    } finally {
+      setIsLoadingEmailConfig(false);
     }
   };
 
@@ -382,6 +411,11 @@ export default function Campaigns({ campaigns: propCampaigns, onTabChange }: Cam
       return;
     }
 
+    if (!formData.emailConfig) {
+      setError('Please select an email configuration');
+      return;
+    }
+
     if (formData.emailsPerDay < 1 || formData.emailsPerDay > 500) {
       setError('Emails per day must be between 1 and 500');
       return;
@@ -410,6 +444,7 @@ export default function Campaigns({ campaigns: propCampaigns, onTabChange }: Cam
         maximumResults: parsedCsv.rows.length,
         emailsPerDay: formData.emailsPerDay,
         emailTemplate: formData.emailTemplate,
+        emailConfig: formData.emailConfig,
         dataSource: 'upload'
       });
 
@@ -436,7 +471,8 @@ export default function Campaigns({ campaigns: propCampaigns, onTabChange }: Cam
         location: '',
         maximumResults: 100,
         emailsPerDay: 50,
-        emailTemplate: ''
+        emailTemplate: '',
+        emailConfig: ''
       });
     } catch (error) {
       setError('Failed to create campaign from uploaded leads');
@@ -476,10 +512,15 @@ export default function Campaigns({ campaigns: propCampaigns, onTabChange }: Cam
       setError('Emails per day must be between 1 and 500');
       return;
     }
-    
+
+    if (!formData.emailConfig) {
+      setError('Please select an email configuration');
+      return;
+    }
+
     setIsCreating(true);
     setError('');
-    
+
     try {
       const result = await apiClient.createCampaign({
         businessType: formData.businessType,
@@ -487,7 +528,8 @@ export default function Campaigns({ campaigns: propCampaigns, onTabChange }: Cam
         selectedLocations: formData.selectedLocations,
         maximumResults: formData.maximumResults,
         emailsPerDay: formData.emailsPerDay,
-        emailTemplate: formData.emailTemplate
+        emailTemplate: formData.emailTemplate,
+        emailConfig: formData.emailConfig
       });
 
       if (result.error) {
@@ -501,7 +543,8 @@ export default function Campaigns({ campaigns: propCampaigns, onTabChange }: Cam
           location: '',
           maximumResults: 100,
           emailsPerDay: 50,
-          emailTemplate: ''
+          emailTemplate: '',
+          emailConfig: ''
         });
       }
     } catch (error) {
@@ -538,17 +581,23 @@ export default function Campaigns({ campaigns: propCampaigns, onTabChange }: Cam
       setError('Emails per day must be between 1 and 500');
       return;
     }
-    
+
+    if (!formData.emailConfig) {
+      setError('Please select an email configuration');
+      return;
+    }
+
     setIsEditing(true);
     setError('');
 
-    
+
     const updatePayload = {
       businessType: formData.businessType,
       location: formData.location,
       maximumResults: formData.maximumResults,
       emailsPerDay: formData.emailsPerDay,
-      emailTemplate: formData.emailTemplate
+      emailTemplate: formData.emailTemplate,
+      emailConfig: formData.emailConfig
     };
 
     try {
@@ -567,7 +616,8 @@ export default function Campaigns({ campaigns: propCampaigns, onTabChange }: Cam
           location: '',
           maximumResults: 100,
           emailsPerDay: 50,
-          emailTemplate: ''
+          emailTemplate: '',
+          emailConfig: ''
         });
       }
     } catch (error) {
@@ -580,12 +630,17 @@ export default function Campaigns({ campaigns: propCampaigns, onTabChange }: Cam
   const handleEditClick = (campaign: ApiCampaign) => {
     setEditingCampaign(campaign);
     setDataSource(campaign.dataSource === 'upload' ? 'upload' : 'scrape');
+    const campaignEmailConfig = campaign.emailConfig;
+    const emailConfigId = typeof campaignEmailConfig === 'string'
+      ? campaignEmailConfig
+      : (campaignEmailConfig?._id || campaignEmailConfig?.id || '');
     setFormData({
       businessType: campaign.businessType || '',
       location: campaign.location || '',
       maximumResults: campaign.maximumResults,
       emailsPerDay: campaign.emailsPerDay,
-      emailTemplate: campaign.emailTemplate._id || campaign.emailTemplate.id || ''
+      emailTemplate: campaign.emailTemplate._id || campaign.emailTemplate.id || '',
+      emailConfig: emailConfigId
     });
     setShowCreateForm(true);
   };
@@ -599,7 +654,8 @@ export default function Campaigns({ campaigns: propCampaigns, onTabChange }: Cam
       location: '',
       maximumResults: 100,
       emailsPerDay: 50,
-      emailTemplate: ''
+      emailTemplate: '',
+      emailConfig: ''
     });
   };
 
@@ -863,7 +919,7 @@ export default function Campaigns({ campaigns: propCampaigns, onTabChange }: Cam
 
   return (
     <div className="space-y-6 sm:space-y-8 px-4 sm:px-0">
-      {!hasEmailConfig && (
+      {!isLoadingEmailConfig && !hasEmailConfig && (
         <div className="bg-amber-50 border border-amber-200 rounded-xl p-4 sm:p-5">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
             <div>
@@ -1300,6 +1356,44 @@ export default function Campaigns({ campaigns: propCampaigns, onTabChange }: Cam
                         className="ml-1 underline font-semibold"
                       >
                         Go to Templates
+                      </button>
+                    </div>
+                  )}
+                 </div>
+
+                 {/* Email Configuration */}
+                 <div>
+                   <label className="block text-sm font-medium text-slate-700 mb-2">
+                     Send From (Email Configuration) *
+                     {isCampaignEditingRestricted() && (
+                       <span className="ml-2 text-xs text-green-600">(Can still be edited)</span>
+                     )}
+                   </label>
+                   <select
+                     required
+                     value={formData.emailConfig}
+                     onChange={(e) => handleInputChange('emailConfig', e.target.value)}
+                     className="w-full px-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-violet-500 focus:border-transparent bg-white/50 backdrop-blur-sm"
+                   >
+                     <option value="">Select an email configuration</option>
+                     {emailConfigs.map((config) => (
+                       <option key={config._id || config.id} value={config._id || config.id}>
+                         {config.name} ({config.emailAddress})
+                       </option>
+                     ))}
+                   </select>
+                  {emailConfigs.length === 0 && (
+                    <div className="mt-2 text-xs text-amber-700 bg-amber-50 border border-amber-200 rounded-lg p-2.5">
+                      No email configurations found. Set one up first, then come back to launch this campaign.
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setShowCreateForm(false);
+                          onTabChange?.('settings');
+                        }}
+                        className="ml-1 underline font-semibold"
+                      >
+                        Go to Settings
                       </button>
                     </div>
                   )}

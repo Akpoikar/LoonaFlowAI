@@ -26,8 +26,7 @@ export default function Overview({ user, campaigns, onTabChange, hasEmailConfig 
     smtpServer: '',
     smtpPort: 587,
     emailAddress: '',
-    emailPassword: '',
-    isDefault: true
+    emailPassword: ''
   });
 
   useEffect(() => {
@@ -105,8 +104,7 @@ export default function Overview({ user, campaigns, onTabChange, hasEmailConfig 
         smtpServer: '',
         smtpPort: 587,
         emailAddress: '',
-        emailPassword: '',
-        isDefault: true
+        emailPassword: ''
       });
     } catch (error) {
       setEmailConfigError('Failed to create email configuration');

@@ -20,8 +20,7 @@ export default function Settings({ user }: SettingsProps) {
     smtpServer: '',
     smtpPort: 587,
     emailAddress: '',
-    emailPassword: '',
-    isDefault: false
+    emailPassword: ''
   });
   const [isCreatingEmailConfig, setIsCreatingEmailConfig] = useState(false);
 
@@ -63,16 +62,10 @@ export default function Settings({ user }: SettingsProps) {
 
   const handleCreateEmailConfig = async (e: React.FormEvent) => {
     e.preventDefault();
-    
-    // Check if user already has an email configuration
-    if (emailConfigs.length > 0) {
-      setEmailConfigError('You can only have one email configuration. Please delete the existing one first.');
-      return;
-    }
-    
+
     setIsCreatingEmailConfig(true);
     setEmailConfigError('');
-    
+
     try {
       const result = await apiClient.createEmailConfig(emailFormData);
 
@@ -86,8 +79,7 @@ export default function Settings({ user }: SettingsProps) {
           smtpServer: '',
           smtpPort: 587,
           emailAddress: '',
-          emailPassword: '',
-          isDefault: false
+          emailPassword: ''
         });
       }
     } catch (error) {
@@ -211,17 +203,11 @@ export default function Settings({ user }: SettingsProps) {
                         <p className="font-medium text-slate-900">{config.name}</p>
                         <p className="text-sm text-slate-600">
                           {config.emailAddress} • {config.smtpServer}:{config.smtpPort}
-                          {config.isDefault && ' • Default'}
                         </p>
                       </div>
                     </div>
                     <div className="flex flex-col sm:flex-row gap-2">
-                      {config.isDefault && (
-                        <span className="px-3 py-1 text-sm bg-violet-100 text-violet-700 rounded-lg font-medium text-center">
-                          Default
-                        </span>
-                      )}
-                      <button 
+                      <button
                         onClick={() => handleDeleteEmailConfig(config._id || config.id || '')}
                         className="px-4 py-2 text-red-600 hover:bg-red-50 rounded-lg transition-colors"
                       >
@@ -235,29 +221,16 @@ export default function Settings({ user }: SettingsProps) {
                   <div className="text-center py-12">
                     <div className="text-4xl mb-4">📧</div>
                     <h3 className="text-lg font-semibold text-slate-900 mb-2">No email configuration yet</h3>
-                    <p className="text-slate-600 mb-6">Add your email configuration to start sending emails. You can only have one configuration at a time.</p>
+                    <p className="text-slate-600 mb-6">Add an email configuration to start sending emails. You can add as many as you like and choose which one to use per campaign.</p>
                   </div>
                 )}
-                
-                {emailConfigs.length === 0 ? (
-                  <button 
-                    onClick={() => setShowEmailModal(true)}
-                    className="w-full px-6 py-4 border-2 border-dashed border-slate-300 rounded-xl text-slate-600 hover:border-violet-400 hover:text-violet-600 transition-colors"
-                  >
-                    + Add Email Configuration
-                  </button>
-                ) : (
-                  <div className="w-full px-6 py-4 bg-slate-50 rounded-xl text-center">
-                    <p className="text-slate-500 text-sm">
-                      You can only have one email configuration. 
-                      {emailConfigs.length > 0 && (
-                        <span className="block mt-1">
-                          To add a new one, please delete the existing configuration first.
-                        </span>
-                      )}
-                    </p>
-                  </div>
-                )}
+
+                <button
+                  onClick={() => setShowEmailModal(true)}
+                  className="w-full px-6 py-4 border-2 border-dashed border-slate-300 rounded-xl text-slate-600 hover:border-violet-400 hover:text-violet-600 transition-colors"
+                >
+                  + Add Email Configuration
+                </button>
               </div>
             )}
           </div>
@@ -410,19 +383,6 @@ export default function Settings({ user }: SettingsProps) {
               placeholder="Enter your email password or app password"
               className="w-full px-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-violet-500 focus:border-transparent bg-white/50 backdrop-blur-sm"
             />
-          </div>
-          
-          <div className="flex items-center gap-2">
-            <input
-              type="checkbox"
-              id="isDefault"
-              checked={emailFormData.isDefault}
-              onChange={(e) => handleEmailInputChange('isDefault', e.target.checked)}
-              className="rounded border-slate-300 text-violet-600 focus:ring-violet-500"
-            />
-            <label htmlFor="isDefault" className="text-sm text-slate-700">
-              Set as default configuration
-            </label>
           </div>
           
           <div className="flex flex-col sm:flex-row gap-3 pt-4">
