@@ -665,6 +665,153 @@ export const workflowArticles: WorkflowArticle[] = [
         description: "Pair personalization with a respectful outreach structure."
       }
     ]
+  },
+  {
+    slug: "how-to-calculate-cold-email-roi",
+    title: "How to Calculate the ROI of Cold Email Outreach",
+    metaTitle: "How to Calculate Cold Email ROI (With a Worked Example) | LoonaFlow AI",
+    metaDescription:
+      "A simple framework for calculating the ROI of cold email outreach: replies, close rate, deal value, and cost per lead. Includes a worked example and a free calculator.",
+    keywords: [
+      "cold email roi",
+      "outreach roi calculator",
+      "cost per lead",
+      "cost per reply",
+      "lead generation roi",
+      "sales outreach roi",
+      "email marketing roi"
+    ],
+    category: "Outreach Strategy",
+    readTime: "7 min read",
+    date: "2026-08-31",
+    updated: "2026-08-31",
+    eyebrow: "Outreach Economics",
+    heroTitle: "How to Calculate the ROI of Cold Email Outreach",
+    heroDescription:
+      "Before you scale a campaign, know the four numbers that decide whether outreach is profitable: reply rate, close rate, deal value, and cost per lead.",
+    quickAnswer:
+      "To calculate cold email ROI, multiply leads contacted by your reply rate to get replies, multiply replies by your close rate to get new customers, multiply new customers by average deal value to get revenue, then divide revenue by your total outreach cost. A result above 1x means the campaign paid for itself.",
+    intro: [
+      "Most outreach advice focuses on open rates and subject lines. Those matter, but they are not the number that tells you whether a campaign is worth running. The number that matters is ROI: what you spent versus what came back.",
+      "The good news is that cold email ROI is simple to calculate once you separate it into four steps. You do not need attribution software or a data team, just your lead volume, a reply rate, a close rate, and an average deal value.",
+      "This guide walks through the math, a worked example, and the mistakes that make outreach look more or less profitable than it actually is."
+    ],
+    sections: [
+      {
+        title: "1. Start with leads contacted, not leads available",
+        body:
+          "ROI calculations break down when people use the size of their total list instead of the number of leads they actually contacted in a given month. Use the volume you realistically send to, since that is what your reply rate and cost are measured against.",
+        bullets: [
+          "Use a monthly figure so it lines up with a subscription cost.",
+          "If you send in batches, use the total across the month, not one batch.",
+          "Keep bounced or undeliverable sends out of the count if you can."
+        ]
+      },
+      {
+        title: "2. Apply a realistic reply rate",
+        body:
+          "Reply rate is the percentage of contacted leads who respond, positive or negative. It swings more than people expect based on list quality and personalization, so anchor your estimate to your own history rather than an industry average.",
+        bullets: [
+          "Cold, unpersonalized lists often land around 1-3%.",
+          "Personalized local outreach with a clear offer often lands around 5-10%.",
+          "Warm lists or referrals can reach 15% or higher.",
+          "If you have no history yet, estimate conservatively and revise after your first campaign."
+        ],
+        callout:
+          "Replies include \"not interested.\" Track that separately if you want a cleaner read on interest, but for ROI math, total replies is the input that leads to booked calls."
+      },
+      {
+        title: "3. Apply a close rate to replies, not to leads",
+        body:
+          "Close rate should be measured against replies, since that is the pool of people who engaged. Applying a close rate directly to your full lead list understates how outreach actually converts and makes the math harder to sanity check.",
+        bullets: [
+          "A typical range for replies turning into paying customers is 10-30%, depending on deal complexity and sales cycle.",
+          "Simple, low-commitment offers convert closer to the high end.",
+          "Longer sales cycles or higher-priced offers convert closer to the low end, but each deal is worth more."
+        ]
+      },
+      {
+        title: "4. Multiply by average deal value to get revenue",
+        body:
+          "Once you know new customers per month, multiply by your average deal value, meaning what a typical customer actually pays, not your highest-ticket outlier. This gives you a monthly revenue figure attributable to the campaign.",
+        bullets: [
+          "Use average first-order value if deals vary widely in size.",
+          "If you sell subscriptions, decide upfront whether you are using first-month value or a lifetime-value estimate, and stay consistent.",
+          "Round down when unsure. An ROI estimate that survives a conservative number is more useful than one that only works optimistically."
+        ]
+      },
+      {
+        title: "5. Divide by total outreach cost",
+        body:
+          "Total cost includes your outreach tool subscription and, if relevant, any time cost you want to account for. Dividing revenue by cost gives you a return multiple: how many dollars came back for every dollar spent.",
+        bullets: [
+          "A 1x return means the campaign paid for its own cost, nothing more.",
+          "A 5-10x return is a healthy range for a lean, self-serve outreach tool.",
+          "Very high multiples usually mean deal value is doing most of the work. Sanity check that deal value figure before trusting the multiple."
+        ]
+      }
+    ],
+    exampleTitle: "A worked example",
+    exampleBody:
+      "Here is the full calculation using a moderate, realistic set of assumptions for a small B2B campaign.",
+    exampleItems: [
+      "Leads contacted: 1,000 per month",
+      "Reply rate: 8% → 80 replies",
+      "Close rate on replies: 20% → 16 new customers",
+      "Average deal value: $500 → $8,000 in monthly revenue",
+      "Outreach tool cost: $14 per month → 571x return on subscription cost",
+      "Cost per lead: $0.014 · Cost per reply: $0.17"
+    ],
+    mistakes: [
+      "Applying a close rate to total leads instead of to replies.",
+      "Using your best month's numbers as the baseline instead of an average.",
+      "Ignoring cost per reply, which is a faster warning sign than cost per lead when a list underperforms.",
+      "Using peak deal value instead of average deal value, which inflates the return multiple.",
+      "Treating one month of data as permanent instead of revisiting the numbers each time reply rate or offer changes."
+    ],
+    getStarted: {
+      title: "Run your own numbers",
+      body:
+        "LoonaFlow AI includes a free calculator on the homepage that runs this exact math live: adjust leads, reply rate, close rate, and deal value to see your plan cost, cost per reply, and return multiple instantly.",
+      primaryHref: "/#roi-calculator",
+      primaryLabel: "Try the ROI Calculator",
+      secondaryHref: "/pricing",
+      secondaryLabel: "View Pricing"
+    },
+    faqs: [
+      {
+        question: "What is a good ROI for cold email outreach?",
+        answer:
+          "There is no universal number, but a campaign that returns 3-10x its outreach cost in revenue is generally considered healthy for a small business or agency. What matters more is that the multiple is calculated from a realistic reply rate and average deal value, not best-case numbers."
+      },
+      {
+        question: "How do I calculate cost per lead versus cost per reply?",
+        answer:
+          "Cost per lead is your total outreach cost divided by leads contacted. Cost per reply is your total outreach cost divided by replies received. Cost per reply is usually the more useful number because it reflects list and message quality, not just volume."
+      },
+      {
+        question: "Should I count negative replies in my ROI calculation?",
+        answer:
+          "Yes, for the reply rate step. A close rate applied afterward already accounts for the fact that not every reply converts, so there is no need to filter out negative replies before that step."
+      }
+    ],
+    relatedLinks: [
+      {
+        label: "How to Find 100 Local Business Leads",
+        href: "/articles/how-to-find-100-local-business-leads",
+        description: "Build the lead volume this ROI math is based on."
+      },
+      {
+        label: "Cold Email Strategies",
+        href: "/articles/cold-email-strategies-2025",
+        description: "Improve the reply rate that drives this calculation."
+      },
+      {
+        label: "Pricing",
+        href: "/pricing",
+        description: "See which plan fits the lead volume in your own ROI math."
+      }
+    ]
   }
 ];
 

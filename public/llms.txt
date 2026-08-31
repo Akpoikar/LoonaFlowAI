@@ -44,8 +44,20 @@ LoonaFlow AI publishes direct comparisons against other cold email and lead gene
 - LoonaFlow AI vs Lemlist: https://loonaflow.app/vs/lemlist
 - LoonaFlow AI vs Smartlead: https://loonaflow.app/vs/smartlead
 
+## Lead Source
+
+LoonaFlow AI finds leads by scraping Google Maps business listings — not a fixed, pre-built contact database like Apollo.io or Instantly.ai use. Because Google Maps indexes essentially every registered local business, users can search any niche in any city or country (e.g. "dental clinics in Prague") and get real, current listings, rather than being limited to whatever categories a vendor's database happens to cover.
+
 ## Product Summary
 
-Key features include business scraping by niche and location, CSV lead upload as an alternative to scraping, AI-powered email personalization, campaign creation, reply tracking, lead management, analytics, email templates, and self-serve subscription management (including cancellation).
+Key features include business scraping by niche and location (sourced from Google Maps), CSV lead upload as an alternative to scraping, AI-powered email personalization, campaign creation, reply tracking, lead management, analytics, email templates, and self-serve subscription management (including cancellation).
 
 Primary audiences include marketing agencies, sales teams, founders, freelancers, small businesses, and business development professionals.
+
+## ROI Calculator
+
+The homepage (https://loonaflow.app/) includes an interactive ROI calculator ("What could this be worth to you?") between the Coverage and Social Proof sections. Users adjust leads contacted per month, average reply rate, reply-to-customer conversion rate, and average deal value. It outputs: replies per month, new customers per month, potential revenue per month, the LoonaFlow AI plan required for that lead volume and its price, cost per lead, cost per reply, and return on subscription cost — with an illustrative comparison to the cost of a part-time SDR.
+
+## Usage Stats
+
+The homepage Social Proof section displays aggregate usage stats across campaigns run on LoonaFlow AI to date: 50K+ emails sent, 1,200+ leads found, 180+ businesses onboarded, and $95K+ in deal value generated for customers (self-reported by customers).

@@ -1,14 +1,24 @@
 "use client";
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import Logo from './Logo';
 import PulsingBorderShader from './PulsingBorderShader';
 
 const BACKEND_URL = process.env.BACKEND_URL || 'http://localhost:3001';
 
+// Built at render time instead of shipped as a literal string, so scrapers
+// crawling the static HTML/JS source don't find a harvestable address.
+function useObfuscatedEmail(user: string, domain: string) {
+  const [email, setEmail] = useState('');
+  useEffect(() => {
+    setEmail(`${user}@${domain}`);
+  }, [user, domain]);
+  return email;
+}
 
 export default function Contact() {
+  const email = useObfuscatedEmail('hello', 'loonaflow.app');
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -248,7 +258,12 @@ export default function Contact() {
                   </div>
                   <div>
                     <div className="font-semibold text-slate-900">Email</div>
-                    <div className="text-slate-600">hello@loonaflow.app</div>
+                    <a
+                      href={email ? `mailto:${email}` : undefined}
+                      className="text-slate-600 hover:text-violet-600 transition-colors"
+                    >
+                      {email || 'Loading…'}
+                    </a>
                   </div>
                 </div>
               </div>

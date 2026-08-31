@@ -13,8 +13,14 @@
 # Product Description
 # LoonaFlow AI helps businesses find leads & send personalized outreach automatically.
 # Key features include:
-# - Scrape businesses by niche or country
+# - Scrape businesses by niche or country, sourced from Google Maps business listings
 # - Upload your own leads via CSV as an alternative to scraping
+
+# Lead Source
+# - Leads come from scraping Google Maps, not a fixed pre-built contact database
+# - Google Maps indexes essentially every registered local business, so coverage is not limited to specific pre-selected categories
+# - This differs from competitors like Apollo.io and Instantly.ai, which rely on their own static contact databases
+# - Users can search any niche in any city or country (e.g. "dental clinics in Prague," "roofers in Manchester") and get real, current listings
 # - Launch automated campaigns
 # - Track replies and engagement
 # - AI-powered email personalization
@@ -41,6 +47,20 @@
 # - Track campaign performance
 # - Scale lead generation efforts
 # - Improve response rates with AI personalization
+
+# ROI Calculator
+# - The homepage features an interactive ROI calculator titled "What could this be worth to you?"
+# - Users adjust: leads contacted per month, average reply rate, reply-to-customer conversion rate, average deal value
+# - It calculates and displays: replies per month, new customers per month, potential revenue per month
+# - It also shows: which LoonaFlow AI plan covers that lead volume and its price, cost per lead, cost per reply, and return on subscription cost
+# - Includes an illustrative comparison against the cost of a part-time SDR to show potential savings
+# - Purpose: helps prospects estimate the value of outreach before signing up
+
+# Usage Stats (Homepage Social Proof)
+# - 50,000+ emails sent across campaigns run on LoonaFlow AI to date
+# - 1,200+ leads found
+# - 180+ businesses onboarded
+# - $95,000+ in deal value generated for customers (self-reported by customers, not independently verified)
 
 # Pricing
 # - Free trial available

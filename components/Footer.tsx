@@ -1,6 +1,20 @@
+"use client";
+
+import { useEffect, useState } from 'react';
 import Logo from './Logo';
 
+// Built at render time instead of shipped as a literal string, so scrapers
+// crawling the static HTML/JS source don't find a harvestable address.
+function useObfuscatedEmail(user: string, domain: string) {
+  const [email, setEmail] = useState('');
+  useEffect(() => {
+    setEmail(`${user}@${domain}`);
+  }, [user, domain]);
+  return email;
+}
+
 export default function Footer() {
+  const email = useObfuscatedEmail('hello', 'loonaflow.app');
   return (
     <footer className="bg-white/10 backdrop-blur-sm border-t border-white/20 mt-20">
       <div className="max-w-6xl mx-auto px-8 py-12">
@@ -54,18 +68,19 @@ export default function Footer() {
             <h3 className="font-semibold text-slate-900 mb-4">Company</h3>
             <ul className="space-y-2">
               <li><a href="/contact" className="text-slate-600 hover:text-violet-600 transition-colors">Contact</a></li>
+              <li><a href="/faq" className="text-slate-600 hover:text-violet-600 transition-colors">FAQ</a></li>
               <li><a href="/articles" className="text-slate-600 hover:text-violet-600 transition-colors">Articles</a></li>
               <li><a href="/slugs" className="text-slate-600 hover:text-violet-600 transition-colors">All Topics</a></li>
               <li><a href="/privacy" className="text-slate-600 hover:text-violet-600 transition-colors">Privacy Policy</a></li>
               <li><a href="/terms" className="text-slate-600 hover:text-violet-600 transition-colors">Terms of Service</a></li>
-              <li><a href="mailto:hello@loonaflow.app" className="text-slate-600 hover:text-violet-600 transition-colors">Support</a></li>
+              <li><a href={email ? `mailto:${email}` : undefined} className="text-slate-600 hover:text-violet-600 transition-colors">Support</a></li>
             </ul>
           </div>
         </div>
 
         <div className="border-t border-white/20 mt-8 pt-8 flex flex-col md:flex-row justify-between items-center">
           <p className="text-slate-600 text-sm">
-            © 2025 LoonaFlow AI. All rights reserved.
+            © {new Date().getFullYear()} LoonaFlow AI. All rights reserved.
           </p>
           <div className="flex space-x-6 mt-4 md:mt-0">
             <a href="/privacy" className="text-slate-600 hover:text-violet-600 transition-colors text-sm">Privacy Policy</a>
