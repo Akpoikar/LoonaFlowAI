@@ -788,6 +788,46 @@ export default function Campaigns({ campaigns: propCampaigns, onTabChange }: Cam
       .join(' ');
   };
 
+  // Renders a lead cell's value as a clickable link when it looks like a URL
+  // or email address (e.g. Outscraper's site/website/email_1 columns), plain
+  // text otherwise. Bare domains (no http/https prefix) are given one so the
+  // link actually navigates instead of being treated as a relative path.
+  const renderLeadCellValue = (value: string) => {
+    const trimmed = value.trim();
+    if (!trimmed) return value;
+
+    const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (emailPattern.test(trimmed)) {
+      return (
+        <a
+          href={`mailto:${trimmed}`}
+          className="text-blue-600 hover:text-blue-800 hover:underline"
+        >
+          {value}
+        </a>
+      );
+    }
+
+    // Requires a non-numeric, 2+ letter TLD so plain decimals (e.g. a "4.5"
+    // rating) aren't mistaken for a bare domain like "example.com".
+    const urlPattern = /^(https?:\/\/)?(www\.)?[a-z0-9-]+(\.[a-z0-9-]+)*\.[a-z]{2,}([/?#]\S*)?$/i;
+    if (urlPattern.test(trimmed)) {
+      const href = /^https?:\/\//i.test(trimmed) ? trimmed : `https://${trimmed}`;
+      return (
+        <a
+          href={href}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="text-blue-600 hover:text-blue-800 hover:underline"
+        >
+          {value}
+        </a>
+      );
+    }
+
+    return value;
+  };
+
   const handleOpenLeadsModal = async (campaignId: string) => {
     setReviewingCampaignId(campaignId);
     setShowLeadsModal(true);
@@ -1527,7 +1567,7 @@ export default function Campaigns({ campaigns: propCampaigns, onTabChange }: Cam
               </div>
 
               <div className="overflow-x-auto rounded-xl border border-slate-200 shadow-lg max-h-[50vh] overflow-y-auto">
-                <table className="w-full text-sm text-left text-slate-900">
+                <table className="w-full text-sm text-left text-slate-900 table-fixed">
                   <thead className="text-xs text-slate-700 uppercase bg-gradient-to-r from-violet-50 to-purple-50 border-b border-slate-200 sticky top-0">
                     <tr>
                       <th scope="col" className="px-4 py-3 font-semibold w-10">
@@ -1539,10 +1579,10 @@ export default function Campaigns({ campaigns: propCampaigns, onTabChange }: Cam
                           title="Select all / Deselect all"
                         />
                       </th>
-                      <th scope="col" className="px-4 py-3 font-semibold">Name</th>
-                      <th scope="col" className="px-4 py-3 font-semibold">Email</th>
+                      <th scope="col" className="px-4 py-3 font-semibold w-40">Name</th>
+                      <th scope="col" className="px-4 py-3 font-semibold w-48">Email</th>
                       {getDynamicLeadColumns(leads).map((col) => (
-                        <th key={col} scope="col" className="px-4 py-3 font-semibold">
+                        <th key={col} scope="col" className="px-4 py-3 font-semibold w-40">
                           {formatColumnHeader(col)}
                         </th>
                       ))}
@@ -1556,7 +1596,7 @@ export default function Campaigns({ campaigns: propCampaigns, onTabChange }: Cam
                           index % 2 === 0 ? 'bg-white' : 'bg-slate-25'
                         }`}
                       >
-                        <td className="px-4 py-3">
+                        <td className="px-4 py-3 align-top">
                           <input
                             type="checkbox"
                             checked={checkedRowIndices.has(lead.row_index)}
@@ -1564,13 +1604,24 @@ export default function Campaigns({ campaigns: propCampaigns, onTabChange }: Cam
                             className="w-4 h-4 rounded border-slate-300 text-violet-600 focus:ring-violet-500"
                           />
                         </td>
-                        <td className="px-4 py-3 font-semibold text-slate-900">{lead.name}</td>
-                        <td className="px-4 py-3 text-slate-700">{lead.email_1}</td>
-                        {getDynamicLeadColumns(leads).map((col) => (
-                          <td key={col} className="px-4 py-3 text-slate-700">
-                            {lead[col] !== undefined && lead[col] !== null ? String(lead[col]) : ''}
-                          </td>
-                        ))}
+                        <td className="px-4 py-3 align-top font-semibold text-slate-900">
+                          <div className="max-h-16 overflow-y-auto break-words">{lead.name}</div>
+                        </td>
+                        <td className="px-4 py-3 align-top text-slate-700">
+                          <div className="max-h-16 overflow-y-auto break-words">
+                            {lead.email_1 ? renderLeadCellValue(String(lead.email_1)) : ''}
+                          </div>
+                        </td>
+                        {getDynamicLeadColumns(leads).map((col) => {
+                          const rawValue = lead[col] !== undefined && lead[col] !== null ? String(lead[col]) : '';
+                          return (
+                            <td key={col} className="px-4 py-3 align-top text-slate-700">
+                              <div className="max-h-16 overflow-y-auto break-words" title={rawValue}>
+                                {rawValue ? renderLeadCellValue(rawValue) : ''}
+                              </div>
+                            </td>
+                          );
+                        })}
                       </tr>
                     ))}
                   </tbody>
